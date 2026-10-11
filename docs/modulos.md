@@ -82,9 +82,23 @@ Qué hace cada archivo. Se completa a medida que avanza la migración (paso del 
 | `estado/progreso.js` | `saveProgreso`: comprensión y mejor examen por subtema [8] |
 | `exportacion/resumen-txt.js` | Arma el texto del resumen .txt [8] |
 | `exportacion/exportar-pdf.js` | Ficha de estudio en PDF con html2pdf [8] |
-| `laboratorio/parser/*.js` | Tokenizador, parser, evaluador, análisis de líneas, formato de números [9] |
-| `laboratorio/lienzo/*.js` | Cuadrícula, trazado, objetos, interacción, lista de expresiones [9] |
-| `pestanas/laboratorio.js` | Pestaña 2: presets y análisis del gráfico por IA [9] |
+| `laboratorio/parser/funciones.js` | Funciones (sen, ln…), palabras especiales y constantes [9] |
+| `laboratorio/parser/tokenizador.js` | Texto → tokens; normaliza ², π, ·, √ [9] |
+| `laboratorio/parser/parser.js` | Tokens → árbol, sin eval; `varsOf` [9] |
+| `laboratorio/parser/operaciones.js` | Tipos de valor (punto, vector, segmento, recta) y sus operaciones [9] |
+| `laboratorio/parser/evaluador.js` | Árbol → función; evalúa todas las líneas resolviendo dependencias [9] |
+| `laboratorio/parser/analisis-linea.js` | Clasifica cada línea (parámetro, función, implícita, valor, error) [9] |
+| `laboratorio/parser/formato-numeros.js` | `fmtNum` [9] |
+| `laboratorio/lienzo/estado-lienzo.js` | Objeto compartido `lz` (DOM, tamaño, vista, expresiones) y conversión plano ↔ píxeles [9] |
+| `laboratorio/lienzo/cuadricula.js` | Grilla, ejes y escala con colores del tema [9] |
+| `laboratorio/lienzo/trazado.js` | Curvas y = f(x), x = g(y) e implícitas [9] |
+| `laboratorio/lienzo/objetos.js` | Puntos, vectores, segmentos y rectas con etiquetas; manijas arrastrables [9] |
+| `laboratorio/lienzo/dibujo.js` | Tamaño del lienzo y redibujo completo [9] |
+| `laboratorio/lienzo/lista-expresiones.js` | Filas de expresiones, deslizadores, errores y "＋ deslizador" [9] |
+| `laboratorio/lienzo/interaccion.js` | Arrastre, zoom (rueda, pellizco, botones), coordenadas, alta de expresiones [9] |
+| `laboratorio/lienzo/lienzo.js` | `iniciarLienzo()` y la API `Lab` que usan las pestañas [9] |
+| `pestanas/laboratorio.js` | Pestaña 2 · presets y "Explicar lo que veo" [9] |
+| `pestanas/pestana-laboratorio.js` | Pestaña 2 · cableado: registro, acciones `lab:*` y avisos [9] |
 | `pestanas/ejercicios.js` · `foto-resolucion.js` · `correccion.js` | Pestaña 3 [10] |
 | `pizarra/*.js` | Pizarra a mano alzada (lápiz, línea, limpiar) que se exporta como imagen [10] |
 | `pestanas/examen.js` | Pestaña 4 [10] |
