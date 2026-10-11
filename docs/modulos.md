@@ -47,12 +47,12 @@ Qué hace cada archivo. Se completa a medida que avanza la migración (paso del 
 | `estado/almacen-local.js` | Backend localStorage [4] |
 | `estado/almacen-claude.js` | Backend base de datos de claude.ai (opcional) [4] |
 | `ia/proveedores.js` | Lista de proveedores, modelos sugeridos y URLs [5] |
-| `ia/config-ia.js` | Proveedor activo, claves, modelos; `aiReady()` [5] |
-| `ia/errores-ia.js` | Traduce errores de red/API a español [5] |
-| `ia/cliente-http.js` | `fetch` JSON con tiempo límite [5] |
+| `ia/config-ia.js` | Proveedor activo, claves, modelos (`IA`), capacidades de claude.ai (`AI`), `aiReady()` e `initCapabilities()` (no toca la pantalla) [5] |
+| `ia/errores-ia.js` | Códigos de error → mensajes en español (`aiError`, `coded`) [5] |
+| `ia/cliente-http.js` | POST JSON que traduce fallas HTTP a códigos; imagen → base64 [5] |
 | `ia/adaptadores/*.js` | Un formato de API por archivo (Gemini, OpenAI-compatible, Anthropic, Claude integrado) [5] |
 | `ia/cliente-ia.js` | `ask()`: único punto de salida a la IA [5] |
-| `ia/panel-ia.js` | Panel de configuración y "Probar conexión" [5] |
+| `ia/panel-ia.js` | Aviso de IA sin configurar (`applyIA`), panel de configuración con borrador y "Probar conexión" [5] |
 | `contexto/reglas-prompt.js` | Reglas de formato, citas, modo estricto y sintaxis del laboratorio [6] |
 | `contexto/busqueda-apuntes.js` | Palabras clave, trozos y apuntes relevantes [6] |
 | `contexto/cabecera-prompt.js` | Arma la cabecera y ajusta el prompt al presupuesto [6] |

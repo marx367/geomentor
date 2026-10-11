@@ -37,6 +37,10 @@ nucleo/                      → utilidades sin dependencias
 5. **El parser no toca el DOM.** Recibe texto y devuelve valores o errores. Así se puede probar solo.
 6. **Eventos delegados.** `ui/eventos.js` escucha `click`, `input` y `change` en `document` y deriva según `data-accion`. No hay `onclick` en el HTML.
 
+## Arranque de la IA
+
+`main.js` llama, en orden: `initCapabilities()` (detecta claude.ai y elige proveedor) → `applyIA()` (aviso en pantalla) → redibuja la vista. En el prototipo, `initCapabilities` redibujaba sola; se separó para que `ia/` no dependa de `ui/`.
+
 ## Flujo típico (pedir teoría)
 
 1. El usuario elige un subtema → `ui/navegacion.js` actualiza `estado.js` y muestra la pestaña.
