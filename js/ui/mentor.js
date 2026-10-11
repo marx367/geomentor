@@ -3,8 +3,13 @@ import { $ } from '../nucleo/dom.js';
 import { S, key } from '../estado/estado.js';
 
 export let mentorTimer = null;
-export function mentor(msg) {
+// accion (opcional): { texto, abrir } muestra un botón que abre ese diálogo. El clic lo atiende
+// el data-abrir delegado de eventos.js. Sin accion, el botón se oculta.
+export function mentor(msg, accion = null) {
   $('#mentor-text').textContent = msg;
+  const btn = $('#mentor-accion');
+  btn.hidden = !accion;
+  if (accion) { btn.textContent = accion.texto; btn.dataset.abrir = accion.abrir; }
   const b = $('#mentor-bubble');
   b.hidden = false;
   b.style.animation = 'none'; void b.offsetWidth; b.style.animation = '';
@@ -31,4 +36,6 @@ export function iniciarMentor() {
     else b.hidden = true;
   });
   $('#mentor-close').addEventListener('click', () => { $('#mentor-bubble').hidden = true; });
+  // Al usar el botón de acción, el globo se cierra (el diálogo lo abre eventos.js).
+  $('#mentor-accion').addEventListener('click', () => { $('#mentor-bubble').hidden = true; });
 }

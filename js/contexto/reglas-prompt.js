@@ -1,4 +1,4 @@
-// Reglas fijas que se agregan a los prompts: formato de respuesta, sintaxis del laboratorio,
+// Reglas fijas que se agregan a los prompts: formato de respuesta, sintaxis del laboratorio, reglas del examen,
 // citas de los apuntes y modo estricto. Si cambiás una etiqueta, ver docs/formato-prompts.md.
 export const FORMAT_RULES = 'FORMATO: fórmulas en LaTeX con $...$ en línea y $$...$$ en bloque; Markdown simple (### títulos, **negrita**, listas con "- "). Sin tablas ni bloques de código. Responde SOLO con las etiquetas pedidas, sin texto fuera de ellas.';
 export const LAB_SYNTAX = `SINTAXIS DEL LABORATORIO GRÁFICO (una expresión por línea, texto plano, NUNCA LaTeX):
@@ -20,3 +20,10 @@ export const STRICT_RULES = `MODO ESTRICTO: explica, resuelve y evalúa SOLO con
 **Para qué:** qué le permite entender o resolver al estudiante.
 :::
 Fuera de esos bloques no incluyas contenido que no esté en los apuntes. En las opciones de un examen no uses bloques; si una explicación necesita un complemento, indícalo con «(complemento: …, porque los apuntes no lo tratan)».`;
+
+// Reglas del examen final (🎓 Profesor y bibliografía). Una línea por opción de material; ver estado/reglas-examen.js.
+export const REGLAS_EXAMEN = {
+  ninguno: 'El examen es SIN MATERIAL: el estudiante tiene que saber de memoria fórmulas, definiciones y notación. En la teoría destaca qué conviene memorizar; en las pistas pídele que recuerde la fórmula antes de dársela; en las preguntas evalúa también fórmulas y notación exactas.',
+  manuscrito: 'El examen es A CUADERNO ABIERTO, SOLO CON MATERIAL MANUSCRITO: prioriza la aplicación y saber dónde buscar. En la teoría señala qué conviene tener copiado a mano en el cuaderno (fórmulas, pasos, casos); en las preguntas evalúa aplicar y elegir el método más que recordar de memoria.',
+  impreso: 'El examen es A CUADERNO ABIERTO Y SE PUEDE LLEVAR MATERIAL IMPRESO: prioriza la aplicación y saber dónde buscar. En la teoría señala qué conviene llevar en la hoja impresa (fórmulas, pasos, casos); en las preguntas evalúa aplicar y elegir el método más que recordar de memoria.'
+};

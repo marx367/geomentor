@@ -5,6 +5,7 @@ import { S } from './estado/estado.js';
 import { Store } from './estado/almacen.js';
 import { cargarCurso } from './estado/curso.js';
 import { cargarProfesor, cargarBiblioteca, guardarProfesor } from './estado/profesor.js';
+import { normalizarReglas, esDefinida } from './estado/reglas-examen.js';
 import { initCapabilities } from './ia/config-ia.js';
 import { applyIA } from './ia/panel-ia.js';
 import { iniciarMentor, mentor } from './ui/mentor.js';
@@ -42,6 +43,16 @@ iniciarTema();
 window.addEventListener('math-ready', rerenderCurrent);
 window.addEventListener('load', () => { if (!window.__mjReady) rerenderCurrent(); });
 
+// Si falta la regla del examen, el mentor la pregunta una vez por sesión (marca en sessionStorage).
+// Si el navegador bloquea sessionStorage, pregunta en cada carga: molesta un poco, pero no rompe.
+function yaPreguntoReglas() {
+  try {
+    if (sessionStorage.getItem('gm_pregunto_reglas')) return true;
+    sessionStorage.setItem('gm_pregunto_reglas', '1');
+  } catch (e) { /* sin sessionStorage */ }
+  return false;
+}
+
 (async function boot() {
   go('materias');
   $('#mentor-bubble').hidden = false;
@@ -51,7 +62,8 @@ window.addEventListener('load', () => { if (!window.__mjReady) rerenderCurrent()
     Store.getDoc('config', null), Store.getDoc('estado', null), Store.listDebiles(), Store.getDoc('curso', null),
     Store.getDoc('profesor', null), Store.getDoc('biblioteca', null)
   ]);
-  if (config) S.config = { apuntes: config.apuntes || {}, asignacion: config.asignacion || {}, planes: config.planes || {} };
+  // Se arma campo por campo: lo que no figure acá no se vuelve a guardar.
+  if (config) S.config = { apuntes: config.apuntes || {}, asignacion: config.asignacion || {}, planes: config.planes || {}, reglasExamen: normalizarReglas(config.reglasExamen) };
   // El estilo y el modo estricto antes vivían en Config: la primera vez se pasan al documento 'profesor'.
   cargarProfesor(profesor, config);
   cargarBiblioteca(biblioteca);
@@ -66,6 +78,7 @@ window.addEventListener('load', () => { if (!window.__mjReady) rerenderCurrent()
   renderApuntes();
   if (S.view === 'materias') renderMaterias();
   const n = S.debiles.reduce((a, d) => a + (d.puntos?.length || 0), 0);
-  if (n) mentor(`¡Hola de nuevo! Tienes ${n} puntos débiles guardados. Ábrelos con 📌 para repasarlos o elige una materia.`);
+  if (!esDefinida() && !yaPreguntoReglas()) mentor('¡Hola! Antes de seguir: ¿cómo es tu examen final? ¿Se puede usar material? Con eso adapto la teoría, las pistas y las preguntas.', { texto: '📋 Reglas del examen', abrir: 'profesor' });
+  else if (n) mentor(`¡Hola de nuevo! Tienes ${n} puntos débiles guardados. Ábrelos con 📌 para repasarlos o elige una materia.`);
   else if (!S.curso.materias.length) mentor('¡Hola! Empieza cargando la clase de hoy con «＋ Tema de hoy».');
 })();

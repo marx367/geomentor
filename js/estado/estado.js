@@ -6,7 +6,7 @@ export const S = {
   curso: { materias: [] },
   profesor: { estilo: '', respuestas: {}, analisis: '', estricto: false },
   biblioteca: { libros: [] },
-  config: { apuntes: {}, asignacion: {}, planes: {} },
+  config: { apuntes: {}, asignacion: {}, planes: {}, reglasExamen: { material: null, fecha: '' } }, // reglas: ver reglas-examen.js
   progreso: { temas: {} },
   debiles: [],
   cache: {}, sessions: {}

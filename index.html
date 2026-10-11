@@ -185,6 +185,7 @@
 <div class="mentor" id="mentor">
   <div class="mentor-bubble" id="mentor-bubble" role="status" aria-live="polite">
     <span id="mentor-text">¡Hola! Soy tu mentor de matemática. Carga la clase de hoy con «＋ Tema de hoy» o elige una materia de tu curso.</span>
+    <button class="btn sm primary" id="mentor-accion" type="button" hidden></button>
     <button class="close" id="mentor-close" aria-label="Ocultar mensaje">✕</button>
   </div>
   <button class="mentor-btn" id="mentor-btn" aria-label="Mostrar consejo del mentor">💡</button>
@@ -235,6 +236,17 @@
 <dialog id="dlg-profesor">
   <div class="dlg-head"><h3>🎓 Profesor y bibliografía</h3><button class="btn ghost sm" data-close>✕</button></div>
   <div class="dlg-body">
+    <section class="pf-seccion">
+      <h4>📋 Reglas del examen</h4>
+      <p class="muted small">Qué material se puede usar en el examen final. El mentor adapta la teoría, las pistas y las preguntas.</p>
+      <fieldset class="pregunta">
+        <legend>Material permitido</legend>
+        <div id="pf-material"></div>
+      </fieldset>
+      <label class="field">Fecha del examen (opcional)<input type="date" id="pf-fecha-examen"></label>
+      <p class="aviso-reglas" id="pf-reglas-aviso" role="alert"></p>
+    </section>
+    <hr class="sep">
     <section class="pf-seccion">
       <h4>👩‍🏫 Estilo del profesor</h4>
       <p class="muted small">Cómo evalúa, qué exige y qué notación usa. El mentor lo sigue al explicar, corregir y armar exámenes.</p>

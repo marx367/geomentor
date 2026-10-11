@@ -1,14 +1,23 @@
-// Cabecera común de todos los prompts del tutor: materia, subtema, apuntes relevantes, estilo del profesor
+// Cabecera común de todos los prompts del tutor: materia, subtema, apuntes relevantes, estilo del profesor, reglas del examen
 // y puntos débiles. fitPrompt() achica el presupuesto de apuntes hasta que el prompt entra en el límite.
 import { clip, byteLen } from '../nucleo/utilidades.js';
 import { S, key } from '../estado/estado.js';
 import { textoEstilo } from '../estado/profesor.js';
 import { apuntesRelevantes } from './busqueda-apuntes.js';
-import { CITE_RULES, STRICT_RULES } from './reglas-prompt.js';
+import { materialPermitido, diasHastaExamen } from '../estado/reglas-examen.js';
+import { CITE_RULES, STRICT_RULES, REGLAS_EXAMEN } from './reglas-prompt.js';
 
 export function debilesDelTema() {
   const k = key();
   return S.debiles.filter(d => d.key === k).flatMap(d => d.puntos || []).slice(0, 12);
+}
+// Bloque de reglas del examen. Sin regla definida, no agrega nada.
+function bloqueReglas() {
+  const regla = REGLAS_EXAMEN[materialPermitido()];
+  if (!regla) return '';
+  const dias = diasHastaExamen();
+  const cuando = dias === null ? '' : dias === 0 ? ' El examen es hoy.' : ` Faltan ${dias} ${dias === 1 ? 'día' : 'días'} para el examen.`;
+  return `\n\n[REGLAS DEL EXAMEN]\n${regla}${cuando}`;
 }
 export function header(budget) {
   const ap = apuntesRelevantes(budget);
@@ -29,7 +38,7 @@ ${CITE_RULES}` : `[APUNTES DEL CURSO]
 ${Object.keys(S.config.apuntes || {}).length ? '(Ninguno de los apuntes cargados corresponde a este subtema: usa el programa universitario estándar.)' : '(No hay apuntes cargados: usa el programa universitario estándar.)'}`}
 
 [ESTILO Y CRITERIOS DEL PROFESOR]
-${est || '(Sin indicaciones: exige notación rigurosa, justificación de cada paso y verificación de condiciones.)'}
+${est || '(Sin indicaciones: exige notación rigurosa, justificación de cada paso y verificación de condiciones.)'}${bloqueReglas()}
 
 [PUNTOS DÉBILES GUARDADOS DEL ESTUDIANTE EN ESTE SUBTEMA]
 ${deb.length ? deb.map(p => '- ' + p).join('\n') : '(ninguno todavía)'}`;

@@ -11,3 +11,4 @@ textarea { resize: vertical; line-height: 1.5; }
 .key-wrap input { flex: 1; min-width: 0; }
 .toggle { display: flex; align-items: flex-start; gap: .6rem; font-size: .9rem; cursor: pointer; }
 .toggle input { width: 20px; height: 20px; margin-top: .15rem; accent-color: var(--accent); flex-shrink: 0; }
+.field input[type="date"] { max-width: 220px; }

@@ -1,11 +1,11 @@
 # Módulos
 
-Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2; [MCn] = paso n de `docs/plan-mi-curso.md`).
+Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2; [MCn] = paso n de `docs/plan-mi-curso.md`; [MC-R] = Reglas del examen, del mismo plan).
 
 ## Raíz
 | Archivo | Qué hace |
 |---|---|
-| `index.html` | Estructura: cabecera (📌, ⚙️ y tema), vistas, diálogos, mentor. Carga CSS y `js/main.js` [2] |
+| `index.html` | Estructura: cabecera (📌, ⚙️ y tema), vistas, diálogos (Profesor con Reglas del examen), mentor con botón de acción. Carga CSS y `js/main.js` [2] |
 | `iniciar-servidor.ps1` | Levanta un servidor local en el puerto 8080 [1] |
 
 ## css/ [2]
@@ -19,9 +19,9 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `componentes/cabecera.css` | Barra superior, marca, acciones (📌 Puntos débiles), botones de ícono (⚙️ y tema), menú de tema y línea de aviso de IA [F2] |
 | `componentes/migas.css` | Migas Materia › Eje › Subtema |
 | `componentes/tarjetas.css` | Tarjetas de selección y pastillas |
-| `componentes/formularios.css` | Campos, botón de archivo, clave, interruptor |
+| `componentes/formularios.css` | Campos (fecha incluida), botón de archivo, clave, interruptor |
 | `componentes/contenido.css` | Contenido de la IA: Markdown, fórmulas, carga, errores, fuentes, complementos |
-| `componentes/mentor.css` | Mentor flotante |
+| `componentes/mentor.css` | Mentor flotante y su botón de acción |
 | `componentes/dialogos.css` | Diálogos de configuración (con la zona "Datos y reinicio"), Tema de hoy, Profesor y bibliografía, plan y débiles |
 | `componentes/ficha-pdf.css` | PDF de la ficha y del ejercicio (siempre en claro, con la foto o pizarra) |
 | `componentes/pizarra.css` | Pizarra de Ejercicios [10] |
@@ -45,6 +45,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `render/markdown.js` | Markdown simple → HTML, sin librerías [3] |
 | `estado/estado.js` | Estado en memoria: vista, materia, Mi curso, sesión por subtema [4] |
 | `estado/curso.js` | Mi curso: materias, ejes y subtemas con fecha en el documento `curso`; validación, ids únicos, crear y buscar [MC1] |
+| `estado/reglas-examen.js` | Reglas del examen en `S.config.reglasExamen` (material permitido y fecha): `normalizarReglas`, `materialPermitido()`, `esDefinida()`, `diasHastaExamen()`, `guardarReglas()` [MC-R] |
 | `estado/profesor.js` | Estilo del profesor (texto, cuestionario, análisis), modo estricto y biblioteca de libros por capítulo, en los documentos `profesor` y `biblioteca`; `textoEstilo()` para los prompts [MC3] |
 | `estado/almacen.js` | Fachada de guardado: elige backend [4] |
 | `estado/almacen-local.js` | Backend localStorage [4] |
@@ -56,9 +57,9 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `ia/adaptadores/*.js` | Un formato de API por archivo (Gemini, OpenAI-compatible, Anthropic, Claude integrado, simulado para pruebas) [5] |
 | `ia/cliente-ia.js` | `ask()`: único punto de salida a la IA [5] |
 | `ia/panel-ia.js` | Aviso de IA sin configurar (`applyIA`: línea breve afuera y detalle dentro del diálogo), panel de configuración con borrador y "Probar conexión" [5] |
-| `contexto/reglas-prompt.js` | Reglas de formato, citas, modo estricto y sintaxis del laboratorio [6] |
+| `contexto/reglas-prompt.js` | Reglas de formato, citas, modo estricto, sintaxis del laboratorio y una línea por regla del examen (`REGLAS_EXAMEN`) [6] [MC-R] |
 | `contexto/busqueda-apuntes.js` | Palabras clave, trozos y apuntes relevantes [6] |
-| `contexto/cabecera-prompt.js` | Arma la cabecera y ajusta el prompt al presupuesto [6] |
+| `contexto/cabecera-prompt.js` | Arma la cabecera (con el bloque de reglas del examen y los días que faltan, si hay regla) y ajusta el prompt al presupuesto [6] [MC-R] |
 | `contexto/fuentes.js` | Etiquetas de transparencia de fuente [6] |
 | `apuntes/lector-archivos.js` | Lee .txt, .md y .pdf; avisa si un PDF es escaneado (código `escaneado`) [6] |
 | `apuntes/lector-pdf.js` | Carga pdf.js bajo demanda y extrae el texto página por página [6] |
@@ -71,11 +72,12 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `ui/navegacion.js` | Vistas de Mi curso (materias, con inicio vacío; ejes; subtemas por fecha), acento por materia, entrar a un subtema, pestañas, `reiniciarSesion()` (el botón está en Config) [7] |
 | `ui/migas.js` | Migas de pan [7] |
 | `ui/tarjetas.js` | Tarjetas de selección y conteo de puntos débiles [7] |
-| `ui/mentor.js` | Mentor flotante y tips por pestaña [7] |
+| `ui/mentor.js` | Mentor flotante y tips por pestaña; `mentor(msg, { texto, abrir })` suma un botón que abre un diálogo (`data-abrir`) [7] [MC-R] |
 | `ui/dialogos.js` | Botón ✕ de todos los diálogos [7] |
 | `ui/dialogo-config.js` | Diálogo ⚙️ Config (botón engranaje): abre IA + apuntes y guarda todo; zona final "Datos y reinicio" (acción `reiniciar-sesion`) [7] |
-| `profesor/dialogo-profesor.js` | Diálogo "🎓 Profesor y bibliografía": estilo (archivo, texto, cuestionario, análisis), modo estricto; guarda solo [MC3] |
+| `profesor/dialogo-profesor.js` | Diálogo "🎓 Profesor y bibliografía": estilo (archivo, texto, cuestionario, análisis), modo estricto; incluye la sección de reglas del examen; guarda solo [MC3] |
 | `profesor/analisis-estilo.js` | Pide a la IA el análisis del estilo con el texto y las respuestas del cuestionario [MC3] |
+| `profesor/panel-reglas.js` | Sección "📋 Reglas del examen": material permitido y fecha (valida que no sea pasada); guarda sola [MC-R] |
 | `profesor/panel-biblioteca.js` | Biblioteca: agregar y quitar libros y capítulos (archivo o texto pegado) [MC3] |
 | `ui/tema.js` | Menú de tema (Light, Dim, Dark, Auto): guarda en localStorage y dispara el evento `cambio-tema` [F2] |
 | `ui/puntos-debiles.js` | Contador, diálogo 📌, repasar, marcar superado, exportar .txt [7] |

@@ -11,6 +11,7 @@ import { aiError } from '../ia/errores-ia.js';
 import { leerArchivoApunte } from '../apuntes/lector-archivos.js';
 import { analizarEstilo } from './analisis-estilo.js';
 import { renderBiblioteca, iniciarPanelBiblioteca } from './panel-biblioteca.js';
+import { renderReglas, iniciarPanelReglas } from './panel-reglas.js';
 
 const A = { busy: false, err: '' }; // estado del análisis
 
@@ -32,7 +33,7 @@ function render() {
   $('#pf-estilo').value = S.profesor.estilo;
   $('#pf-estricto').checked = S.profesor.estricto;
   $('#pf-guardado').textContent = '';
-  renderCuestionario(); renderAnalisis(); renderBiblioteca();
+  renderReglas(); renderCuestionario(); renderAnalisis(); renderBiblioteca();
 }
 
 async function guardar() {
@@ -65,6 +66,7 @@ export function abrirProfesor() { render(); $('#dlg-profesor').showModal(); }
 
 export function iniciarDialogoProfesor() {
   iniciarPanelBiblioteca();
+  iniciarPanelReglas();
   $('#pf-estilo').addEventListener('change', () => { if (leerEstilo()) guardar(); });
   $('#dlg-profesor').addEventListener('close', () => { if (leerEstilo()) guardar(); });
   $('#pf-estricto').addEventListener('change', ev => { S.profesor.estricto = ev.target.checked; guardar(); });
