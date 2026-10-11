@@ -1,0 +1,25 @@
+/* Contenido generado por la IA: Markdown, fórmulas, carga, errores, fuentes y complementos */
+/* Contenido generado */
+.md { overflow-wrap: anywhere; }
+.md p { margin: .45rem 0; }
+.md ul, .md ol { margin: .45rem 0; padding-left: 1.3rem; }
+.md li { margin: .2rem 0; }
+.md h3, .md h4, .md h5, .md h6 { color: var(--accent); margin: 1rem 0 .35rem; }
+.md h3 { font-size: 1.08rem; } .md h4 { font-size: 1rem; } .md h5 { font-size: .95rem; }
+.md hr { border: 0; border-top: 1px solid var(--border); margin: .9rem 0; }
+.md code, code.tex { background: var(--surface-3); padding: 0 .3rem; border-radius: 5px; font-size: .9em; }
+.math-block { display: block; overflow-x: auto; overflow-y: hidden; margin: .6rem 0; padding: .6rem .8rem; background: var(--surface); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+.math-block mjx-container { margin: 0 !important; }
+mjx-container[jax="SVG"] { outline: none; }
+.ideas { margin: 0; padding-left: 1.2rem; }
+.ideas li { margin: .3rem 0; }
+
+.loading { display: flex; align-items: center; gap: .6rem; padding: 1.5rem 1rem; color: var(--muted); }
+.spinner { width: 18px; height: 18px; border-radius: 50%; border: 3px solid color-mix(in srgb, var(--accent) 20%, transparent); border-top-color: var(--accent); animation: spin .8s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-text { color: var(--bad); font-size: .9rem; margin-top: .5rem; }
+.empty { text-align: center; padding: 2rem 1rem; display: flex; flex-direction: column; align-items: center; gap: .75rem; }
+.fuentes { font-size: .78rem; color: var(--muted); margin-top: .6rem; }
+.complemento { margin: .8rem 0; padding: .7rem .9rem; border: 1px dashed color-mix(in srgb, var(--hint) 70%, transparent); background: var(--hint-soft); border-radius: var(--radius-sm); }
+.complemento .comp-title { font-weight: 600; color: var(--hint); margin: 0 0 .3rem; }
+.cita { font-size: .8em; color: var(--muted); white-space: nowrap; }

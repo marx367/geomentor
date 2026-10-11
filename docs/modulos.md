@@ -11,17 +11,28 @@ Qué hace cada archivo. Se completa a medida que avanza la migración (paso del 
 ## css/ [2]
 | Archivo | Qué hace |
 |---|---|
-| `estilos.css` | Entrada: `@import` del resto, en orden |
-| `tema.css` | Variables de color (azul marino, cian), tipografía, radios, sombras |
-| `base.css` | Reset y estilos base, mobile-first |
-| `componentes/botones.css` · `cabecera.css` · `tarjetas.css` · `mentor.css` · `dialogos.css` · `ficha-pdf.css` · `pizarra.css` | Una pieza visual cada uno |
-| `vistas/mentoria.css` | Pestañas de teoría, ejercicios y examen |
-| `vistas/laboratorio.css` | Canvas y lista de expresiones |
-| `responsive.css` | Breakpoints |
+| `estilos.css` | Entrada: `@import` del resto, en el mismo orden que el prototipo (la cascada depende del orden) |
+| `tema.css` | Variables de color (claro y oscuro azul marino/cian), tipografía, radios, sombras |
+| `base.css` | Reset y estilos de elementos, mobile-first |
+| `layout.css` | Contenedor central y encabezado de cada vista |
+| `componentes/botones.css` | Botones y fila de botones |
+| `componentes/cabecera.css` | Barra superior, marca, acciones y aviso de IA |
+| `componentes/migas.css` | Migas Materia › Eje › Subtema |
+| `componentes/tarjetas.css` | Tarjetas de selección y pastillas |
+| `componentes/formularios.css` | Campos, botón de archivo, clave, interruptor |
+| `componentes/contenido.css` | Contenido de la IA: Markdown, fórmulas, carga, errores, fuentes, complementos |
+| `componentes/mentor.css` | Mentor flotante |
+| `componentes/dialogos.css` | Diálogos de configuración, ejes, plan y débiles |
+| `componentes/ficha-pdf.css` | Ficha PDF (siempre en claro) |
+| `componentes/pizarra.css` | Pizarra de Ejercicios [10] |
+| `vistas/mentoria.css` | Contenedor y pestañas del subtema |
+| `vistas/teoria.css` · `ejercicios.css` · `examen.css` · `laboratorio.css` | Una pestaña cada uno |
+| `responsive.css` | Breakpoints y movimiento reducido |
 
 ## js/
 | Archivo | Qué hace |
 |---|---|
+| `config-mathjax.js` | Configuración de MathJax. Script clásico que se carga antes que MathJax; avisa con el evento `math-ready` [2] |
 | `main.js` | Punto de entrada: inicializa almacén, IA, lienzo, eventos y la primera vista [7] |
 | `nucleo/dom.js` | `$` y `$$` (selectores) [3] |
 | `nucleo/utilidades.js` | `newId`, `escapeHTML`, formateos [3] |

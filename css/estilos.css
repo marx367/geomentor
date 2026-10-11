@@ -1,0 +1,19 @@
+/* Entrada de estilos: importa todo en el mismo orden que el prototipo (el orden importa en la cascada). */
+@import url("tema.css");
+@import url("base.css");
+@import url("componentes/botones.css");
+@import url("componentes/cabecera.css");
+@import url("layout.css");
+@import url("componentes/migas.css");
+@import url("componentes/tarjetas.css");
+@import url("componentes/formularios.css");
+@import url("vistas/mentoria.css");
+@import url("componentes/contenido.css");
+@import url("vistas/teoria.css");
+@import url("vistas/ejercicios.css");
+@import url("vistas/examen.css");
+@import url("vistas/laboratorio.css");
+@import url("componentes/mentor.css");
+@import url("componentes/dialogos.css");
+@import url("componentes/ficha-pdf.css");
+@import url("responsive.css");

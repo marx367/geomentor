@@ -1,0 +1,7 @@
+/* Pestaña Ejercicios: pistas, solución y foto */
+/* Ejercicios */
+.hint-box { background: var(--hint-soft); color: var(--text); border: 1px solid color-mix(in srgb, var(--hint) 30%, transparent); border-radius: var(--radius-sm); padding: .7rem .9rem; }
+.hint-box strong { color: var(--hint); }
+.solution-box { background: var(--ok-soft); border-radius: var(--radius-sm); padding: .8rem 1rem; }
+.photo-row { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+.photo-preview img { max-width: 100%; max-height: 240px; border-radius: 8px; border: 1px solid var(--border); margin-top: .5rem; }

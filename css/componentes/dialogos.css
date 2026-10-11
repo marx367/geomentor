@@ -1,0 +1,21 @@
+/* Diálogos: configuración, apuntes, ejes generados y puntos débiles */
+dialog { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); padding: 0; width: min(640px, calc(100vw - 1.5rem)); max-height: calc(100dvh - 2rem); box-shadow: var(--shadow); }
+dialog::backdrop { background: rgba(2,6,23,.55); }
+.dlg-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .9rem 1rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); }
+.dlg-body { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; }
+.file-list { display: flex; flex-direction: column; gap: .4rem; }
+.file-item { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .5rem .7rem; background: var(--surface-2); border-radius: 8px; font-size: .88rem; }
+.weak-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .8rem .9rem; }
+.weak-item h4 { font-size: .95rem; color: var(--accent); }
+.weak-item .meta { font-size: .78rem; color: var(--muted); margin: .15rem 0 .5rem; }
+.weak-item ul { margin: 0 0 .6rem; padding-left: 1.1rem; font-size: .9rem; }
+.ia-box { display: flex; flex-direction: column; gap: .6rem; }
+.ia-box h4 { font-size: 1rem; }
+.file-info { display: flex; flex-direction: column; gap: .35rem; flex: 1; min-width: 0; }
+.file-info select { min-height: 36px; padding: .3rem .5rem; font-size: .85rem; }
+.gen-eje { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .75rem; display: flex; flex-direction: column; gap: .5rem; }
+.gen-row { display: flex; gap: .4rem; align-items: center; }
+.gen-row input { flex: 1; min-width: 0; min-height: 38px; padding: .35rem .6rem; }
+.gen-row .emoji { width: 56px; flex: 0 0 56px; text-align: center; }
+.gen-subs { display: flex; flex-direction: column; gap: .35rem; padding-left: 1rem; border-left: 2px solid var(--border); }
+.gen-files { font-size: .76rem; color: var(--muted); padding-left: .2rem; }

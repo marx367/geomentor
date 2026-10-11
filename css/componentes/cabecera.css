@@ -1,0 +1,22 @@
+/* Cabecera: barra superior, marca, acciones y aviso de IA */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  padding: .6rem 1rem; background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+}
+.brand { display: flex; align-items: center; gap: .65rem; min-width: 0; }
+.brand > div:last-child { min-width: 0; }
+.brand-name, .brand-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.logo { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; font-size: 1.3rem;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 45%, #6366f1)); flex-shrink: 0; }
+.brand-name { font-weight: 700; font-size: 1.1rem; color: var(--accent); }
+.brand-sub { font-size: .75rem; color: var(--muted); display: none; }
+.top-actions { display: flex; gap: .3rem; flex-shrink: 0; }
+.top-actions .btn { min-height: 40px; min-width: 40px; padding: .4rem .5rem; gap: .3rem; }
+.top-actions .lbl { display: none; }
+.count { background: var(--accent); color: var(--on-accent); border-radius: 999px; font-size: .72rem; padding: 0 .45rem; font-weight: 700; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block; }
+
+.notice-bar { margin: .75rem 1rem 0; padding: .7rem .9rem; border-radius: var(--radius-sm); background: var(--hint-soft); color: var(--hint); font-size: .9rem; }
+.notice-bar .btn { margin-left: .5rem; }

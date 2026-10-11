@@ -1,0 +1,8 @@
+/* Ficha PDF exportada (siempre en claro, para imprimir) */
+.pdf-doc { background: #fff; color: #111827; padding: 12px; font-family: var(--font); font-size: 11pt; line-height: 1.55; width: 720px; }
+.pdf-doc * { color: #111827; }
+.pdf-doc h1 { font-size: 18pt; color: #0e7490; margin-bottom: 4px; }
+.pdf-doc h2 { font-size: 13pt; color: #0e7490; margin: 16px 0 6px; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; }
+.pdf-doc .md h3, .pdf-doc .md h4 { color: #1e40af; }
+.pdf-doc .math-block { background: #f1f5f9; border-left-color: #0e7490; }
+.pdf-doc .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; margin: 6px 0; }

@@ -1,0 +1,5 @@
+/* Diseño de página: contenedor central y encabezado de cada vista */
+.container { max-width: 1180px; margin: 0 auto; padding: 1rem 1rem 7rem; }
+.view-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: .75rem; margin-bottom: 1.25rem; }
+.view-head h1 { font-size: 1.5rem; }
+.lead { color: var(--muted); margin-top: .35rem; max-width: 62ch; }

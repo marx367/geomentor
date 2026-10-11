@@ -1,0 +1,22 @@
+/* Breakpoints y movimiento reducido */
+@media (min-width: 560px) {
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
+  .brand-sub { display: block; }
+}
+@media (min-width: 760px) {
+  .top-actions .lbl { display: inline; }
+  .top-actions .btn { padding: .4rem .8rem; }
+  .container { padding: 1.5rem 1.5rem 7rem; }
+  .view-head h1 { font-size: 1.75rem; }
+  .tab-panel { padding: 1.25rem 1.5rem; }
+  .chips-block { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 1000px) {
+  .card-grid.three { grid-template-columns: repeat(3, 1fr); }
+  .lab { grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); align-items: start; }
+  .lab-side { max-height: 640px; overflow-y: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  .pick.selected { transform: none; }
+}

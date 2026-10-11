@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GeoMentor · Mentor de Matemática (multi-IA)</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap">
+
+<link rel="stylesheet" href="css/estilos.css">
+
+<!-- Librerías por CDN (quedan globales: MathJax, katex, html2pdf). pdf.js se carga bajo demanda. -->
+<script src="js/config-mathjax.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo" aria-hidden="true">📐</div>
+    <div>
+      <div class="brand-name">GeoMentor</div>
+      <div class="brand-sub">Tutor de matemática para exámenes</div>
+    </div>
+  </div>
+  <nav class="top-actions" aria-label="Acciones">
+    <button class="btn ghost" id="btn-debiles" title="Puntos débiles guardados">📌 <span class="lbl">Puntos débiles</span> <span class="count" id="debiles-count" hidden>0</span></button>
+    <button class="btn ghost" id="btn-apuntes" title="Configuración: IA, apuntes y estilo">⚙️ <span class="lbl">Config</span> <span class="dot" id="apuntes-dot" hidden></span></button>
+    <button class="btn ghost" id="btn-pdf" title="Exportar ficha en PDF">📄 <span class="lbl">Exportar PDF</span></button>
+    <button class="btn ghost" id="btn-reset" title="Reiniciar sesión">🔄 <span class="lbl">Reiniciar</span></button>
+  </nav>
+</header>
+
+<div class="notice-bar" id="ai-notice" hidden></div>
+
+<main class="container">
+  <nav class="crumbs" id="crumbs" aria-label="Ruta"></nav>
+
+  <section id="view-materias" class="view">
+    <div class="view-head">
+      <div>
+        <h1>Elige la materia</h1>
+        <p class="lead">Cada materia se organiza en ejes y subtemas. Dentro de cada subtema estudias la teoría, experimentas en el laboratorio gráfico, practicas ejercicios y rindes un examen.</p>
+      </div>
+    </div>
+    <div class="card-grid three" id="grid-materias"></div>
+  </section>
+
+  <section id="view-ejes" class="view" hidden>
+    <div class="view-head">
+      <div>
+        <h1 id="ejes-title">Selecciona un eje temático</h1>
+        <p class="lead" id="ejes-lead"></p>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btn-plan" title="Une todos tus apuntes en un plan de estudios limpio, con cronograma">🧩 Consolidar apuntes en un plan</button>
+        <button class="btn primary" id="btn-gen-ejes" title="Crea ejes y subtemas a partir de los apuntes cargados en Config">✨ Generar ejes desde mis apuntes</button>
+        <button class="btn" data-go="materias">← Volver a materias</button>
+      </div>
+    </div>
+    <div class="card-grid three" id="grid-ejes"></div>
+  </section>
+
+  <section id="view-subtemas" class="view" hidden>
+    <div class="view-head">
+      <div>
+        <h1 id="subtemas-title"></h1>
+        <p class="lead">Selecciona el tema específico que corresponde a tu cuaderno de clase.</p>
+      </div>
+      <button class="btn" data-go="ejes">← Volver a ejes</button>
+    </div>
+    <div class="card-grid three" id="grid-subtemas"></div>
+    <form class="custom-sub" id="custom-sub-form">
+      <input id="custom-sub-input" placeholder="¿No está tu tema? Escríbelo (ej. Rotación de ejes)" autocomplete="off">
+      <button class="btn" type="submit">Estudiar este tema</button>
+    </form>
+  </section>
+
+  <section id="view-mentoria" class="view" hidden>
+    <div class="mentoria-head">
+      <button class="btn" data-go="subtemas">← Volver a subtemas</button>
+      <h1 id="mentoria-title"></h1>
+    </div>
+    <div class="shell">
+      <div class="tabs" role="tablist" aria-label="Secciones del subtema">
+        <button class="tab" role="tab" data-tab="teoria" aria-selected="true">📘 1. Teoría y notación</button>
+        <button class="tab" role="tab" data-tab="lab" aria-selected="false">📐 2. Laboratorio visual</button>
+        <button class="tab" role="tab" data-tab="ejercicios" aria-selected="false">📝 3. Ejercicios guiados</button>
+        <button class="tab" role="tab" data-tab="examen" aria-selected="false">✅ 4. Examen y ficha</button>
+      </div>
+
+      <div class="tab-panel" id="tab-teoria" role="tabpanel"></div>
+
+      <div class="tab-panel" id="tab-lab" role="tabpanel" hidden>
+        <div class="lab">
+          <div>
+            <div class="plot-wrap" id="plot-wrap">
+              <canvas id="plot" aria-label="Plano cartesiano interactivo"></canvas>
+              <div class="plot-coords" id="plot-coords">Arrastra para moverte · rueda o pellizco para zoom</div>
+              <div class="plot-zoom">
+                <button data-zoom="in" aria-label="Acercar">+</button>
+                <button data-zoom="out" aria-label="Alejar">−</button>
+                <button data-zoom="home" aria-label="Vista inicial">⌂</button>
+              </div>
+            </div>
+            <p class="muted small" style="margin-top:.5rem">Arrastra los puntos y las puntas de los vectores para cambiar sus coordenadas. Los parámetros con deslizador cambian el gráfico en vivo.</p>
+          </div>
+          <aside class="lab-side">
+            <div class="panel-card" style="display:flex;flex-direction:column;gap:.7rem">
+              <div class="card-head" style="margin:0"><h3>🎛️ Expresiones</h3></div>
+              <div class="btn-row" id="lab-presets"></div>
+              <div class="expr-list" id="expr-list"></div>
+              <form class="expr-add" id="expr-add">
+                <input id="expr-new" placeholder="Nueva expresión, ej. y = m x + b" autocomplete="off" autocapitalize="off" spellcheck="false">
+                <button class="btn primary" type="submit" aria-label="Agregar expresión">＋</button>
+              </form>
+              <details class="help">
+                <summary>¿Cómo escribo las expresiones?</summary>
+                <ul>
+                  <li>Parámetro con deslizador: <code>a = 2</code></li>
+                  <li>Función: <code>y = a x^2 + b x + c</code> o <code>f(x) = sen(x)</code></li>
+                  <li>Ecuación (cónicas): <code>x^2/9 + y^2/4 = 1</code></li>
+                  <li>Recta vertical: <code>x = 3</code></li>
+                  <li>Punto: <code>A = (2, 3)</code> · Vector: <code>u = vector(3, 4)</code> o <code>vector(A, B)</code></li>
+                  <li>Segmento: <code>segmento(A, B)</code> · Recta: <code>recta(A, B)</code> o <code>recta(A, u)</code></li>
+                  <li>Cálculos: <code>u*v</code> (producto escalar), <code>norma(u)</code>, <code>angulo(u, v)</code> en grados, <code>cruz(u, v)</code> con vectores de R³ como <code>(1, 2, 3)</code></li>
+                  <li>Funciones: <code>sen cos tan sqrt abs ln log exp</code>, constantes <code>pi</code> y <code>e</code>. Líneas que empiezan con <code>//</code> son comentarios.</li>
+                </ul>
+              </details>
+              <button class="btn" id="lab-analyze">🤖 Explicar lo que veo</button>
+              <div id="lab-analysis"></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-ejercicios" role="tabpanel" hidden></div>
+      <div class="tab-panel" id="tab-examen" role="tabpanel" hidden></div>
+    </div>
+  </section>
+</main>
+
+<div class="mentor" id="mentor">
+  <div class="mentor-bubble" id="mentor-bubble" role="status" aria-live="polite">
+    <span id="mentor-text">¡Hola! Soy tu mentor de matemática. Elige una materia para empezar tu repaso guiado.</span>
+    <button class="close" id="mentor-close" aria-label="Ocultar mensaje">✕</button>
+  </div>
+  <button class="mentor-btn" id="mentor-btn" aria-label="Mostrar consejo del mentor">💡</button>
+</div>
+
+<dialog id="dlg-apuntes">
+  <div class="dlg-head"><h3>⚙️ Configuración</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body">
+    <section class="ia-box">
+      <h4>🤖 Proveedor de IA</h4>
+      <label class="field">Proveedor<select id="ia-provider"></select></label>
+      <p class="muted small" id="ia-provider-note"></p>
+      <label class="field" id="ia-key-row">API key <span class="muted small" id="ia-key-opt"></span>
+        <span class="key-wrap"><input id="ia-key" type="password" autocomplete="off" spellcheck="false" placeholder="Pega aquí tu clave"><button type="button" class="btn ghost sm" id="ia-key-eye" aria-label="Mostrar u ocultar clave">👁️</button></span>
+      </label>
+      <a class="small" id="ia-key-link" target="_blank" rel="noopener"></a>
+      <label class="field" id="ia-model-row">Modelo<input id="ia-model" list="ia-models" autocomplete="off" spellcheck="false"><datalist id="ia-models"></datalist></label>
+      <label class="field" id="ia-base-row">URL base (endpoint compatible con OpenAI)<input id="ia-base" autocomplete="off" spellcheck="false" placeholder="http://localhost:11434/v1"></label>
+      <p class="muted small">La clave se guarda solo en este navegador y se envía únicamente al proveedor elegido. Si el modelo no admite imágenes, la corrección por foto dará error.</p>
+      <div class="btn-row"><button class="btn sm" type="button" id="ia-test">🔌 Probar conexión</button><span class="small" id="ia-test-result" role="status"></span></div>
+    </section>
+    <hr style="border:0;border-top:1px solid var(--border);margin:0">
+    <div>
+      <h4 style="margin-bottom:.3rem">📚 Apuntes del curso</h4><p class="muted small">Sube tus apuntes (.txt, .md o .pdf con texto). Asigna cada archivo a su materia, eje o subtema: el mentor lo usará primero en ese tema y no lo enviará en temas ajenos. Los archivos sin asignar se buscan automáticamente.</p>
+      <div class="btn-row" style="margin:.6rem 0">
+        <label class="btn file-btn">📁 Agregar apuntes<input type="file" id="in-apuntes" accept=".txt,.md,.pdf,text/plain,text/markdown,application/pdf" multiple></label>
+      </div>
+      <div class="file-list" id="apuntes-list"></div>
+    </div>
+    <div>
+      <p class="muted small">Estilo y criterios del profesor (cómo evalúa, qué exige, notación preferida).</p>
+      <div class="btn-row" style="margin:.6rem 0">
+        <label class="btn file-btn">👩‍🏫 Cargar archivo de estilo<input type="file" id="in-estilo" accept=".txt,.md,text/plain,text/markdown"></label>
+      </div>
+      <textarea id="estilo-text" rows="5" placeholder="O escríbelo aquí: exige gráfico en cada ejercicio, penaliza no verificar condiciones…"></textarea>
+    </div>
+    <label class="toggle"><input type="checkbox" id="estricto"><span><strong>Modo estricto de apuntes.</strong> Las explicaciones se basan solo en tus apuntes. Cuando falte algo, el tutor lo agrega en un recuadro aparte que indica qué agrega, por qué y para qué.</span></label>
+    <p class="muted small" id="storage-note"></p>
+    <div class="btn-row"><button class="btn primary" id="apuntes-save">Guardar configuración</button></div>
+  </div>
+</dialog>
+
+<dialog id="dlg-ejes">
+  <div class="dlg-head"><h3>✨ Ejes desde tus apuntes</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body" id="ejes-gen-body"></div>
+</dialog>
+
+<dialog id="dlg-plan">
+  <div class="dlg-head"><h3>🧩 Plan de estudios desde tus apuntes</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body" id="plan-body"></div>
+</dialog>
+
+<dialog id="dlg-debiles">
+  <div class="dlg-head"><h3>📌 Tus puntos débiles guardados</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body" id="debiles-body"></div>
+</dialog>
+
+</body>
+</html>
