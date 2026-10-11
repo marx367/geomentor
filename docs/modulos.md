@@ -74,8 +74,14 @@ Qué hace cada archivo. Se completa a medida que avanza la migración (paso del 
 | `ui/eventos.js` | Listeners delegados del documento (data-go, pestañas, data-lab, data-action, campos) [7] |
 | `exportacion/descargas.js` | `saveFile`: descarga con claude.ai o con enlace temporal [7] |
 | `pestanas/registro.js` | Conecta navegación y pestañas: `registrarPestana`, `registrarAccion`, avisos `alSuceder`/`avisar` (`entrar-subtema`, `cambio-acento`, `reiniciar`) [7] |
-| `pestanas/contenido-teoria.js` · `teoria.js` · `chequeo-socratico.js` | Pestaña 1 [8] |
-| `exportacion/*.js` | Descargas, resumen .txt, ficha PDF [8] |
+| `pestanas/pestana-teoria.js` | Pestaña 1 · cableado: registro, acciones y pedido de teoría al entrar a un subtema [8] |
+| `pestanas/teoria.js` | Pestaña 1 · pantalla: teoría, ideas clave, chequeo y tarjeta de resumen [8] |
+| `pestanas/contenido-teoria.js` | Pestaña 1 · pide el material a la IA; manda el gráfico al laboratorio (`cargar-grafico`) [8] |
+| `pestanas/chequeo-socratico.js` | Pestaña 1 · evalúa la respuesta y actualiza comprensión, entendido/falta y pregunta [8] |
+| `pestanas/resumen-sesion.js` | Pestaña 1 · resumen por IA, guarda puntos débiles y descarga el .txt [8] |
+| `estado/progreso.js` | `saveProgreso`: comprensión y mejor examen por subtema [8] |
+| `exportacion/resumen-txt.js` | Arma el texto del resumen .txt [8] |
+| `exportacion/exportar-pdf.js` | Ficha de estudio en PDF con html2pdf [8] |
 | `laboratorio/parser/*.js` | Tokenizador, parser, evaluador, análisis de líneas, formato de números [9] |
 | `laboratorio/lienzo/*.js` | Cuadrícula, trazado, objetos, interacción, lista de expresiones [9] |
 | `pestanas/laboratorio.js` | Pestaña 2: presets y análisis del gráfico por IA [9] |

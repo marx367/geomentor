@@ -14,6 +14,10 @@ import { iniciarEventos } from './ui/eventos.js';
 import { iniciarPanelApuntes, renderApuntes } from './apuntes/panel-apuntes.js';
 import { iniciarDialogoEjes } from './apuntes/dialogo-ejes.js';
 import { iniciarDialogoPlan } from './apuntes/dialogo-plan.js';
+import { iniciarExportarPDF } from './exportacion/exportar-pdf.js';
+
+// Pestañas: cada una se anota sola en el registro al importarse.
+import './pestanas/pestana-teoria.js';
 
 iniciarMentor();
 iniciarDialogos();
@@ -22,6 +26,7 @@ iniciarPanelApuntes();
 iniciarPuntosDebiles();
 iniciarDialogoEjes();
 iniciarDialogoPlan();
+iniciarExportarPDF();
 iniciarNavegacion();
 iniciarEventos();
 
