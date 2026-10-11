@@ -57,11 +57,13 @@ Qué hace cada archivo. Se completa a medida que avanza la migración (paso del 
 | `contexto/busqueda-apuntes.js` | Palabras clave, trozos y apuntes relevantes [6] |
 | `contexto/cabecera-prompt.js` | Arma la cabecera y ajusta el prompt al presupuesto [6] |
 | `contexto/fuentes.js` | Etiquetas de transparencia de fuente [6] |
-| `apuntes/apuntes.js` | Lista, alcance y guardado de apuntes [6] |
-| `apuntes/lector-archivos.js` | Lee .txt y .md [6] |
-| `apuntes/lector-pdf.js` | Carga pdf.js bajo demanda y extrae texto [6] |
-| `apuntes/ejes-generados.js` | Ejes propuestos por la IA desde los apuntes [6] |
-| `apuntes/plan-estudios.js` | Consolida apuntes en un plan de estudios [6] |
+| `apuntes/lector-archivos.js` | Lee .txt, .md y .pdf; avisa si un PDF es escaneado (código `escaneado`) [6] |
+| `apuntes/lector-pdf.js` | Carga pdf.js bajo demanda y extrae el texto página por página [6] |
+| `apuntes/estructura-ejes.js` | Lógica: apuntes de la materia, índices por partes, propuesta de ejes por la IA y normalización de ids [6] |
+| `apuntes/plan-estudios.js` | Lógica: prompt de cada sección, limpieza, cronograma y armado del plan .md [6] |
+| `apuntes/panel-apuntes.js` | Lista de apuntes en Config, asignación a temas, carga de archivos y guardado [7] |
+| `apuntes/dialogo-ejes.js` | Diálogo "Generar ejes desde mis apuntes" [7] |
+| `apuntes/dialogo-plan.js` | Diálogo "Consolidar apuntes en un plan", con progreso y cancelación [7] |
 | `ui/*.js` | Navegación, migas, catálogo, mentor, diálogos, puntos débiles, eventos [7] |
 | `pestanas/registro.js` | Tabla pestaña → función de render [7] |
 | `pestanas/contenido-teoria.js` · `teoria.js` · `chequeo-socratico.js` | Pestaña 1 [8] |
