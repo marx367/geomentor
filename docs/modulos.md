@@ -64,8 +64,16 @@ Qué hace cada archivo. Se completa a medida que avanza la migración (paso del 
 | `apuntes/panel-apuntes.js` | Lista de apuntes en Config, asignación a temas, carga de archivos y guardado [7] |
 | `apuntes/dialogo-ejes.js` | Diálogo "Generar ejes desde mis apuntes" [7] |
 | `apuntes/dialogo-plan.js` | Diálogo "Consolidar apuntes en un plan", con progreso y cancelación [7] |
-| `ui/*.js` | Navegación, migas, catálogo, mentor, diálogos, puntos débiles, eventos [7] |
-| `pestanas/registro.js` | Tabla pestaña → función de render [7] |
+| `ui/navegacion.js` | Vistas materias/ejes/subtemas, acento por materia, entrar a un subtema, pestañas, tema personalizado, reiniciar [7] |
+| `ui/migas.js` | Migas de pan [7] |
+| `ui/tarjetas.js` | Tarjetas de selección y conteo de puntos débiles [7] |
+| `ui/mentor.js` | Mentor flotante y tips por pestaña [7] |
+| `ui/dialogos.js` | Botón ✕ de todos los diálogos [7] |
+| `ui/dialogo-config.js` | Diálogo ⚙️ Config: abre IA + apuntes y guarda todo [7] |
+| `ui/puntos-debiles.js` | Contador, diálogo 📌, repasar, marcar superado, exportar .txt [7] |
+| `ui/eventos.js` | Listeners delegados del documento (data-go, pestañas, data-lab, data-action, campos) [7] |
+| `exportacion/descargas.js` | `saveFile`: descarga con claude.ai o con enlace temporal [7] |
+| `pestanas/registro.js` | Conecta navegación y pestañas: `registrarPestana`, `registrarAccion`, avisos `alSuceder`/`avisar` (`entrar-subtema`, `cambio-acento`, `reiniciar`) [7] |
 | `pestanas/contenido-teoria.js` · `teoria.js` · `chequeo-socratico.js` | Pestaña 1 [8] |
 | `exportacion/*.js` | Descargas, resumen .txt, ficha PDF [8] |
 | `laboratorio/parser/*.js` | Tokenizador, parser, evaluador, análisis de líneas, formato de números [9] |

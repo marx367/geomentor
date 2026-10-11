@@ -31,7 +31,12 @@ nucleo/                      → utilidades sin dependencias
 ## Reglas
 
 1. **Sin ciclos.** Si dos módulos se necesitan entre sí, la parte común baja a una capa inferior.
-2. **Registro de pestañas.** Cada pestaña se anota en `pestanas/registro.js` (`registrarPestana('teoria', render)`). `ui/navegacion.js` pide el render al registro. Así la navegación no importa las pestañas y se evita el ciclo navegación ↔ pestañas.
+2. **Registro de pestañas.** Cada pestaña se anota en `pestanas/registro.js` al cargarse:
+   - `registrarPestana('teoria', { mostrar, redibujar })`: qué hacer al abrirla y al redibujar.
+   - `registrarAccion('verificar', fn)`: botones `data-action="verificar"` (los dispara `ui/eventos.js`). Los botones `data-lab="x"` llegan como acción `lab:x`.
+   - `alSuceder('entrar-subtema', fn)`: avisos que dispara la navegación (`entrar-subtema`, `cambio-acento`, `reiniciar`).
+
+   Así la navegación no importa las pestañas y se evita el ciclo navegación ↔ pestañas. Las pestañas sí pueden usar la "carcasa" de la interfaz (`ui/navegacion.js`, `ui/mentor.js`), igual que los diálogos de `apuntes/`. Para sumar una pestaña, alcanza con importarla en `main.js`.
 3. **Un solo punto de salida a la IA:** `ia/cliente-ia.js` → `ask()`. Las pestañas nunca llaman a un proveedor directo.
 4. **Un solo punto de guardado:** `estado/almacen.js`. Elige localStorage o la base de claude.ai sin que el resto lo sepa.
 5. **El parser no toca el DOM.** Recibe texto y devuelve valores o errores. Así se puede probar solo.
