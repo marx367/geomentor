@@ -25,7 +25,6 @@ export async function saveApuntes() {
 
 export function iniciarDialogoConfig() {
   $('#btn-apuntes').addEventListener('click', openConfig);
-  $('#ai-notice').addEventListener('click', ev => { if (ev.target.closest('[data-open-config]')) openConfig(); });
   $('#ia-provider').addEventListener('change', ev => cambiarProveedorBorrador(ev.target.value));
   $('#ia-test').addEventListener('click', testIA);
   $('#ia-key-eye').addEventListener('click', () => { const k = $('#ia-key'); k.type = k.type === 'password' ? 'text' : 'password'; });

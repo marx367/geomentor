@@ -9,19 +9,20 @@ import { aiError, coded } from './errores-ia.js';
 import { callProvider } from './cliente-ia.js';
 import { llamarClaudeIntegrado } from './adaptadores/claude-integrado.js';
 
-// Muestra u oculta el aviso de "configurá un proveedor" y habilita lo que depende de la IA.
+// Muestra u oculta los avisos de "configurá un proveedor" y habilita lo que depende de la IA.
+// Afuera queda una línea breve que remite al engranaje; el detalle va dentro del diálogo.
 export function applyIA() {
   const p = IA.provider;
   AI.images = p === 'claude' ? AI.claudeImages : true;
   AI.imageTypes = p === 'claude' ? AI.claudeTypes : 'image/jpeg,image/png,image/webp';
-  const notice = $('#ai-notice');
-  if (aiReady()) { notice.hidden = true; }
-  else {
-    const msg = inClaude() && p !== 'claude'
+  const notice = $('#ai-notice'), avisoDlg = $('#ia-aviso-dlg');
+  const listo = aiReady();
+  notice.hidden = avisoDlg.hidden = listo;
+  if (!listo) {
+    notice.textContent = 'Para activar el mentor, configura un proveedor de IA en ⚙️ (arriba a la derecha). El laboratorio funciona sin IA.';
+    avisoDlg.textContent = inClaude() && p !== 'claude'
       ? 'Dentro de claude.ai solo funciona «Claude integrado». Para usar otro proveedor, abre el archivo HTML en tu navegador.'
-      : 'Configura un proveedor de IA (Gemini, OpenRouter, OpenAI, Anthropic, DeepSeek, GLM, Qwen o uno local) para activar el mentor. El laboratorio gráfico funciona igual.';
-    notice.innerHTML = `${escapeHTML(msg)}<button class="btn sm" data-open-config>⚙️ Configurar</button>`;
-    notice.hidden = false;
+      : 'Elige un proveedor de IA (Gemini, OpenRouter, OpenAI, Anthropic, DeepSeek, GLM, Qwen o uno local) y completa su clave para activar el mentor.';
   }
   const la = $('#lab-analyze');
   if (la) la.disabled = !aiReady();
