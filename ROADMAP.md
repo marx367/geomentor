@@ -13,7 +13,7 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 ## Ahora
 
 - **Fase en curso:** Fase 2: Mejoras
-- **Siguiente prioridad:** Mi curso, paso 4 (pestañas por subtema). Plan: `docs/plan-mi-curso.md` (rama `mi-curso`)
+- **Siguiente prioridad:** Mi curso, paso 4 (pestañas por subtema; Reglas del examen y Puntos débiles con tipo ya están). Plan: `docs/plan-mi-curso.md` (rama `mi-curso`)
 - **Bloqueos / dudas:** ninguno
 
 ## Fases
@@ -39,6 +39,8 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
   - [x] Paso 1: datos de Mi curso en el almacén, con fecha e inicio vacío
   - [x] Paso 2: "＋ Tema de hoy" con propuesta de la IA
   - [x] Paso 3: "🎓 Profesor y bibliografía"
+  - [x] Reglas del examen (base: material, fecha, mentor y prompts)
+  - [x] Puntos débiles con tipo (tipo de error, origen, superado sin borrar, errores frecuentes)
   - [ ] Pasos 4 a 10
 
 ## Fuera de alcance / ideas para después
@@ -75,3 +77,4 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 5. Al cambiar de fase, actualizar también la línea del proyecto en `C:\Proyectos\ROADMAP-GLOBAL.md`.
 - 2026-10-11 · Fase 2: engranaje de configuración y selector de tema
 - 2026-10-11 · Fase 2: Mi curso, pasos 1 a 3 (datos propios, Tema de hoy, Profesor y bibliografía)
+- 2026-10-11 · Fase 2: Mi curso, Reglas del examen y Puntos débiles con tipo
