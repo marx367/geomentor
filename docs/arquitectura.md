@@ -23,7 +23,7 @@ ia/  render/                 → hablar con la IA · mostrar Markdown y fórmula
   │
 estado/                      → estado en memoria y almacenamiento
   │
-datos/  laboratorio/parser/  → catálogo fijo · parser puro (sin DOM)
+datos/  laboratorio/parser/  → datos fijos (colores, sinónimos) · parser puro (sin DOM)
   │
 nucleo/                      → utilidades sin dependencias
 ```

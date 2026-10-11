@@ -4,7 +4,10 @@ export const clip = (s, n) => { s = String(s || ''); return s.length > n ? s.sli
 export const byteLen = s => new TextEncoder().encode(s).length;
 export const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 export const slug = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'tema';
-export const today = () => new Date().toISOString().slice(0, 10);
+// Texto escrito por el estudiante: sin espacios de más y con un largo máximo.
+export const limpiarTexto = (s, max = 120) => String(s ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
+export const esFechaValida = s => /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(new Date(s + 'T00:00:00'));
+export const today =() => new Date().toISOString().slice(0, 10);
 export const stamp = (d = new Date()) => d.toLocaleString('es', { dateStyle: 'short', timeStyle: 'short' });
 export const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 export const spinnerHTML = '<span class="spinner" aria-hidden="true"></span>';

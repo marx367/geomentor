@@ -1,14 +1,14 @@
-// Estado en memoria de la app: vista actual, selección (materia/eje/subtema), configuración,
-// progreso y una sesión de trabajo por subtema. No se guarda solo: ver almacen.js.
+// Estado en memoria de la app: vista actual, selección (materia/eje/subtema), Mi curso (ver curso.js),
+// configuración, progreso y una sesión de trabajo por subtema. No se guarda solo: ver almacen.js.
 export const S = {
   view: 'materias', tab: 'teoria',
   materia: null, eje: null, sub: null,
-  config: { apuntes: {}, estilo: '', asignacion: {}, estricto: false, ejesGen: {}, planes: {} },
+  curso: { materias: [] },
+  config: { apuntes: {}, estilo: '', asignacion: {}, estricto: false, planes: {} },
   progreso: { temas: {} },
   debiles: [],
   cache: {}, sessions: {}
 };
-export const ejesDe = m => [...m.ejes, ...((S.config.ejesGen || {})[m.id] || [])];
 export const key = () => S.sub ? `${S.materia.id}/${S.eje.id}/${S.sub.id}` : null;
 export function sess(k = key()) {
   if (!k) return null;

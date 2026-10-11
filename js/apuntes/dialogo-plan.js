@@ -1,4 +1,4 @@
-// Diálogo "🧩 Consolidar apuntes en un plan": opciones (días, completar, crear ejes), progreso con
+// Diálogo "🧩 Consolidar apuntes en un plan": opciones (días, completar), progreso con
 // cancelación (una consulta por subtema), resultado y descarga del .md.
 import { $ } from '../nucleo/dom.js';
 import { escapeHTML, loadingHTML } from '../nucleo/utilidades.js';
@@ -9,12 +9,11 @@ import { aiReady } from '../ia/config-ia.js';
 import { aiError, coded } from '../ia/errores-ia.js';
 import { Apuntes } from '../contexto/busqueda-apuntes.js';
 import { saveFile } from '../exportacion/descargas.js';
-import { renderEjes } from '../ui/navegacion.js';
 import { renderApuntes } from './panel-apuntes.js';
-import { materialDeApuntes, proponerEstructura, normalizarEjes } from './estructura-ejes.js';
+import { materialDeApuntes, proponerEstructura } from './estructura-ejes.js';
 import { planFileName, fuentesPlan, promptSeccion, limpiarSeccion, armarPlan } from './plan-estudios.js';
 
-const Plan = { busy: false, cancel: false, progress: '', err: '', result: null, dias: 12, completar: true, crearEjes: true };
+const Plan = { busy: false, cancel: false, progress: '', err: '', result: null, dias: 12, completar: true };
 
 export async function consolidarApuntes() {
   const m = S.materia;
@@ -53,16 +52,9 @@ export async function consolidarApuntes() {
     S.config.apuntes[fname] = md;
     (S.config.asignacion ||= {})[fname] = m.id;
     (S.config.planes ||= {})[m.id] = fname;
-    let ejesCreados = 0;
-    if (Plan.crearEjes) {
-      const conPlan = ejes.map(e => ({ ...e, subtemas: e.subtemas.map(sb => ({ ...sb, archivos: [fname, ...sb.archivos.filter(a => a !== fname)] })) }));
-      (S.config.ejesGen ||= {})[m.id] = normalizarEjes(m, conPlan);
-      ejesCreados = ejes.length;
-    }
     const ok = await Store.setDoc('config', S.config);
-    Plan.result = { md, fname, ejes: ejes.length, subtemas: total, complementos: (md.match(/^:::complemento/gm) || []).length, ejesCreados, ok };
+    Plan.result = { md, fname, ejes: ejes.length, subtemas: total, complementos: (md.match(/^:::complemento/gm) || []).length, ok };
     renderApuntes();
-    if (S.view === 'ejes') renderEjes();
   } catch (e) {
     Plan.err = e.code === 'cancelado' ? 'Consolidación cancelada. No se guardó nada.' : (e.code ? aiError(e) : e.message);
   } finally {
@@ -83,10 +75,10 @@ export function renderPlanDlg() {
     const r = Plan.result;
     body.innerHTML = `
       <p>✔ Plan listo: <strong>${r.ejes} ejes</strong> y <strong>${r.subtemas} subtemas</strong>${r.complementos ? `, con ${r.complementos} ${r.complementos === 1 ? 'complemento marcado' : 'complementos marcados'}` : ''}.</p>
-      <p class="muted small">Quedó guardado como apunte «${escapeHTML(r.fname)}», asignado a ${escapeHTML(m.nombre)}.${r.ejesCreados ? ' Los ejes del plan ya aparecen marcados con 📚.' : ''} Tus archivos originales siguen cargados como respaldo.${r.ok ? '' : ' No se pudo guardar de forma permanente (el plan es muy grande).'}</p>
+      <p class="muted small">Quedó guardado como apunte «${escapeHTML(r.fname)}», asignado a ${escapeHTML(m.nombre)}. Tus archivos originales siguen cargados como respaldo.${r.ok ? '' : ' No se pudo guardar de forma permanente (el plan es muy grande).'}</p>
       <div class="btn-row">
         <button class="btn primary" data-pact="descargar">⬇️ Descargar plan (.md)</button>
-        <button class="btn" data-pact="cerrar">Ver los ejes</button>
+        <button class="btn" data-pact="cerrar">Cerrar</button>
       </div>`;
     return;
   }
@@ -100,7 +92,6 @@ export function renderPlanDlg() {
     ${!S.config.estilo ? '<p class="small" style="color:var(--hint)">No cargaste el estilo del profesor en ⚙️ Config: el plan usará criterios generales.</p>' : ''}
     <label class="field">Días hasta el examen<input type="number" id="plan-dias" min="3" max="90" value="${Plan.dias}" style="max-width:140px"></label>
     <label class="toggle"><input type="checkbox" id="plan-completar" ${Plan.completar ? 'checked' : ''}><span>Completar temas típicos que falten en los apuntes, marcados como complemento (qué, por qué y para qué).</span></label>
-    <label class="toggle"><input type="checkbox" id="plan-ejes" ${Plan.crearEjes ? 'checked' : ''}><span>Crear también los ejes y subtemas del plan en la app (reemplaza los generados antes para esta materia).</span></label>
     <div class="btn-row"><button class="btn primary" data-pact="crear" ${files.length && aiReady() ? '' : 'disabled'}>🧩 Crear plan</button></div>`;
 }
 
@@ -113,7 +104,6 @@ export function iniciarDialogoPlan() {
     if (act === 'crear') {
       Plan.dias = Number($('#plan-dias').value) || 12;
       Plan.completar = $('#plan-completar').checked;
-      Plan.crearEjes = $('#plan-ejes').checked;
       consolidarApuntes();
     }
     if (act === 'cancelar') { Plan.cancel = true; renderPlanDlg(); }

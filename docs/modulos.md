@@ -1,6 +1,6 @@
 # Módulos
 
-Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2).
+Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2; [MC1] = paso 1 de `docs/plan-mi-curso.md`).
 
 ## Raíz
 | Archivo | Qué hace |
@@ -36,14 +36,14 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `tema-inicial.js` | Script clásico en `<head>`, antes de los estilos: aplica el tema guardado (`data-theme`) para que no haya parpadeo [F2] |
 | `main.js` | Punto de entrada: inicializa almacén, IA, lienzo, eventos y la primera vista [7] |
 | `nucleo/dom.js` | `$` y `$$` (selectores) [3] |
-| `nucleo/utilidades.js` | `newId`, `escapeHTML`, formateos [3] |
+| `nucleo/utilidades.js` | `newId`, `escapeHTML`, formateos, `limpiarTexto` y `esFechaValida` para validar lo que escribe el estudiante [3] |
 | `nucleo/etiquetas-xml.js` | `getTag`, `getTags`, `toList`: leen la respuesta de la IA [3] |
-| `datos/catalogo.js` | Junta las materias y exporta `MATERIAS` [3] |
-| `datos/materias/*.js` | Una materia por archivo: ejes y subtemas [3] |
+| `datos/colores-materias.js` | Colores de acento e íconos que toman las materias nuevas, en orden [MC1] |
 | `datos/sinonimos.js` | Sinónimos matemáticos para buscar en apuntes [3] |
 | `render/matematica.js` | Fórmulas LaTeX con KaTeX/MathJax [3] |
 | `render/markdown.js` | Markdown simple → HTML, sin librerías [3] |
-| `estado/estado.js` | Estado en memoria: vista, materia, sesión por subtema [4] |
+| `estado/estado.js` | Estado en memoria: vista, materia, Mi curso, sesión por subtema [4] |
+| `estado/curso.js` | Mi curso: materias, ejes y subtemas con fecha en el documento `curso`; validación, ids únicos, crear y buscar [MC1] |
 | `estado/almacen.js` | Fachada de guardado: elige backend [4] |
 | `estado/almacen-local.js` | Backend localStorage [4] |
 | `estado/almacen-claude.js` | Backend base de datos de claude.ai (opcional) [4] |
@@ -60,12 +60,11 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `contexto/fuentes.js` | Etiquetas de transparencia de fuente [6] |
 | `apuntes/lector-archivos.js` | Lee .txt, .md y .pdf; avisa si un PDF es escaneado (código `escaneado`) [6] |
 | `apuntes/lector-pdf.js` | Carga pdf.js bajo demanda y extrae el texto página por página [6] |
-| `apuntes/estructura-ejes.js` | Lógica: apuntes de la materia, índices por partes, propuesta de ejes por la IA y normalización de ids [6] |
+| `apuntes/estructura-ejes.js` | Lógica: apuntes de la materia, índices por partes y propuesta de ejes por la IA (la usa el plan consolidado) [6] |
 | `apuntes/plan-estudios.js` | Lógica: prompt de cada sección, limpieza, cronograma y armado del plan .md [6] |
 | `apuntes/panel-apuntes.js` | Lista de apuntes en Config, asignación a temas, carga de archivos y guardado [7] |
-| `apuntes/dialogo-ejes.js` | Diálogo "Generar ejes desde mis apuntes" [7] |
 | `apuntes/dialogo-plan.js` | Diálogo "Consolidar apuntes en un plan", con progreso y cancelación [7] |
-| `ui/navegacion.js` | Vistas materias/ejes/subtemas, acento por materia, entrar a un subtema, pestañas, tema personalizado, reiniciar [7] |
+| `ui/navegacion.js` | Vistas de Mi curso (materias, con inicio vacío; ejes; subtemas por fecha), acento por materia, entrar a un subtema, pestañas, reiniciar [7] |
 | `ui/migas.js` | Migas de pan [7] |
 | `ui/tarjetas.js` | Tarjetas de selección y conteo de puntos débiles [7] |
 | `ui/mentor.js` | Mentor flotante y tips por pestaña [7] |

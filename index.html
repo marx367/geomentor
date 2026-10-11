@@ -78,8 +78,11 @@
   <section id="view-materias" class="view">
     <div class="view-head">
       <div>
-        <h1>Elige la materia</h1>
-        <p class="lead">Cada materia se organiza en ejes y subtemas. Dentro de cada subtema estudias la teoría, experimentas en el laboratorio gráfico, practicas ejercicios y rindes un examen.</p>
+        <h1>Mi curso</h1>
+        <p class="lead">Lo que se da en clase, ordenado en materias, ejes y subtemas. Dentro de cada subtema estudias la teoría, experimentas en el laboratorio gráfico, practicas ejercicios y rindes un examen.</p>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" data-abrir="tema-hoy">＋ Tema de hoy</button>
       </div>
     </div>
     <div class="card-grid three" id="grid-materias"></div>
@@ -93,7 +96,6 @@
       </div>
       <div class="btn-row">
         <button class="btn" id="btn-plan" title="Une todos tus apuntes en un plan de estudios limpio, con cronograma">🧩 Consolidar apuntes en un plan</button>
-        <button class="btn primary" id="btn-gen-ejes" title="Crea ejes y subtemas a partir de los apuntes cargados en Config">✨ Generar ejes desde mis apuntes</button>
         <button class="btn" data-go="materias">← Volver a materias</button>
       </div>
     </div>
@@ -109,10 +111,6 @@
       <button class="btn" data-go="ejes">← Volver a ejes</button>
     </div>
     <div class="card-grid three" id="grid-subtemas"></div>
-    <form class="custom-sub" id="custom-sub-form">
-      <input id="custom-sub-input" placeholder="¿No está tu tema? Escríbelo (ej. Rotación de ejes)" autocomplete="off">
-      <button class="btn" type="submit">Estudiar este tema</button>
-    </form>
   </section>
 
   <section id="view-mentoria" class="view" hidden>
@@ -181,7 +179,7 @@
 
 <div class="mentor" id="mentor">
   <div class="mentor-bubble" id="mentor-bubble" role="status" aria-live="polite">
-    <span id="mentor-text">¡Hola! Soy tu mentor de matemática. Elige una materia para empezar tu repaso guiado.</span>
+    <span id="mentor-text">¡Hola! Soy tu mentor de matemática. Carga la clase de hoy con «＋ Tema de hoy» o elige una materia de tu curso.</span>
     <button class="close" id="mentor-close" aria-label="Ocultar mensaje">✕</button>
   </div>
   <button class="mentor-btn" id="mentor-btn" aria-label="Mostrar consejo del mentor">💡</button>
@@ -223,11 +221,6 @@
     <p class="muted small" id="storage-note"></p>
     <div class="btn-row"><button class="btn primary" id="apuntes-save">Guardar configuración</button></div>
   </div>
-</dialog>
-
-<dialog id="dlg-ejes">
-  <div class="dlg-head"><h3>✨ Ejes desde tus apuntes</h3><button class="btn ghost sm" data-close>✕</button></div>
-  <div class="dlg-body" id="ejes-gen-body"></div>
 </dialog>
 
 <dialog id="dlg-plan">

@@ -3,6 +3,7 @@
 import { $ } from './nucleo/dom.js';
 import { S } from './estado/estado.js';
 import { Store } from './estado/almacen.js';
+import { cargarCurso, guardarCurso } from './estado/curso.js';
 import { initCapabilities } from './ia/config-ia.js';
 import { applyIA } from './ia/panel-ia.js';
 import { iniciarMentor, mentor } from './ui/mentor.js';
@@ -13,7 +14,6 @@ import { iniciarPuntosDebiles, updateDebilesCount } from './ui/puntos-debiles.js
 import { iniciarEventos } from './ui/eventos.js';
 import { iniciarTema } from './ui/tema.js';
 import { iniciarPanelApuntes, renderApuntes } from './apuntes/panel-apuntes.js';
-import { iniciarDialogoEjes } from './apuntes/dialogo-ejes.js';
 import { iniciarDialogoPlan } from './apuntes/dialogo-plan.js';
 import { iniciarExportarPDF } from './exportacion/exportar-pdf.js';
 
@@ -28,7 +28,6 @@ iniciarDialogos();
 iniciarDialogoConfig();
 iniciarPanelApuntes();
 iniciarPuntosDebiles();
-iniciarDialogoEjes();
 iniciarDialogoPlan();
 iniciarExportarPDF();
 iniciarNavegacion();
@@ -44,15 +43,23 @@ window.addEventListener('load', () => { if (!window.__mjReady) rerenderCurrent()
   $('#mentor-bubble').hidden = false;
   initCapabilities().then(() => { applyIA(); rerenderCurrent(); });
   await Store.init();
-  const [config, estado, debiles] = await Promise.all([
-    Store.getDoc('config', null), Store.getDoc('estado', null), Store.listDebiles()
+  const [config, estado, debiles, curso] = await Promise.all([
+    Store.getDoc('config', null), Store.getDoc('estado', null), Store.listDebiles(), Store.getDoc('curso', null)
   ]);
-  if (config) S.config = { apuntes: config.apuntes || {}, estilo: config.estilo || '', asignacion: config.asignacion || {}, estricto: !!config.estricto, ejesGen: config.ejesGen || {}, planes: config.planes || {} };
+  if (config) S.config = { apuntes: config.apuntes || {}, estilo: config.estilo || '', asignacion: config.asignacion || {}, estricto: !!config.estricto, planes: config.planes || {} };
   if (estado?.progreso) S.progreso = { temas: estado.progreso.temas || {} };
+  cargarCurso(curso);
+  // Primera vez con Mi curso: el progreso del catálogo fijo ya no corresponde a ningún tema, así que se borra.
+  // Los ejes generados viejos (ejesGen) tampoco se usan más. Los apuntes y puntos débiles se conservan.
+  if (!curso) {
+    S.progreso = { temas: {} };
+    await Promise.all([guardarCurso(), Store.setDoc('estado', { progreso: S.progreso }), config ? Store.setDoc('config', S.config) : null]);
+  }
   S.debiles = Array.isArray(debiles) ? debiles : [];
   updateDebilesCount();
   renderApuntes();
   if (S.view === 'materias') renderMaterias();
   const n = S.debiles.reduce((a, d) => a + (d.puntos?.length || 0), 0);
   if (n) mentor(`¡Hola de nuevo! Tienes ${n} puntos débiles guardados. Ábrelos con 📌 para repasarlos o elige una materia.`);
+  else if (!S.curso.materias.length) mentor('¡Hola! Empieza cargando la clase de hoy con «＋ Tema de hoy».');
 })();

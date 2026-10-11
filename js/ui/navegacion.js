@@ -1,9 +1,8 @@
-// Navegación entre vistas (materias → ejes → subtemas → mentoría), color de acento por materia,
-// pestañas del subtema, tema personalizado y botón "Reiniciar". Las pestañas se manejan por el registro.
+// Navegación entre vistas (materias → ejes → subtemas → mentoría) de Mi curso, color de acento por materia,
+// pestañas del subtema y botón "Reiniciar". Las pestañas se manejan por el registro.
 import { $, $$ } from '../nucleo/dom.js';
-import { slug } from '../nucleo/utilidades.js';
-import { MATERIAS } from '../datos/catalogo.js';
-import { S, ejesDe } from '../estado/estado.js';
+import { S } from '../estado/estado.js';
+import { subtemasPorFecha, contarSubtemas } from '../estado/curso.js';
 import { debilesDelTema } from '../contexto/cabecera-prompt.js';
 import { mostrarPestana, redibujarPestana, avisar } from '../pestanas/registro.js';
 import { mentor } from './mentor.js';
@@ -30,12 +29,22 @@ export function renderMaterias() {
   setAccent(null);
   const grid = $('#grid-materias');
   grid.innerHTML = '';
-  for (const m of MATERIAS) {
+  // Inicio vacío: todavía no se cargó ninguna clase.
+  if (!S.curso.materias.length) {
+    grid.innerHTML = `<div class="curso-vacio">
+      <p><strong>Todavía no cargaste ningún tema.</strong></p>
+      <p class="muted">Después de cada clase, toca «＋ Tema de hoy»: cargas el título y tus apuntes, y el mentor lo ubica en su materia y eje.</p>
+      <button class="btn primary" data-abrir="tema-hoy">＋ Tema de hoy</button>
+    </div>`;
+    return;
+  }
+  for (const m of S.curso.materias) {
     const n = countDebiles(m.id + '/');
+    const temas = contarSubtemas(m);
     grid.appendChild(pickCard({
       icon: m.icono, title: m.nombre, desc: m.desc,
-      badges: `<span class="pill">${ejesDe(m).length} ejes</span>${n ? `<span class="pill warn">📌 ${n} puntos débiles</span>` : ''}`,
-      onPick: () => { S.materia = m; S.eje = null; S.sub = null; setAccent(m); go('ejes'); mentor(`¡Buena elección! ${m.nombre} tiene ${ejesDe(m).length} ejes. Empieza por el que más te cuesta.`); }
+      badges: `<span class="pill">${m.ejes.length} ${m.ejes.length === 1 ? 'eje' : 'ejes'}</span><span class="pill">${temas} ${temas === 1 ? 'tema' : 'temas'}</span>${n ? `<span class="pill warn">📌 ${n} puntos débiles</span>` : ''}`,
+      onPick: () => { S.materia = m; S.eje = null; S.sub = null; setAccent(m); go('ejes'); mentor(`${m.nombre} tiene ${m.ejes.length} ${m.ejes.length === 1 ? 'eje' : 'ejes'}. Empieza por el que más te cuesta.`); }
     }));
   }
 }
@@ -46,26 +55,28 @@ export function renderEjes() {
   $('#ejes-lead').textContent = `Elige la unidad de ${m.nombre} que quieres repasar hoy.`;
   const grid = $('#grid-ejes');
   grid.innerHTML = '';
-  for (const e of ejesDe(m)) {
+  for (const e of m.ejes) {
     const n = countDebiles(`${m.id}/${e.id}/`);
     grid.appendChild(pickCard({
       icon: e.icono, title: e.nombre, desc: e.desc,
-      badges: `${e.generado ? '<span class="pill accent">📚 De tus apuntes</span>' : ''}<span class="pill">${e.subtemas.length} subtemas</span>${n ? `<span class="pill warn">📌 ${n}</span>` : ''}`,
+      badges: `<span class="pill">${e.subtemas.length} ${e.subtemas.length === 1 ? 'subtema' : 'subtemas'}</span>${n ? `<span class="pill warn">📌 ${n}</span>` : ''}`,
       onPick: () => { S.eje = e; S.sub = null; go('subtemas'); mentor('Vas por buen camino. Ahora elige el subtema que corresponde a tu clase.'); }
     }));
   }
 }
+// 'AAAA-MM-DD' → '11/10/2026' (sin pasar por Date, para que no cambie el día por la zona horaria).
+const fechaCorta = f => f.split('-').reverse().join('/');
+
 export function renderSubtemas() {
   const m = S.materia, e = S.eje;
   $('#subtemas-title').textContent = e.nombre;
   const grid = $('#grid-subtemas');
   grid.innerHTML = '';
-  const subs = [...e.subtemas, ...(e.custom || [])];
-  for (const s of subs) {
+  for (const s of subtemasPorFecha(e)) {
     const k = `${m.id}/${e.id}/${s.id}`;
     const p = S.progreso.temas?.[k];
     const n = countDebiles(k);
-    let badges = '';
+    let badges = `<span class="pill">📅 ${fechaCorta(s.fecha)}</span>`;
     if (p?.comprension != null) badges += `<span class="pill accent">Comprensión ${p.comprension}%</span>`;
     if (p?.examenMejor != null) badges += `<span class="pill accent">Examen ${p.examenMejor}/10</span>`;
     if (n) badges += `<span class="pill warn">📌 ${n}</span>`;
@@ -95,15 +106,6 @@ export function rerenderCurrent() {
 }
 
 export function iniciarNavegacion() {
-  $('#custom-sub-form').addEventListener('submit', ev => {
-    ev.preventDefault();
-    const name = $('#custom-sub-input').value.trim();
-    if (!name) return;
-    const sub = { id: 'custom-' + slug(name), nombre: name, desc: 'Tema personalizado' };
-    (S.eje.custom ||= []).some(x => x.id === sub.id) || S.eje.custom.push(sub);
-    $('#custom-sub-input').value = '';
-    enterSubtema(sub);
-  });
   $('#btn-reset').addEventListener('click', () => {
     if (!confirm('¿Reiniciar la sesión? Se borra el avance de esta sesión (chequeos, ejercicios y exámenes). Tus apuntes y puntos débiles guardados se conservan.')) return;
     S.cache = {}; S.sessions = {}; S.materia = S.eje = S.sub = null;

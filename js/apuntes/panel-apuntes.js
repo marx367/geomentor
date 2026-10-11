@@ -2,8 +2,7 @@
 // (.txt, .md, .pdf), archivo de estilo del profesor y quitar apuntes.
 import { $ } from '../nucleo/dom.js';
 import { escapeHTML, spinnerHTML } from '../nucleo/utilidades.js';
-import { MATERIAS } from '../datos/catalogo.js';
-import { S, ejesDe } from '../estado/estado.js';
+import { S } from '../estado/estado.js';
 import { Store } from '../estado/almacen.js';
 import { mentor } from '../ui/mentor.js';
 import { esPDF, leerArchivoApunte } from './lector-archivos.js';
@@ -11,9 +10,9 @@ import { esPDF, leerArchivoApunte } from './lector-archivos.js';
 export function scopeOptions(sel) {
   const opt = (v, label) => `<option value="${v}" ${v === sel ? 'selected' : ''}>${escapeHTML(label)}</option>`;
   let h = opt('', 'Todos los temas (búsqueda automática)');
-  for (const m of MATERIAS) {
+  for (const m of S.curso.materias) {
     h += `<optgroup label="${escapeHTML(m.nombre)}">${opt(m.id, `${m.nombre}: toda la materia`)}`;
-    for (const e of ejesDe(m)) {
+    for (const e of m.ejes) {
       h += opt(`${m.id}/${e.id}`, `\u00a0\u00a0${e.nombre} (eje completo)`);
       for (const sb of e.subtemas) h += opt(`${m.id}/${e.id}/${sb.id}`, `\u00a0\u00a0\u00a0\u00a0· ${sb.nombre}`);
     }

@@ -32,4 +32,4 @@ Botón de configuración → elegí proveedor → pegá tu clave → *Probar con
 - `docs/modulos.md`: qué hace cada archivo
 - `docs/formato-prompts.md`: etiquetas que devuelve la IA
 - `docs/seguridad.md`: claves y riesgos
-- `docs/agregar-materia.md`: cómo sumar contenido al catálogo
+- `docs/plan-mi-curso.md`: plan de la transformación en "Mi curso"

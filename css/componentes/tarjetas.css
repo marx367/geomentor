@@ -17,5 +17,6 @@
 .pill.accent { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
 .pill.warn { color: var(--hint); background: var(--hint-soft); border-color: transparent; }
 
-.custom-sub { margin-top: 1.25rem; display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
-.custom-sub input { flex: 1 1 240px; }
+/* Inicio vacío de Mi curso: ocupa todo el ancho de la grilla */
+.curso-vacio { grid-column: 1 / -1; text-align: center; padding: 2.5rem 1rem; display: flex; flex-direction: column; align-items: center; gap: .6rem; background: var(--surface-2); border: 1px dashed var(--border); border-radius: var(--radius); }
+.curso-vacio p { max-width: 46ch; margin: 0; }

@@ -1,6 +1,6 @@
-// Lógica para generar ejes y subtemas desde los apuntes con la IA (sin pantalla: el diálogo está en dialogo-ejes.js).
+// Lógica para ordenar los apuntes de una materia en ejes y subtemas con la IA (la usa el plan consolidado).
 // Etapa 1: material (texto completo, o índices por partes si es largo). Etapa 2: la IA propone ejes en etiquetas.
-import { clip, slug } from '../nucleo/utilidades.js';
+import { clip } from '../nucleo/utilidades.js';
 import { getTag, getTags } from '../nucleo/etiquetas-xml.js';
 import { S } from '../estado/estado.js';
 import { ask } from '../ia/cliente-ia.js';
@@ -13,19 +13,6 @@ export function apuntesDeMateria(m) {
     const sc = (S.config.asignacion || {})[n] || '';
     return !sc || sc === m.id || sc.startsWith(m.id + '/');
   });
-}
-// Si algún apunte trae una sección «ESTRUCTURA DEL PLAN», se usa tal cual.
-export function estructuraDePlan(files) {
-  const pref = S.materia ? (S.config.planes || {})[S.materia.id] : null;
-  const orden = [...files].sort((a, b) => (b[0] === pref) - (a[0] === pref));
-  for (const [n, t] of orden) {
-    const i = t.search(/^#{1,3}\s*ESTRUCTURA DEL PLAN/im);
-    if (i < 0) continue;
-    const rest = t.slice(i);
-    const end = rest.slice(1).search(/\n---|\n#{1,2}\s/);
-    return { file: n, text: end >= 0 ? rest.slice(0, end + 1) : rest.slice(0, 8000) };
-  }
-  return null;
 }
 // Etapa 1: material para decidir la estructura (texto completo o índices por partes).
 export async function materialDeApuntes(m, files, onProgress, cancelado = () => false) {
@@ -95,22 +82,3 @@ Responde solo con las etiquetas.`, { fresh: true });
   return ejes;
 }
 
-// Convierte la propuesta editada en ejes definitivos, con ids únicos que no choquen con los fijos.
-export function normalizarEjes(m, draft) {
-  const usados = new Set(m.ejes.map(e => e.id));
-  return draft.filter(e => e.nombre && e.subtemas.some(x => x.nombre)).map(e => {
-    let id = 'ap-' + slug(e.nombre), n = 2;
-    while (usados.has(id)) id = `ap-${slug(e.nombre)}-${n++}`;
-    usados.add(id);
-    const subIds = new Set();
-    return {
-      id, nombre: e.nombre, icono: e.icono || '📚', desc: e.desc || 'Generado desde tus apuntes.', generado: true,
-      subtemas: e.subtemas.filter(x => x.nombre).map(x => {
-        let sid = slug(x.nombre), k = 2;
-        while (subIds.has(sid)) sid = `${slug(x.nombre)}-${k++}`;
-        subIds.add(sid);
-        return { id: sid, nombre: x.nombre, desc: x.desc || 'Tema de tus apuntes.', archivos: x.archivos };
-      })
-    };
-  });
-}

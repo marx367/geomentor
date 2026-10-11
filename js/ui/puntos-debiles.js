@@ -2,8 +2,8 @@
 // "Marcar como superado" y exportar todo a .txt.
 import { $ } from '../nucleo/dom.js';
 import { escapeHTML, stamp, today } from '../nucleo/utilidades.js';
-import { MATERIAS } from '../datos/catalogo.js';
-import { S, ejesDe } from '../estado/estado.js';
+import { S } from '../estado/estado.js';
+import { buscarMateria, buscarEje } from '../estado/curso.js';
 import { Store } from '../estado/almacen.js';
 import { mdInline } from '../render/markdown.js';
 import { saveFile } from '../exportacion/descargas.js';
@@ -35,13 +35,12 @@ export function renderDebiles() {
       </div>
     </article>`).join('')}`;
 }
+// Busca en Mi curso el subtema de un punto débil. Si se borró (o era del catálogo viejo), devuelve null.
 export function findSub(d) {
-  const m = MATERIAS.find(x => x.id === d.materiaId);
-  const e = m ? ejesDe(m).find(x => x.id === d.ejeId) : null;
-  if (!m || !e) return null;
-  let s = [...e.subtemas, ...(e.custom || [])].find(x => x.id === d.subId);
-  if (!s) { s = { id: d.subId, nombre: d.subtema, desc: 'Tema personalizado' }; (e.custom ||= []).push(s); }
-  return { m, e, s };
+  const m = buscarMateria(d.materiaId);
+  const e = buscarEje(m, d.ejeId);
+  const s = e?.subtemas.find(x => x.id === d.subId);
+  return s ? { m, e, s } : null;
 }
 export function exportAllDebiles() {
   const L = ['GEOMENTOR · PUNTOS DÉBILES GUARDADOS', `Exportado: ${stamp()}`, ''];
@@ -69,7 +68,7 @@ export function iniciarPuntosDebiles() {
     }
     if (b.dataset.dact === 'repasar') {
       const f = findSub(d);
-      if (!f) return;
+      if (!f) { mentor('Ese tema ya no está en Mi curso. Puedes marcar el punto como superado o cargarlo de nuevo con «＋ Tema de hoy».'); return; }
       $('#dlg-debiles').close();
       S.materia = f.m; S.eje = f.e; setAccent(f.m);
       enterSubtema(f.s);

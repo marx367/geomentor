@@ -1,6 +1,6 @@
 # GeoMentor
 
-Tutor de matemática con IA: catálogo Materia › Eje › Subtema, cuatro pestañas por subtema (Teoría, Laboratorio, Ejercicios, Examen), apuntes del estudiante y capa multi-LLM. App web estática, sin backend.
+Tutor de matemática con IA: materias, ejes y subtemas que arma el estudiante (Mi curso), cuatro pestañas por subtema (Teoría, Laboratorio, Ejercicios, Examen), apuntes del estudiante y capa multi-LLM. App web estática, sin backend.
 
 ## Stack (definitivo)
 
@@ -25,7 +25,7 @@ index.html          → estructura HTML; carga js/tema-inicial.js, css/estilos.c
 css/                → tema, base, componentes/, vistas/, responsive
 js/main.js          → punto de entrada
 js/nucleo/          → utilidades sin dependencias
-js/datos/           → catálogo (una materia por archivo) y sinónimos
+js/datos/           → colores de materias y sinónimos
 js/estado/          → estado en memoria y almacenamiento
 js/render/          → Markdown y fórmulas
 js/ia/              → proveedores, adaptadores, cliente y panel de IA
