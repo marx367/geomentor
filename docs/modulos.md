@@ -5,7 +5,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 ## Raíz
 | Archivo | Qué hace |
 |---|---|
-| `index.html` | Estructura: cabecera, vistas, diálogos, mentor. Carga CSS y `js/main.js` [2] |
+| `index.html` | Estructura: cabecera (📌, ⚙️ y tema), vistas, diálogos, mentor. Carga CSS y `js/main.js` [2] |
 | `iniciar-servidor.ps1` | Levanta un servidor local en el puerto 8080 [1] |
 
 ## css/ [2]
@@ -16,14 +16,14 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `base.css` | Reset y estilos de elementos, mobile-first |
 | `layout.css` | Contenedor central y encabezado de cada vista |
 | `componentes/botones.css` | Botones y fila de botones |
-| `componentes/cabecera.css` | Barra superior, marca, acciones, botones de ícono (⚙️ y tema), menú de tema y línea de aviso de IA [F2] |
+| `componentes/cabecera.css` | Barra superior, marca, acciones (📌 Puntos débiles), botones de ícono (⚙️ y tema), menú de tema y línea de aviso de IA [F2] |
 | `componentes/migas.css` | Migas Materia › Eje › Subtema |
 | `componentes/tarjetas.css` | Tarjetas de selección y pastillas |
 | `componentes/formularios.css` | Campos, botón de archivo, clave, interruptor |
 | `componentes/contenido.css` | Contenido de la IA: Markdown, fórmulas, carga, errores, fuentes, complementos |
 | `componentes/mentor.css` | Mentor flotante |
-| `componentes/dialogos.css` | Diálogos de configuración, Tema de hoy, Profesor y bibliografía, plan y débiles |
-| `componentes/ficha-pdf.css` | Ficha PDF (siempre en claro) |
+| `componentes/dialogos.css` | Diálogos de configuración (con la zona "Datos y reinicio"), Tema de hoy, Profesor y bibliografía, plan y débiles |
+| `componentes/ficha-pdf.css` | PDF de la ficha y del ejercicio (siempre en claro, con la foto o pizarra) |
 | `componentes/pizarra.css` | Pizarra de Ejercicios [10] |
 | `vistas/mentoria.css` | Contenedor y pestañas del subtema |
 | `vistas/teoria.css` · `ejercicios.css` · `examen.css` · `laboratorio.css` | Una pestaña cada uno |
@@ -68,12 +68,12 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `apuntes/plan-estudios.js` | Lógica: prompt de cada sección, limpieza, cronograma y armado del plan .md [6] |
 | `apuntes/panel-apuntes.js` | Lista de apuntes en Config, asignación a temas y carga de archivos [7] |
 | `apuntes/dialogo-plan.js` | Diálogo "Consolidar apuntes en un plan", con progreso y cancelación [7] |
-| `ui/navegacion.js` | Vistas de Mi curso (materias, con inicio vacío; ejes; subtemas por fecha), acento por materia, entrar a un subtema, pestañas, reiniciar [7] |
+| `ui/navegacion.js` | Vistas de Mi curso (materias, con inicio vacío; ejes; subtemas por fecha), acento por materia, entrar a un subtema, pestañas, `reiniciarSesion()` (el botón está en Config) [7] |
 | `ui/migas.js` | Migas de pan [7] |
 | `ui/tarjetas.js` | Tarjetas de selección y conteo de puntos débiles [7] |
 | `ui/mentor.js` | Mentor flotante y tips por pestaña [7] |
 | `ui/dialogos.js` | Botón ✕ de todos los diálogos [7] |
-| `ui/dialogo-config.js` | Diálogo ⚙️ Config (botón engranaje): abre IA + apuntes y guarda todo [7] |
+| `ui/dialogo-config.js` | Diálogo ⚙️ Config (botón engranaje): abre IA + apuntes y guarda todo; zona final "Datos y reinicio" (acción `reiniciar-sesion`) [7] |
 | `profesor/dialogo-profesor.js` | Diálogo "🎓 Profesor y bibliografía": estilo (archivo, texto, cuestionario, análisis), modo estricto; guarda solo [MC3] |
 | `profesor/analisis-estilo.js` | Pide a la IA el análisis del estilo con el texto y las respuestas del cuestionario [MC3] |
 | `profesor/panel-biblioteca.js` | Biblioteca: agregar y quitar libros y capítulos (archivo o texto pegado) [MC3] |
@@ -89,7 +89,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `pestanas/resumen-sesion.js` | Pestaña 1 · resumen por IA, guarda puntos débiles y descarga el .txt [8] |
 | `estado/progreso.js` | `saveProgreso`: comprensión y mejor examen por subtema [8] |
 | `exportacion/resumen-txt.js` | Arma el texto del resumen .txt [8] |
-| `exportacion/exportar-pdf.js` | Ficha de estudio en PDF con html2pdf [8] |
+| `exportacion/exportar-pdf.js` | PDF con html2pdf: `generarPDF()` común, ficha del subtema (acción `pdf`, en Examen y ficha) y ejercicio con resolución y solución (acción `pdf-ejercicio`, en Ejercicios) [8] |
 | `laboratorio/parser/funciones.js` | Funciones (sen, ln…), palabras especiales y constantes [9] |
 | `laboratorio/parser/tokenizador.js` | Texto → tokens; normaliza ², π, ·, √ [9] |
 | `laboratorio/parser/parser.js` | Tokens → árbol, sin eval; `varsOf` [9] |
@@ -107,7 +107,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `laboratorio/lienzo/lienzo.js` | `iniciarLienzo()` y la API `Lab` que usan las pestañas [9] |
 | `pestanas/laboratorio.js` | Pestaña 2 · presets y "Explicar lo que veo" [9] |
 | `pestanas/pestana-laboratorio.js` | Pestaña 2 · cableado: registro, acciones `lab:*` y avisos [9] |
-| `pestanas/ejercicios.js` | Pestaña 3 · pide el ejercicio y dibuja la pantalla (pistas, solución, resolución con texto, foto o pizarra) [10] |
+| `pestanas/ejercicios.js` | Pestaña 3 · pide el ejercicio y dibuja la pantalla (pistas, solución, resolución con texto, foto o pizarra, 📄 Exportar) [10] |
 | `pestanas/foto-resolucion.js` | Pestaña 3 · foto del desarrollo: achica a 1600 px y pasa a JPEG [10] |
 | `pestanas/correccion.js` | Pestaña 3 · corrección por IA con texto e imagen [10] |
 | `pestanas/pestana-ejercicios.js` | Pestaña 3 · cableado: registro, botones y acciones de la pizarra [10] |

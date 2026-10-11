@@ -47,6 +47,7 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 - Vite + tests automáticos (sobre todo del parser)
 - Librerías locales para funcionar sin internet
 - Backend para claves de IA compartidas
+- Chat real con el mentor (conversación libre)
 
 ## Completados
 

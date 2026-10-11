@@ -6,3 +6,4 @@
 .pdf-doc .md h3, .pdf-doc .md h4 { color: #1e40af; }
 .pdf-doc .math-block { background: #f1f5f9; border-left-color: #0e7490; }
 .pdf-doc .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; margin: 6px 0; }
+.pdf-doc img { max-width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; margin: 6px 0; } /* foto o pizarra del ejercicio */
