@@ -21,7 +21,7 @@ Tutor de matemática con IA: catálogo Materia › Eje › Subtema, cuatro pesta
 ## Estructura
 
 ```
-index.html          → estructura HTML; carga css/estilos.css y js/main.js
+index.html          → estructura HTML; carga js/tema-inicial.js, css/estilos.css y js/main.js
 css/                → tema, base, componentes/, vistas/, responsive
 js/main.js          → punto de entrada
 js/nucleo/          → utilidades sin dependencias
@@ -35,7 +35,7 @@ js/pizarra/         → pizarra a mano alzada para Ejercicios
 js/pestanas/        → teoría, laboratorio, ejercicios, examen
 js/apuntes/         → lectores de archivos, ejes generados, plan de estudios
 js/exportacion/     → descargas, resumen .txt, ficha PDF
-js/ui/              → navegación, migas, mentor, diálogos, eventos
+js/ui/              → navegación, migas, mentor, diálogos, eventos, tema
 docs/               → arquitectura y guías
 ```
 

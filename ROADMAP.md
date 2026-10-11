@@ -13,7 +13,7 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 ## Ahora
 
 - **Fase en curso:** Fase 2: Mejoras
-- **Siguiente prioridad:** elegir la primera mejora con Marcelo
+- **Siguiente prioridad:** elegir la próxima mejora con Marcelo
 - **Bloqueos / dudas:** ninguno
 
 ## Fases
@@ -34,7 +34,8 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 
 ### 🔄 Fase 2: Mejoras (a definir)
 **Listo cuando:** a definir con Marcelo.
-- [ ] A definir
+- [x] Engranaje de configuración y selector de tema (Light, Dim, Dark, Auto)
+- [ ] Próxima mejora: a definir
 
 ## Fuera de alcance / ideas para después
 
@@ -67,3 +68,4 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 3. Una idea nueva entra en "Fuera de alcance"; pasa a una fase solo si la persona lo decide.
 4. Cambios en este archivo: solo con el OK de la persona.
 5. Al cambiar de fase, actualizar también la línea del proyecto en `C:\Proyectos\ROADMAP-GLOBAL.md`.
+- 2026-10-11 · Fase 2: engranaje de configuración y selector de tema
