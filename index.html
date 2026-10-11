@@ -95,6 +95,7 @@
         <p class="lead" id="ejes-lead"></p>
       </div>
       <div class="btn-row">
+        <button class="btn primary" data-abrir="tema-hoy">＋ Tema de hoy</button>
         <button class="btn" id="btn-plan" title="Une todos tus apuntes en un plan de estudios limpio, con cronograma">🧩 Consolidar apuntes en un plan</button>
         <button class="btn" data-go="materias">← Volver a materias</button>
       </div>
@@ -108,7 +109,10 @@
         <h1 id="subtemas-title"></h1>
         <p class="lead">Selecciona el tema específico que corresponde a tu cuaderno de clase.</p>
       </div>
-      <button class="btn" data-go="ejes">← Volver a ejes</button>
+      <div class="btn-row">
+        <button class="btn primary" data-abrir="tema-hoy">＋ Tema de hoy</button>
+        <button class="btn" data-go="ejes">← Volver a ejes</button>
+      </div>
     </div>
     <div class="card-grid three" id="grid-subtemas"></div>
   </section>
@@ -221,6 +225,11 @@
     <p class="muted small" id="storage-note"></p>
     <div class="btn-row"><button class="btn primary" id="apuntes-save">Guardar configuración</button></div>
   </div>
+</dialog>
+
+<dialog id="dlg-tema-hoy">
+  <div class="dlg-head"><h3>＋ Tema de hoy</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body" id="tema-hoy-body"></div>
 </dialog>
 
 <dialog id="dlg-plan">

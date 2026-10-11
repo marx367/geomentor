@@ -30,6 +30,14 @@ y = x^2
 P = (1, 1)
 </grafico>`;
 
+// "＋ Tema de hoy": si la materia ya tiene ejes, elige el primero; si no, propone uno nuevo.
+function ubicacion(prompt) {
+  const primerEje = prompt.match(/^- ([a-z0-9-]+): /m)?.[1] || '';
+  return `<eje_existente>${primerEje}</eje_existente>
+<eje_nuevo><nombre>Eje de prueba</nombre><icono>🧪</icono><desc>Eje propuesto en modo prueba.</desc></eje_nuevo>
+<subtema><nombre>Subtema de prueba</nombre><desc>Propuesto por el modo prueba.</desc></subtema>`;
+}
+
 export async function llamarSimulado({ prompt, signal }) {
   await new Promise((resolver, rechazar) => {
     const timer = setTimeout(resolver, DEMORA_MS);
@@ -39,5 +47,6 @@ export async function llamarSimulado({ prompt, signal }) {
   // "Probar conexión" pide responder solo OK
   if (/únicamente con la palabra OK/i.test(prompt)) return 'OK';
   if (prompt.includes('<teoria>')) return TEORIA;
+  if (prompt.includes('<eje_existente>')) return ubicacion(prompt);
   return RESPUESTA;
 }

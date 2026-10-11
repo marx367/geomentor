@@ -7,7 +7,8 @@ export const slug = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '
 // Texto escrito por el estudiante: sin espacios de más y con un largo máximo.
 export const limpiarTexto = (s, max = 120) => String(s ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
 export const esFechaValida = s => /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(new Date(s + 'T00:00:00'));
-export const today =() => new Date().toISOString().slice(0, 10);
+// Fecha local AAAA-MM-DD (toISOString usa UTC: de noche en Argentina daría el día siguiente).
+export const today = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 export const stamp = (d = new Date()) => d.toLocaleString('es', { dateStyle: 'short', timeStyle: 'short' });
 export const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 export const spinnerHTML = '<span class="spinner" aria-hidden="true"></span>';

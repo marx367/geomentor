@@ -1,5 +1,5 @@
 /* Formularios: campos, botón de archivo, clave, interruptor */
-input[type="text"], input[type="password"], input[type="number"]:not(.slider input), input:not([type]), select, textarea {
+input[type="text"], input[type="password"], input[type="date"], input[type="number"]:not(.slider input), input:not([type]), select, textarea {
   width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
   padding: .65rem .75rem; color: var(--text); min-height: 44px;
 }

@@ -41,7 +41,7 @@ nucleo/                      → utilidades sin dependencias
 4. **Un solo punto de guardado:** `estado/almacen.js`. Elige localStorage o la base de claude.ai sin que el resto lo sepa.
    Excepción: el tema (`geomentor-tema`) va directo a localStorage, porque `tema-inicial.js` tiene que leerlo sincrónico, antes de pintar, y `almacen.js` es asíncrono.
 5. **El parser no toca el DOM.** Recibe texto y devuelve valores o errores. Así se puede probar solo.
-6. **Eventos delegados.** `ui/eventos.js` escucha `click`, `input` y `change` en `document` y deriva según `data-action`. No hay `onclick` en el HTML.
+6. **Eventos delegados.** `ui/eventos.js` escucha `click`, `input` y `change` en `document` y deriva según `data-action` (y `data-abrir` para diálogos que se abren desde varios botones, como "＋ Tema de hoy"). No hay `onclick` en el HTML.
 7. **Avisos con eventos de `window`** cuando una capa baja tiene que reaccionar a algo de una alta: `math-ready` (MathJax cargó) y `cambio-tema` (lo dispara `ui/tema.js`; lo escucha el lienzo para redibujarse con los colores nuevos). Así la capa baja escucha sin importar a la alta.
 
 ## Temas

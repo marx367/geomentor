@@ -1,4 +1,4 @@
-/* Diálogos: configuración, apuntes, ejes generados y puntos débiles */
+/* Diálogos: configuración, apuntes, Tema de hoy (propuesta editable), plan y puntos débiles */
 dialog { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); padding: 0; width: min(640px, calc(100vw - 1.5rem)); max-height: calc(100dvh - 2rem); box-shadow: var(--shadow); }
 dialog::backdrop { background: rgba(2,6,23,.55); }
 .dlg-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .9rem 1rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); }
@@ -17,5 +17,5 @@ dialog::backdrop { background: rgba(2,6,23,.55); }
 .gen-row { display: flex; gap: .4rem; align-items: center; }
 .gen-row input { flex: 1; min-width: 0; min-height: 38px; padding: .35rem .6rem; }
 .gen-row .emoji { width: 56px; flex: 0 0 56px; text-align: center; }
-.gen-subs { display: flex; flex-direction: column; gap: .35rem; padding-left: 1rem; border-left: 2px solid var(--border); }
+.gen-eje > input { font-size: .88rem; min-height: 38px; padding: .35rem .6rem; }
 .gen-files { font-size: .76rem; color: var(--muted); padding-left: .2rem; }
