@@ -24,5 +24,7 @@ export const PROVIDERS = {
     nota: 'La clave solo sirve en su región. Internacional: dashscope-intl…; China: https://dashscope.aliyuncs.com/compatible-mode/v1.' },
   compatible: { nombre: 'Otro compatible con OpenAI (Groq, Mistral, Ollama, LM Studio…)', modelo: 'llama3.1', modelos: [],
     base: 'http://localhost:11434/v1', baseEditable: true, keyOptional: true,
-    nota: 'Cualquier servicio con endpoint /chat/completions. Para Ollama local inicia el servidor con OLLAMA_ORIGINS=* para permitir el navegador.' }
+    nota: 'Cualquier servicio con endpoint /chat/completions. Para Ollama local inicia el servidor con OLLAMA_ORIGINS=* para permitir el navegador.' },
+  simulado: { nombre: 'Modo prueba (sin IA real)', modelo: 'simulado', modelos: ['simulado'], keyOptional: true,
+    nota: 'Responde siempre el mismo texto de ejemplo, sin internet ni clave. Solo para probar la interfaz.' }
 };

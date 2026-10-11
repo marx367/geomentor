@@ -8,6 +8,7 @@ import { llamarGemini } from './adaptadores/gemini.js';
 import { llamarAnthropic } from './adaptadores/anthropic.js';
 import { llamarOpenAICompatible } from './adaptadores/openai-compatible.js';
 import { llamarClaudeIntegrado } from './adaptadores/claude-integrado.js';
+import { llamarSimulado } from './adaptadores/simulado.js';
 
 const TIEMPO_MAXIMO_MS = 180000; // 3 minutos: los apuntes largos pueden tardar
 
@@ -22,6 +23,7 @@ export async function callProvider(p, prompt, images, cfg = {}) {
   const timer = setTimeout(() => ctrl.abort(), TIEMPO_MAXIMO_MS);
   const pedido = { p, key, model, base, prompt, imgs, signal: ctrl.signal };
   try {
+    if (p === 'simulado') return await llamarSimulado(pedido);
     if (p === 'gemini') return await llamarGemini(pedido);
     if (p === 'anthropic') return await llamarAnthropic(pedido);
     return await llamarOpenAICompatible(pedido); // OpenRouter, OpenAI y cualquier endpoint compatible
