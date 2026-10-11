@@ -19,7 +19,7 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 ## Fases
 
 ### 🔄 Fase 1: Migración a módulos ES
-**Listo cuando:** la app nueva hace todo lo que hacía el prototipo (checklist de paridad completo) y los originales están borrados.
+**Listo cuando:** los originales están borrados y la documentación está al día.
 - [ ] Paso 1: Base del proyecto (docs, Git, gitleaks, primer commit, repo privado en GitHub)
 - [ ] Paso 2: `index.html` y estilos
 - [ ] Paso 3: Núcleo, datos y render
@@ -30,7 +30,7 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 - [ ] Paso 8: Teoría y exportación
 - [ ] Paso 9: Laboratorio
 - [ ] Paso 10: Ejercicios con pizarra, examen y puntos débiles
-- [ ] Paso 11: Cierre (paridad, docs, borrar originales, push)
+- [ ] Paso 11: Cierre (docs, push)
 
 ### ⬜ Fase 2: Mejoras (a definir)
 **Listo cuando:** a definir con Marcelo.
