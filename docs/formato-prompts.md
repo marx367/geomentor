@@ -1,0 +1,36 @@
+# Formato de las respuestas de la IA
+
+La IA responde **solo con etiquetas XML** (`<nombre>…</nombre>`). `js/nucleo/etiquetas-xml.js` las lee con `getTag` (una) y `getTags` (varias). Dentro de cada etiqueta va Markdown simple y LaTeX (`$…$` en línea, `$$…$$` en bloque).
+
+## Por pestaña
+
+| Uso | Etiquetas |
+|---|---|
+| Teoría | `teoria`, `ideas_clave`, `pregunta`, `tips`, `grafico` |
+| Chequeo socrático | `feedback`, `comprension` (0-100), `entendido`, `falta`, `siguiente_pregunta`, `tip` |
+| Resumen | `resumen_general`, `puntos_fuertes`, `puntos_debiles`, `plan_de_repaso`, `ejercicio_sugerido` |
+| Ejercicio | `enunciado`, `pista` (varias), `solucion`, `grafico` |
+| Corrección | `correccion`, `falta` |
+| Examen | `pregunta` (varias) → dentro: `enunciado`, opciones, `correcta`, `explicacion`, `por_que_…` |
+| Ejes desde apuntes | `eje` (varios) → `nombre`, `icono`, `desc`, `subtema` (varios) → `nombre`, `desc`, `archivos` |
+
+`grafico` contiene expresiones en la sintaxis del laboratorio (texto plano, una por línea, nunca LaTeX).
+
+## Reglas que se agregan a cada prompt
+
+Están en `js/contexto/reglas-prompt.js`:
+
+- **Formato:** LaTeX + Markdown simple, sin tablas ni bloques de código, nada fuera de las etiquetas.
+- **Citas:** si algo viene de los apuntes, se cierra con `(según NOMBRE_DEL_ARCHIVO)`.
+- **Modo estricto** (opcional): solo con lo que está en los apuntes. Lo que se agregue va en un bloque aparte:
+  ```
+  :::complemento
+  **Qué agrego:** …
+  **Por qué:** …
+  **Para qué:** …
+  :::
+  ```
+
+## Si cambiás un prompt
+
+Si agregás o renombrás una etiqueta, actualizá a la vez el prompt, el código que la lee y esta tabla.

@@ -1,0 +1,3579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GeoMentor · Mentor de Matemática (multi-IA)</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap">
+
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [], displayMath: [] },
+    svg: { fontCache: 'none' },
+    options: { enableMenu: false },
+    startup: {
+      typeset: false,
+      ready: () => {
+        MathJax.startup.defaultReady();
+        MathJax.startup.promise.then(() => {
+          try { document.head.appendChild(MathJax.svgStylesheet()); } catch (e) { /* sin hoja extra */ }
+          window.__mjReady = true;
+          window.dispatchEvent(new Event('math-ready'));
+        });
+      }
+    }
+  };
+</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+/* ============ TOKENS ============ */
+:root {
+  --accent-l: #0e7490; --accent-d: #22d3ee;
+  --bg: #f3f6fb; --surface: #ffffff; --surface-2: #eef3f9; --surface-3: #e2e9f3;
+  --border: #d5deea; --text: #0e1a2b; --muted: #56657c;
+  --accent: var(--accent-l); --on-accent: #ffffff;
+  --ok: #047857; --ok-soft: #d1fae5; --bad: #be123c; --bad-soft: #ffe4e6;
+  --hint: #92400e; --hint-soft: #fef3c7;
+  --plot-bg: #ffffff; --plot-minor: #eef2f7; --plot-major: #d3dbe7; --plot-axis: #334155; --plot-label: #56657c;
+  --shadow: 0 1px 2px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.08);
+  --radius: 14px; --radius-sm: 10px;
+  --font: 'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f172a; --surface: #1a2436; --surface-2: #141e30; --surface-3: #22304a;
+    --border: #2c3a52; --text: #eef2f8; --muted: #94a3b8;
+    --accent: var(--accent-d); --on-accent: #06121f;
+    --ok: #34d399; --ok-soft: rgba(16,185,129,.14); --bad: #fb7185; --bad-soft: rgba(244,63,94,.14);
+    --hint: #fcd34d; --hint-soft: rgba(245,158,11,.12);
+    --plot-bg: #0b1322; --plot-minor: #131d30; --plot-major: #22304a; --plot-axis: #94a3b8; --plot-label: #94a3b8;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f172a; --surface: #1a2436; --surface-2: #141e30; --surface-3: #22304a;
+  --border: #2c3a52; --text: #eef2f8; --muted: #94a3b8;
+  --accent: var(--accent-d); --on-accent: #06121f;
+  --ok: #34d399; --ok-soft: rgba(16,185,129,.14); --bad: #fb7185; --bad-soft: rgba(244,63,94,.14);
+  --hint: #fcd34d; --hint-soft: rgba(245,158,11,.12);
+  --plot-bg: #0b1322; --plot-minor: #131d30; --plot-major: #22304a; --plot-axis: #94a3b8; --plot-label: #94a3b8;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+
+/* ============ BASE (mobile-first) ============ */
+:root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: var(--bg); }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: inherit; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, h5 { line-height: 1.25; margin: 0; font-weight: 600; }
+p { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+[hidden] { display: none !important; }
+.muted { color: var(--muted); }
+.small { font-size: .85rem; }
+
+/* ============ BOTONES ============ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+  min-height: 44px; padding: .55rem 1rem; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+  font-weight: 500; cursor: pointer; transition: background .15s, border-color .15s, transform .1s;
+  text-align: center;
+}
+.btn:hover:not(:disabled) { background: var(--surface-3); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+.btn.primary:hover:not(:disabled) { background: color-mix(in srgb, var(--accent) 85%, var(--text)); }
+.btn.ghost { background: transparent; }
+.btn.ghost:hover:not(:disabled) { background: var(--surface-2); }
+.btn.sm { min-height: 36px; padding: .35rem .75rem; font-size: .88rem; }
+.btn-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* ============ CABECERA ============ */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  padding: .6rem 1rem; background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+}
+.brand { display: flex; align-items: center; gap: .65rem; min-width: 0; }
+.brand > div:last-child { min-width: 0; }
+.brand-name, .brand-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.logo { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; font-size: 1.3rem;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 45%, #6366f1)); flex-shrink: 0; }
+.brand-name { font-weight: 700; font-size: 1.1rem; color: var(--accent); }
+.brand-sub { font-size: .75rem; color: var(--muted); display: none; }
+.top-actions { display: flex; gap: .3rem; flex-shrink: 0; }
+.top-actions .btn { min-height: 40px; min-width: 40px; padding: .4rem .5rem; gap: .3rem; }
+.top-actions .lbl { display: none; }
+.count { background: var(--accent); color: var(--on-accent); border-radius: 999px; font-size: .72rem; padding: 0 .45rem; font-weight: 700; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block; }
+
+.notice-bar { margin: .75rem 1rem 0; padding: .7rem .9rem; border-radius: var(--radius-sm); background: var(--hint-soft); color: var(--hint); font-size: .9rem; }
+
+/* ============ CONTENEDOR ============ */
+.container { max-width: 1180px; margin: 0 auto; padding: 1rem 1rem 7rem; }
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .5rem; font-size: .88rem; color: var(--muted); margin-bottom: 1rem; }
+.crumbs button { background: none; border: 0; padding: .2rem 0; cursor: pointer; color: var(--muted); }
+.crumbs button:hover { color: var(--accent); text-decoration: underline; }
+.crumbs .current { color: var(--accent); font-weight: 600; }
+.crumbs .sep { opacity: .6; }
+
+.view-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: .75rem; margin-bottom: 1.25rem; }
+.view-head h1 { font-size: 1.5rem; }
+.lead { color: var(--muted); margin-top: .35rem; max-width: 62ch; }
+
+/* ============ TARJETAS DE SELECCIÓN ============ */
+.card-grid { display: grid; grid-template-columns: 1fr; gap: .85rem; }
+.pick {
+  position: relative; text-align: left; cursor: pointer; width: 100%;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.1rem 1.15rem; box-shadow: var(--shadow); color: var(--text);
+  display: flex; flex-direction: column; gap: .45rem;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.pick:hover { border-color: color-mix(in srgb, var(--accent) 60%, var(--border)); }
+.pick .icon { font-size: 2rem; line-height: 1; }
+.pick h3 { font-size: 1.08rem; color: var(--accent); }
+.pick p { color: var(--muted); font-size: .92rem; }
+.pick .badges { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .2rem; }
+.pick.selected { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent), 0 0 28px color-mix(in srgb, var(--accent) 35%, transparent); transform: scale(1.03); }
+.pill { display: inline-flex; align-items: center; gap: .25rem; font-size: .76rem; padding: .15rem .55rem; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
+.pill.accent { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.pill.warn { color: var(--hint); background: var(--hint-soft); border-color: transparent; }
+
+.custom-sub { margin-top: 1.25rem; display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.custom-sub input { flex: 1 1 240px; }
+
+input[type="text"], input[type="password"], input[type="number"]:not(.slider input), input:not([type]), select, textarea {
+  width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: .65rem .75rem; color: var(--text); min-height: 44px;
+}
+textarea { resize: vertical; line-height: 1.5; }
+
+/* ============ MENTORÍA ============ */
+.mentoria-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1rem; }
+.mentoria-head h1 { font-size: 1.25rem; color: var(--accent); }
+.shell { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.tabs { display: flex; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 0 0 auto; background: none; border: 0; border-bottom: 3px solid transparent; cursor: pointer;
+  padding: .85rem 1rem; color: var(--muted); font-weight: 500; white-space: nowrap; min-height: 48px;
+}
+.tab:hover { color: var(--text); }
+.tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); background: var(--surface); }
+.tab-panel { padding: 1rem; }
+.stack { display: flex; flex-direction: column; gap: 1rem; }
+
+.panel-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }
+.panel-card h2 { font-size: 1.15rem; }
+.panel-card h3 { font-size: 1.02rem; }
+.card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .75rem; }
+
+/* Contenido generado */
+.md { overflow-wrap: anywhere; }
+.md p { margin: .45rem 0; }
+.md ul, .md ol { margin: .45rem 0; padding-left: 1.3rem; }
+.md li { margin: .2rem 0; }
+.md h3, .md h4, .md h5, .md h6 { color: var(--accent); margin: 1rem 0 .35rem; }
+.md h3 { font-size: 1.08rem; } .md h4 { font-size: 1rem; } .md h5 { font-size: .95rem; }
+.md hr { border: 0; border-top: 1px solid var(--border); margin: .9rem 0; }
+.md code, code.tex { background: var(--surface-3); padding: 0 .3rem; border-radius: 5px; font-size: .9em; }
+.math-block { display: block; overflow-x: auto; overflow-y: hidden; margin: .6rem 0; padding: .6rem .8rem; background: var(--surface); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+.math-block mjx-container { margin: 0 !important; }
+mjx-container[jax="SVG"] { outline: none; }
+.ideas { margin: 0; padding-left: 1.2rem; }
+.ideas li { margin: .3rem 0; }
+
+.loading { display: flex; align-items: center; gap: .6rem; padding: 1.5rem 1rem; color: var(--muted); }
+.spinner { width: 18px; height: 18px; border-radius: 50%; border: 3px solid color-mix(in srgb, var(--accent) 20%, transparent); border-top-color: var(--accent); animation: spin .8s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-text { color: var(--bad); font-size: .9rem; margin-top: .5rem; }
+.empty { text-align: center; padding: 2rem 1rem; display: flex; flex-direction: column; align-items: center; gap: .75rem; }
+
+/* Chequeo socrático */
+.socratic { border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); }
+.meter { height: 10px; border-radius: 999px; background: var(--surface-3); overflow: hidden; margin: .2rem 0 1rem; }
+.meter > span { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width .5s ease; }
+.turn { border-top: 1px dashed var(--border); padding: .85rem 0; }
+.turn-q { font-weight: 600; display: flex; gap: .5rem; }
+.turn-n { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: .78rem; background: var(--accent); color: var(--on-accent); }
+.turn-a { margin: .5rem 0; padding: .5rem .75rem; border-left: 3px solid var(--border); color: var(--muted); font-style: italic; }
+.turn-f { background: var(--surface); border-radius: var(--radius-sm); padding: .6rem .85rem; border: 1px solid var(--border); }
+.chips-block { display: grid; gap: .75rem; margin: .5rem 0 1rem; }
+.chips-block h4 { font-size: .85rem; margin-bottom: .35rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+.chip { font-size: .82rem; padding: .25rem .6rem; border-radius: 8px; line-height: 1.4; }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+.current-q { margin-top: .5rem; padding-top: .85rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: .6rem; }
+.q-label { font-size: .78rem; font-weight: 600; color: var(--accent); letter-spacing: .02em; }
+.q-text { font-weight: 600; font-size: 1.02rem; }
+
+.summary-card h3 { margin-bottom: .5rem; }
+.summary-card h4 { font-size: .9rem; margin: .8rem 0 .3rem; }
+.summary-card ul, .summary-card ol { margin: 0; padding-left: 1.2rem; }
+.saved-note { color: var(--ok); font-size: .88rem; margin-top: .75rem; }
+
+/* Ejercicios */
+.hint-box { background: var(--hint-soft); color: var(--text); border: 1px solid color-mix(in srgb, var(--hint) 30%, transparent); border-radius: var(--radius-sm); padding: .7rem .9rem; }
+.hint-box strong { color: var(--hint); }
+.solution-box { background: var(--ok-soft); border-radius: var(--radius-sm); padding: .8rem 1rem; }
+.photo-row { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+.photo-preview img { max-width: 100%; max-height: 240px; border-radius: 8px; border: 1px solid var(--border); margin-top: .5rem; }
+.file-btn { position: relative; overflow: hidden; }
+.file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+/* Examen */
+.q-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }
+.q-card .q-title { font-weight: 600; margin-bottom: .75rem; display: flex; gap: .4rem; }
+.opts { display: grid; gap: .5rem; }
+.opt {
+  display: flex; align-items: flex-start; gap: .6rem; width: 100%; text-align: left; cursor: pointer;
+  padding: .7rem .9rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); min-height: 48px;
+}
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt .letter { font-weight: 700; color: var(--muted); flex-shrink: 0; }
+.opt.selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
+.opt.correct { border-color: var(--ok); background: var(--ok-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt:disabled { cursor: default; }
+.explain { margin-top: .75rem; font-size: .92rem; display: grid; gap: .35rem; }
+.explain .good { color: var(--ok); }
+.explain .badx { color: var(--bad); }
+.result-card { text-align: center; padding: 1.25rem; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--surface)), color-mix(in srgb, #6366f1 12%, var(--surface))); }
+.result-card .grade { font-size: 2rem; font-weight: 700; margin: .25rem 0 .6rem; }
+.score-bar { height: 14px; border-radius: 999px; background: var(--surface-3); overflow: hidden; max-width: 480px; margin: 0 auto; }
+.score-bar > span { display: block; height: 100%; border-radius: inherit; transition: width .7s ease; }
+.score-bar.low > span { background: var(--bad); } .score-bar.mid > span { background: #f59e0b; } .score-bar.high > span { background: var(--ok); }
+.exam-foot { position: sticky; bottom: 0; background: var(--surface); padding: .75rem 0 .25rem; border-top: 1px solid var(--border); }
+
+/* ============ LABORATORIO ============ */
+.lab { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.plot-wrap { position: relative; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: var(--plot-bg); }
+#plot { display: block; width: 100%; touch-action: none; cursor: crosshair; }
+.plot-coords { position: absolute; left: .6rem; bottom: .5rem; font-size: .78rem; color: var(--plot-label); background: color-mix(in srgb, var(--plot-bg) 80%, transparent); padding: .1rem .4rem; border-radius: 6px; pointer-events: none; }
+.plot-zoom { position: absolute; right: .5rem; top: .5rem; display: flex; flex-direction: column; gap: .3rem; }
+.plot-zoom button { width: 38px; height: 38px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; font-size: 1.05rem; box-shadow: var(--shadow); }
+.lab-side { display: flex; flex-direction: column; gap: .75rem; }
+.expr-list { display: flex; flex-direction: column; gap: .5rem; }
+.expr-row { display: grid; grid-template-columns: 30px 1fr 34px; gap: .4rem; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .4rem; }
+.expr-row.has-error { border-color: color-mix(in srgb, var(--bad) 60%, var(--border)); }
+.expr-color { width: 24px; height: 24px; border-radius: 50%; border: 3px solid var(--c); background: var(--c); cursor: pointer; justify-self: center; padding: 0; }
+.expr-color.off { background: transparent; }
+.expr-input { border: 0 !important; background: transparent !important; min-height: 38px !important; padding: .3rem .4rem !important; font-size: .95rem; }
+.expr-del { width: 32px; height: 32px; border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 1.2rem; border-radius: 8px; }
+.expr-del:hover { background: var(--surface-2); color: var(--bad); }
+.expr-meta { grid-column: 2 / 4; font-size: .82rem; color: var(--muted); }
+.expr-meta:empty { display: none; }
+.expr-meta .err { color: var(--bad); }
+.slider { display: grid; grid-template-columns: 52px 1fr 52px; gap: .4rem; align-items: center; }
+.slider input[type="range"] { width: 100%; accent-color: var(--c, var(--accent)); min-height: 28px; }
+.slider input[type="number"] { width: 100%; font-size: .78rem; padding: .2rem .3rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-2); color: var(--text); }
+.slider-val { grid-column: 1 / 4; font-weight: 600; color: var(--text); }
+.add-var { margin: .3rem .3rem 0 0; font-size: .78rem; padding: .15rem .5rem; border-radius: 6px; border: 1px dashed var(--accent); background: none; color: var(--accent); cursor: pointer; }
+.expr-add { display: flex; gap: .4rem; }
+.help { font-size: .86rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .5rem .75rem; }
+.help summary { cursor: pointer; font-weight: 500; }
+.help ul { padding-left: 1.1rem; margin: .5rem 0 0; }
+.help code { background: var(--surface-3); padding: 0 .3rem; border-radius: 4px; }
+
+/* ============ MENTOR ============ */
+.mentor { position: fixed; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 30; display: flex; flex-direction: column; align-items: flex-end; gap: .6rem; pointer-events: none; }
+.mentor > * { pointer-events: auto; }
+.mentor-bubble {
+  max-width: min(340px, calc(100vw - 2rem)); background: var(--surface); color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border)); border-radius: 16px 16px 4px 16px;
+  padding: .8rem 2rem .8rem .95rem; box-shadow: var(--shadow); font-size: .92rem; position: relative;
+  animation: pop .25s ease;
+}
+.mentor-bubble .close { position: absolute; top: .3rem; right: .35rem; border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 1rem; width: 28px; height: 28px; border-radius: 6px; }
+.mentor-btn { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--surface); cursor: pointer; font-size: 1.5rem;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 40%, #6366f1)); box-shadow: var(--shadow); }
+@keyframes pop { from { opacity: 0; transform: translateY(6px) scale(.97); } to { opacity: 1; transform: none; } }
+
+/* ============ DIÁLOGOS ============ */
+dialog { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); padding: 0; width: min(640px, calc(100vw - 1.5rem)); max-height: calc(100dvh - 2rem); box-shadow: var(--shadow); }
+dialog::backdrop { background: rgba(2,6,23,.55); }
+.dlg-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .9rem 1rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); }
+.dlg-body { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; }
+.file-list { display: flex; flex-direction: column; gap: .4rem; }
+.file-item { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .5rem .7rem; background: var(--surface-2); border-radius: 8px; font-size: .88rem; }
+.weak-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .8rem .9rem; }
+.weak-item h4 { font-size: .95rem; color: var(--accent); }
+.weak-item .meta { font-size: .78rem; color: var(--muted); margin: .15rem 0 .5rem; }
+.weak-item ul { margin: 0 0 .6rem; padding-left: 1.1rem; font-size: .9rem; }
+
+.ia-box { display: flex; flex-direction: column; gap: .6rem; }
+.ia-box h4 { font-size: 1rem; }
+.field { display: flex; flex-direction: column; gap: .3rem; font-size: .88rem; font-weight: 500; }
+.key-wrap { display: flex; gap: .4rem; }
+.key-wrap input { flex: 1; min-width: 0; }
+.notice-bar .btn { margin-left: .5rem; }
+
+.fuentes { font-size: .78rem; color: var(--muted); margin-top: .6rem; }
+.file-info { display: flex; flex-direction: column; gap: .35rem; flex: 1; min-width: 0; }
+.file-info select { min-height: 36px; padding: .3rem .5rem; font-size: .85rem; }
+
+.complemento { margin: .8rem 0; padding: .7rem .9rem; border: 1px dashed color-mix(in srgb, var(--hint) 70%, transparent); background: var(--hint-soft); border-radius: var(--radius-sm); }
+.complemento .comp-title { font-weight: 600; color: var(--hint); margin: 0 0 .3rem; }
+.cita { font-size: .8em; color: var(--muted); white-space: nowrap; }
+.toggle { display: flex; align-items: flex-start; gap: .6rem; font-size: .9rem; cursor: pointer; }
+.toggle input { width: 20px; height: 20px; margin-top: .15rem; accent-color: var(--accent); flex-shrink: 0; }
+.gen-eje { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .75rem; display: flex; flex-direction: column; gap: .5rem; }
+.gen-row { display: flex; gap: .4rem; align-items: center; }
+.gen-row input { flex: 1; min-width: 0; min-height: 38px; padding: .35rem .6rem; }
+.gen-row .emoji { width: 56px; flex: 0 0 56px; text-align: center; }
+.gen-subs { display: flex; flex-direction: column; gap: .35rem; padding-left: 1rem; border-left: 2px solid var(--border); }
+.gen-files { font-size: .76rem; color: var(--muted); padding-left: .2rem; }
+
+/* ============ PDF ============ */
+.pdf-doc { background: #fff; color: #111827; padding: 12px; font-family: var(--font); font-size: 11pt; line-height: 1.55; width: 720px; }
+.pdf-doc * { color: #111827; }
+.pdf-doc h1 { font-size: 18pt; color: #0e7490; margin-bottom: 4px; }
+.pdf-doc h2 { font-size: 13pt; color: #0e7490; margin: 16px 0 6px; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; }
+.pdf-doc .md h3, .pdf-doc .md h4 { color: #1e40af; }
+.pdf-doc .math-block { background: #f1f5f9; border-left-color: #0e7490; }
+.pdf-doc .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; margin: 6px 0; }
+
+/* ============ BREAKPOINTS ============ */
+@media (min-width: 560px) {
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
+  .brand-sub { display: block; }
+}
+@media (min-width: 760px) {
+  .top-actions .lbl { display: inline; }
+  .top-actions .btn { padding: .4rem .8rem; }
+  .container { padding: 1.5rem 1.5rem 7rem; }
+  .view-head h1 { font-size: 1.75rem; }
+  .tab-panel { padding: 1.25rem 1.5rem; }
+  .chips-block { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 1000px) {
+  .card-grid.three { grid-template-columns: repeat(3, 1fr); }
+  .lab { grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); align-items: start; }
+  .lab-side { max-height: 640px; overflow-y: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  .pick.selected { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo" aria-hidden="true">📐</div>
+    <div>
+      <div class="brand-name">GeoMentor</div>
+      <div class="brand-sub">Tutor de matemática para exámenes</div>
+    </div>
+  </div>
+  <nav class="top-actions" aria-label="Acciones">
+    <button class="btn ghost" id="btn-debiles" title="Puntos débiles guardados">📌 <span class="lbl">Puntos débiles</span> <span class="count" id="debiles-count" hidden>0</span></button>
+    <button class="btn ghost" id="btn-apuntes" title="Configuración: IA, apuntes y estilo">⚙️ <span class="lbl">Config</span> <span class="dot" id="apuntes-dot" hidden></span></button>
+    <button class="btn ghost" id="btn-pdf" title="Exportar ficha en PDF">📄 <span class="lbl">Exportar PDF</span></button>
+    <button class="btn ghost" id="btn-reset" title="Reiniciar sesión">🔄 <span class="lbl">Reiniciar</span></button>
+  </nav>
+</header>
+
+<div class="notice-bar" id="ai-notice" hidden></div>
+
+<main class="container">
+  <nav class="crumbs" id="crumbs" aria-label="Ruta"></nav>
+
+  <section id="view-materias" class="view">
+    <div class="view-head">
+      <div>
+        <h1>Elige la materia</h1>
+        <p class="lead">Cada materia se organiza en ejes y subtemas. Dentro de cada subtema estudias la teoría, experimentas en el laboratorio gráfico, practicas ejercicios y rindes un examen.</p>
+      </div>
+    </div>
+    <div class="card-grid three" id="grid-materias"></div>
+  </section>
+
+  <section id="view-ejes" class="view" hidden>
+    <div class="view-head">
+      <div>
+        <h1 id="ejes-title">Selecciona un eje temático</h1>
+        <p class="lead" id="ejes-lead"></p>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="btn-plan" title="Une todos tus apuntes en un plan de estudios limpio, con cronograma">🧩 Consolidar apuntes en un plan</button>
+        <button class="btn primary" id="btn-gen-ejes" title="Crea ejes y subtemas a partir de los apuntes cargados en Config">✨ Generar ejes desde mis apuntes</button>
+        <button class="btn" data-go="materias">← Volver a materias</button>
+      </div>
+    </div>
+    <div class="card-grid three" id="grid-ejes"></div>
+  </section>
+
+  <section id="view-subtemas" class="view" hidden>
+    <div class="view-head">
+      <div>
+        <h1 id="subtemas-title"></h1>
+        <p class="lead">Selecciona el tema específico que corresponde a tu cuaderno de clase.</p>
+      </div>
+      <button class="btn" data-go="ejes">← Volver a ejes</button>
+    </div>
+    <div class="card-grid three" id="grid-subtemas"></div>
+    <form class="custom-sub" id="custom-sub-form">
+      <input id="custom-sub-input" placeholder="¿No está tu tema? Escríbelo (ej. Rotación de ejes)" autocomplete="off">
+      <button class="btn" type="submit">Estudiar este tema</button>
+    </form>
+  </section>
+
+  <section id="view-mentoria" class="view" hidden>
+    <div class="mentoria-head">
+      <button class="btn" data-go="subtemas">← Volver a subtemas</button>
+      <h1 id="mentoria-title"></h1>
+    </div>
+    <div class="shell">
+      <div class="tabs" role="tablist" aria-label="Secciones del subtema">
+        <button class="tab" role="tab" data-tab="teoria" aria-selected="true">📘 1. Teoría y notación</button>
+        <button class="tab" role="tab" data-tab="lab" aria-selected="false">📐 2. Laboratorio visual</button>
+        <button class="tab" role="tab" data-tab="ejercicios" aria-selected="false">📝 3. Ejercicios guiados</button>
+        <button class="tab" role="tab" data-tab="examen" aria-selected="false">✅ 4. Examen y ficha</button>
+      </div>
+
+      <div class="tab-panel" id="tab-teoria" role="tabpanel"></div>
+
+      <div class="tab-panel" id="tab-lab" role="tabpanel" hidden>
+        <div class="lab">
+          <div>
+            <div class="plot-wrap" id="plot-wrap">
+              <canvas id="plot" aria-label="Plano cartesiano interactivo"></canvas>
+              <div class="plot-coords" id="plot-coords">Arrastra para moverte · rueda o pellizco para zoom</div>
+              <div class="plot-zoom">
+                <button data-zoom="in" aria-label="Acercar">+</button>
+                <button data-zoom="out" aria-label="Alejar">−</button>
+                <button data-zoom="home" aria-label="Vista inicial">⌂</button>
+              </div>
+            </div>
+            <p class="muted small" style="margin-top:.5rem">Arrastra los puntos y las puntas de los vectores para cambiar sus coordenadas. Los parámetros con deslizador cambian el gráfico en vivo.</p>
+          </div>
+          <aside class="lab-side">
+            <div class="panel-card" style="display:flex;flex-direction:column;gap:.7rem">
+              <div class="card-head" style="margin:0"><h3>🎛️ Expresiones</h3></div>
+              <div class="btn-row" id="lab-presets"></div>
+              <div class="expr-list" id="expr-list"></div>
+              <form class="expr-add" id="expr-add">
+                <input id="expr-new" placeholder="Nueva expresión, ej. y = m x + b" autocomplete="off" autocapitalize="off" spellcheck="false">
+                <button class="btn primary" type="submit" aria-label="Agregar expresión">＋</button>
+              </form>
+              <details class="help">
+                <summary>¿Cómo escribo las expresiones?</summary>
+                <ul>
+                  <li>Parámetro con deslizador: <code>a = 2</code></li>
+                  <li>Función: <code>y = a x^2 + b x + c</code> o <code>f(x) = sen(x)</code></li>
+                  <li>Ecuación (cónicas): <code>x^2/9 + y^2/4 = 1</code></li>
+                  <li>Recta vertical: <code>x = 3</code></li>
+                  <li>Punto: <code>A = (2, 3)</code> · Vector: <code>u = vector(3, 4)</code> o <code>vector(A, B)</code></li>
+                  <li>Segmento: <code>segmento(A, B)</code> · Recta: <code>recta(A, B)</code> o <code>recta(A, u)</code></li>
+                  <li>Cálculos: <code>u*v</code> (producto escalar), <code>norma(u)</code>, <code>angulo(u, v)</code> en grados, <code>cruz(u, v)</code> con vectores de R³ como <code>(1, 2, 3)</code></li>
+                  <li>Funciones: <code>sen cos tan sqrt abs ln log exp</code>, constantes <code>pi</code> y <code>e</code>. Líneas que empiezan con <code>//</code> son comentarios.</li>
+                </ul>
+              </details>
+              <button class="btn" id="lab-analyze">🤖 Explicar lo que veo</button>
+              <div id="lab-analysis"></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-ejercicios" role="tabpanel" hidden></div>
+      <div class="tab-panel" id="tab-examen" role="tabpanel" hidden></div>
+    </div>
+  </section>
+</main>
+
+<div class="mentor" id="mentor">
+  <div class="mentor-bubble" id="mentor-bubble" role="status" aria-live="polite">
+    <span id="mentor-text">¡Hola! Soy tu mentor de matemática. Elige una materia para empezar tu repaso guiado.</span>
+    <button class="close" id="mentor-close" aria-label="Ocultar mensaje">✕</button>
+  </div>
+  <button class="mentor-btn" id="mentor-btn" aria-label="Mostrar consejo del mentor">💡</button>
+</div>
+
+<dialog id="dlg-apuntes">
+  <div class="dlg-head"><h3>⚙️ Configuración</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body">
+    <section class="ia-box">
+      <h4>🤖 Proveedor de IA</h4>
+      <label class="field">Proveedor<select id="ia-provider"></select></label>
+      <p class="muted small" id="ia-provider-note"></p>
+      <label class="field" id="ia-key-row">API key <span class="muted small" id="ia-key-opt"></span>
+        <span class="key-wrap"><input id="ia-key" type="password" autocomplete="off" spellcheck="false" placeholder="Pega aquí tu clave"><button type="button" class="btn ghost sm" id="ia-key-eye" aria-label="Mostrar u ocultar clave">👁️</button></span>
+      </label>
+      <a class="small" id="ia-key-link" target="_blank" rel="noopener"></a>
+      <label class="field" id="ia-model-row">Modelo<input id="ia-model" list="ia-models" autocomplete="off" spellcheck="false"><datalist id="ia-models"></datalist></label>
+      <label class="field" id="ia-base-row">URL base (endpoint compatible con OpenAI)<input id="ia-base" autocomplete="off" spellcheck="false" placeholder="http://localhost:11434/v1"></label>
+      <p class="muted small">La clave se guarda solo en este navegador y se envía únicamente al proveedor elegido. Si el modelo no admite imágenes, la corrección por foto dará error.</p>
+      <div class="btn-row"><button class="btn sm" type="button" id="ia-test">🔌 Probar conexión</button><span class="small" id="ia-test-result" role="status"></span></div>
+    </section>
+    <hr style="border:0;border-top:1px solid var(--border);margin:0">
+    <div>
+      <h4 style="margin-bottom:.3rem">📚 Apuntes del curso</h4><p class="muted small">Sube tus apuntes (.txt, .md o .pdf con texto). Asigna cada archivo a su materia, eje o subtema: el mentor lo usará primero en ese tema y no lo enviará en temas ajenos. Los archivos sin asignar se buscan automáticamente.</p>
+      <div class="btn-row" style="margin:.6rem 0">
+        <label class="btn file-btn">📁 Agregar apuntes<input type="file" id="in-apuntes" accept=".txt,.md,.pdf,text/plain,text/markdown,application/pdf" multiple></label>
+      </div>
+      <div class="file-list" id="apuntes-list"></div>
+    </div>
+    <div>
+      <p class="muted small">Estilo y criterios del profesor (cómo evalúa, qué exige, notación preferida).</p>
+      <div class="btn-row" style="margin:.6rem 0">
+        <label class="btn file-btn">👩‍🏫 Cargar archivo de estilo<input type="file" id="in-estilo" accept=".txt,.md,text/plain,text/markdown"></label>
+      </div>
+      <textarea id="estilo-text" rows="5" placeholder="O escríbelo aquí: exige gráfico en cada ejercicio, penaliza no verificar condiciones…"></textarea>
+    </div>
+    <label class="toggle"><input type="checkbox" id="estricto"><span><strong>Modo estricto de apuntes.</strong> Las explicaciones se basan solo en tus apuntes. Cuando falte algo, el tutor lo agrega en un recuadro aparte que indica qué agrega, por qué y para qué.</span></label>
+    <p class="muted small" id="storage-note"></p>
+    <div class="btn-row"><button class="btn primary" id="apuntes-save">Guardar configuración</button></div>
+  </div>
+</dialog>
+
+<dialog id="dlg-ejes">
+  <div class="dlg-head"><h3>✨ Ejes desde tus apuntes</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body" id="ejes-gen-body"></div>
+</dialog>
+
+<dialog id="dlg-plan">
+  <div class="dlg-head"><h3>🧩 Plan de estudios desde tus apuntes</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body" id="plan-body"></div>
+</dialog>
+
+<dialog id="dlg-debiles">
+  <div class="dlg-head"><h3>📌 Tus puntos débiles guardados</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body" id="debiles-body"></div>
+</dialog>
+
+<script>
+'use strict';
+
+/* =====================================================================
+   DATOS DEL PROGRAMA
+   ===================================================================== */
+const MATERIAS = [
+  { id: 'geometria', nombre: 'Geometría Analítica', icono: '📐', desc: 'Vectores, rectas, planos y cónicas.', acc: ['#0e7490', '#22d3ee'], ejes: [
+    { id: 'vectores', nombre: 'Vectores en R² y R³', icono: '↗️', desc: 'Operaciones, producto escalar y vectorial, módulo y ángulos.', subtemas: [
+      { id: 'operaciones', nombre: 'Operaciones y producto escalar', desc: 'Suma, resta, combinación lineal y producto punto.' },
+      { id: 'modulo', nombre: 'Módulo, versor y ángulo', desc: 'Norma, vector unitario y ángulo entre vectores.' },
+      { id: 'proyeccion', nombre: 'Proyección ortogonal', desc: 'Proyección de un vector sobre otro y componente ortogonal.' },
+      { id: 'vectorial', nombre: 'Producto vectorial y mixto', desc: 'Producto cruz en R³, áreas y volúmenes.' } ] },
+    { id: 'recta', nombre: 'La recta en el plano', icono: '📏', desc: 'Ecuaciones, posiciones relativas y distancias.', subtemas: [
+      { id: 'ecuaciones', nombre: 'Ecuaciones de la recta', desc: 'Explícita, general, segmentaria, vectorial y paramétrica.' },
+      { id: 'posiciones', nombre: 'Paralelismo y perpendicularidad', desc: 'Condiciones con pendientes y vectores directores.' },
+      { id: 'distancia', nombre: 'Distancia punto-recta', desc: 'Fórmula de distancia y distancia entre paralelas.' },
+      { id: 'interseccion', nombre: 'Intersección y ángulo entre rectas', desc: 'Sistemas de ecuaciones y ángulo entre direcciones.' } ] },
+    { id: 'conicas', nombre: 'Las cónicas', icono: '⭕', desc: 'Circunferencia, parábola, elipse e hipérbola.', subtemas: [
+      { id: 'circunferencia', nombre: 'Circunferencia', desc: 'Centro, radio, ecuación canónica y general.' },
+      { id: 'parabola', nombre: 'Parábola', desc: 'Foco, directriz, vértice y eje.' },
+      { id: 'elipse', nombre: 'Elipse', desc: 'Semiejes, focos y excentricidad.' },
+      { id: 'hiperbola', nombre: 'Hipérbola', desc: 'Asíntotas, focos y excentricidad.' },
+      { id: 'general', nombre: 'Ecuación general de segundo grado', desc: 'Completar cuadrados e identificar la cónica.' } ] },
+    { id: 'espacio', nombre: 'Recta y plano en R³', icono: '🧊', desc: 'Ecuaciones y posiciones relativas en el espacio.', subtemas: [
+      { id: 'plano', nombre: 'Ecuaciones del plano', desc: 'Vector normal, ecuación general y paramétrica.' },
+      { id: 'recta3', nombre: 'La recta en el espacio', desc: 'Ecuaciones vectorial, paramétrica y simétrica.' },
+      { id: 'relativas', nombre: 'Posiciones relativas y distancias', desc: 'Recta-plano, plano-plano y distancia punto-plano.' } ] }
+  ] },
+  { id: 'funciones', nombre: 'Funciones y Precálculo', icono: '📈', desc: 'Funciones elementales, sus gráficas y transformaciones.', acc: ['#6d28d9', '#a78bfa'], ejes: [
+    { id: 'elementales', nombre: 'Funciones elementales', icono: '📈', desc: 'Lineal, cuadrática, polinómica y racional.', subtemas: [
+      { id: 'cuadratica', nombre: 'Función lineal y cuadrática', desc: 'Pendiente, vértice, raíces y forma canónica.' },
+      { id: 'polinomica', nombre: 'Funciones polinómicas', desc: 'Raíces, multiplicidad y comportamiento en los extremos.' },
+      { id: 'racional', nombre: 'Funciones racionales', desc: 'Dominio, asíntotas verticales y horizontales.' } ] },
+    { id: 'explog', nombre: 'Exponencial y logarítmica', icono: '🧮', desc: 'Crecimiento, logaritmos y ecuaciones.', subtemas: [
+      { id: 'exponencial', nombre: 'Función exponencial', desc: 'Base, crecimiento, decrecimiento y asíntota.' },
+      { id: 'logaritmo', nombre: 'Logaritmo y propiedades', desc: 'Definición, propiedades y cambio de base.' },
+      { id: 'ecuaciones', nombre: 'Ecuaciones exponenciales y logarítmicas', desc: 'Resolución y verificación de soluciones.' } ] },
+    { id: 'transformaciones', nombre: 'Transformaciones y composición', icono: '🔁', desc: 'Traslaciones, dilataciones, inversa y composición.', subtemas: [
+      { id: 'traslaciones', nombre: 'Traslaciones, dilataciones y reflexiones', desc: 'Efecto de los parámetros sobre la gráfica.' },
+      { id: 'composicion', nombre: 'Composición e inversa', desc: 'Composición, inyectividad y función inversa.' },
+      { id: 'dominio', nombre: 'Dominio, imagen y signo', desc: 'Análisis completo de una función.' } ] }
+  ] },
+  { id: 'trigonometria', nombre: 'Trigonometría', icono: '🔺', desc: 'Razones, funciones trigonométricas e identidades.', acc: ['#b45309', '#fbbf24'], ejes: [
+    { id: 'razones', nombre: 'Razones y círculo trigonométrico', icono: '🔺', desc: 'Triángulos, radianes y círculo unitario.', subtemas: [
+      { id: 'triangulo', nombre: 'Razones en el triángulo rectángulo', desc: 'Seno, coseno y tangente de ángulos agudos.' },
+      { id: 'circulo', nombre: 'Círculo trigonométrico y radianes', desc: 'Ángulos orientados, reducción al primer cuadrante.' },
+      { id: 'teoremas', nombre: 'Teoremas del seno y del coseno', desc: 'Resolución de triángulos oblicuángulos.' } ] },
+    { id: 'graficas', nombre: 'Funciones trigonométricas', icono: '〰️', desc: 'Gráficas, amplitud, período y fase.', subtemas: [
+      { id: 'graficas', nombre: 'Gráficas de seno, coseno y tangente', desc: 'Dominio, imagen, ceros y asíntotas.' },
+      { id: 'parametros', nombre: 'Amplitud, período y fase', desc: 'Función y = A sen(Bx + C) + D.' } ] },
+    { id: 'identidades', nombre: 'Identidades y ecuaciones', icono: '🧩', desc: 'Demostraciones y resolución de ecuaciones.', subtemas: [
+      { id: 'identidades', nombre: 'Identidades fundamentales', desc: 'Pitagórica, suma de ángulos y ángulo doble.' },
+      { id: 'ecuaciones', nombre: 'Ecuaciones trigonométricas', desc: 'Soluciones generales y en un intervalo.' } ] }
+  ] },
+  { id: 'calculo', nombre: 'Cálculo Diferencial', icono: '📉', desc: 'Límites, continuidad, derivadas y sus aplicaciones.', acc: ['#047857', '#34d399'], ejes: [
+    { id: 'limites', nombre: 'Límites y continuidad', icono: '🎯', desc: 'Cálculo de límites e indeterminaciones.', subtemas: [
+      { id: 'limites', nombre: 'Cálculo de límites', desc: 'Límites laterales, al infinito y propiedades.' },
+      { id: 'indeterminaciones', nombre: 'Indeterminaciones', desc: '0/0, ∞/∞ y técnicas para salvarlas.' },
+      { id: 'continuidad', nombre: 'Continuidad y asíntotas', desc: 'Tipos de discontinuidad y asíntotas.' } ] },
+    { id: 'derivada', nombre: 'La derivada', icono: '📉', desc: 'Definición, recta tangente y reglas.', subtemas: [
+      { id: 'definicion', nombre: 'Definición y recta tangente', desc: 'Cociente incremental e interpretación geométrica.' },
+      { id: 'reglas', nombre: 'Reglas de derivación', desc: 'Suma, producto, cociente y derivadas elementales.' },
+      { id: 'cadena', nombre: 'Regla de la cadena', desc: 'Derivada de funciones compuestas.' } ] },
+    { id: 'aplicaciones', nombre: 'Aplicaciones de la derivada', icono: '🏔️', desc: 'Extremos, concavidad y optimización.', subtemas: [
+      { id: 'extremos', nombre: 'Crecimiento y extremos', desc: 'Puntos críticos, máximos y mínimos.' },
+      { id: 'concavidad', nombre: 'Concavidad e inflexión', desc: 'Segunda derivada y puntos de inflexión.' },
+      { id: 'optimizacion', nombre: 'Optimización', desc: 'Problemas de máximos y mínimos.' } ] }
+  ] },
+  { id: 'algebra', nombre: 'Álgebra Lineal', icono: '🔢', desc: 'Matrices, sistemas y transformaciones lineales.', acc: ['#be123c', '#fb7185'], ejes: [
+    { id: 'matrices', nombre: 'Matrices y determinantes', icono: '🔢', desc: 'Operaciones, determinantes e inversa.', subtemas: [
+      { id: 'operaciones', nombre: 'Operaciones con matrices', desc: 'Suma, producto y transpuesta.' },
+      { id: 'determinantes', nombre: 'Determinantes', desc: 'Cálculo y propiedades.' },
+      { id: 'inversa', nombre: 'Matriz inversa', desc: 'Existencia y cálculo de la inversa.' } ] },
+    { id: 'sistemas', nombre: 'Sistemas de ecuaciones', icono: '⚖️', desc: 'Gauss y clasificación de sistemas.', subtemas: [
+      { id: 'gauss', nombre: 'Método de Gauss', desc: 'Escalonamiento y resolución.' },
+      { id: 'clasificacion', nombre: 'Clasificación de sistemas', desc: 'Compatible determinado, indeterminado e incompatible.' } ] },
+    { id: 'transformaciones', nombre: 'Transformaciones lineales en el plano', icono: '🔄', desc: 'Matriz asociada y transformaciones geométricas.', subtemas: [
+      { id: 'matriz', nombre: 'Matriz asociada', desc: 'Imagen de la base canónica.' },
+      { id: 'geometricas', nombre: 'Rotaciones, simetrías y homotecias', desc: 'Efecto geométrico de una matriz 2×2.' } ] }
+  ] }
+];
+
+/* =====================================================================
+   UTILIDADES
+   ===================================================================== */
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+const escapeHTML = s => String(s ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+const clip = (s, n) => { s = String(s || ''); return s.length > n ? s.slice(0, n) + '…' : s; };
+const byteLen = s => new TextEncoder().encode(s).length;
+const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const slug = s => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'tema';
+const today = () => new Date().toISOString().slice(0, 10);
+const stamp = (d = new Date()) => d.toLocaleString('es', { dateStyle: 'short', timeStyle: 'short' });
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const spinnerHTML = '<span class="spinner" aria-hidden="true"></span>';
+
+function getTag(text, name) {
+  const t = String(text || '');
+  const closed = t.match(new RegExp(`<${name}>([\\s\\S]*?)</${name}>`, 'i'));
+  if (closed) return closed[1].trim();
+  const open = t.match(new RegExp(`<${name}>([\\s\\S]*?)(?=<\\/?[a-z_]+>|$)`, 'i'));
+  return open ? open[1].trim() : '';
+}
+function getTags(text, name) {
+  return [...String(text || '').matchAll(new RegExp(`<${name}>([\\s\\S]*?)</${name}>`, 'gi'))].map(m => m[1].trim());
+}
+function toList(s) {
+  return String(s || '').split('\n').map(l => l.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '').trim()).filter(Boolean);
+}
+
+/* =====================================================================
+   RENDER DE MATEMÁTICA Y MARKDOWN
+   ===================================================================== */
+function renderMath(tex, display) {
+  let html = null;
+  if (window.__mjReady && window.MathJax && MathJax.tex2svg) {
+    try { html = MathJax.tex2svg(tex, { display }).outerHTML; } catch (e) { html = null; }
+  }
+  if (!html && window.katex) {
+    try { html = katex.renderToString(tex, { displayMode: display, throwOnError: false, output: 'mathml' }); } catch (e) { html = null; }
+  }
+  if (!html) html = `<code class="tex">${escapeHTML(tex)}</code>`;
+  return display ? `<span class="math-block">${html}</span>` : html;
+}
+
+function markdownToHTML(src) {
+  const math = [];
+  const stash = (tex, display) => { math.push(renderMath(tex.trim(), display)); return `\uE000${math.length - 1}\uE001`; };
+  let text = String(src || '').replace(/\r\n?/g, '\n')
+    .replace(/```[a-z]*\n?/gi, '')
+    .replace(/\$\$([\s\S]+?)\$\$/g, (_, m) => stash(m, true))
+    .replace(/\\\[([\s\S]+?)\\\]/g, (_, m) => stash(m, true))
+    .replace(/\\\(([\s\S]+?)\\\)/g, (_, m) => stash(m, false))
+    .replace(/\$([^$\n]+?)\$/g, (_, m) => stash(m, false));
+  text = escapeHTML(text);
+
+  const inline = s => s
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\((seg[uú]n [^()]{1,80})\)/g, '<span class="cita">($1)</span>')
+    .replace(/(^|[^*\w])\*(?!\s)([^*\n]+?)\*(?!\*)/g, '$1<em>$2</em>');
+
+  let html = '', listType = null, para = [], inComp = false;
+  const flushPara = () => { if (para.length) { html += `<p>${para.map(inline).join('<br>')}</p>`; para = []; } };
+  const closeList = () => { if (listType) { html += `</${listType}>`; listType = null; } };
+  const HEAD = [3, 3, 4, 5, 6, 6];
+
+  for (const raw of text.split('\n')) {
+    const line = raw.trimEnd();
+    let m;
+    if (/^\s*:::\s*complemento/i.test(line)) { flushPara(); closeList(); if (inComp) html += '</aside>'; html += '<aside class="complemento"><p class="comp-title">➕ Complemento del tutor</p>'; inComp = true; continue; }
+    if (inComp && /^\s*:::\s*$/.test(line)) { flushPara(); closeList(); html += '</aside>'; inComp = false; continue; }
+    if (!line.trim()) { flushPara(); closeList(); continue; }
+    if ((m = line.match(/^\s*(#{1,6})\s+(.*)$/))) {
+      flushPara(); closeList();
+      const lvl = HEAD[m[1].length - 1];
+      html += `<h${lvl}>${inline(m[2])}</h${lvl}>`; continue;
+    }
+    if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) { flushPara(); closeList(); html += '<hr>'; continue; }
+    if ((m = line.match(/^\s*[-*+•]\s+(.*)$/))) {
+      flushPara();
+      if (listType !== 'ul') { closeList(); html += '<ul>'; listType = 'ul'; }
+      html += `<li>${inline(m[1])}</li>`; continue;
+    }
+    if ((m = line.match(/^\s*(\d+)[.)]\s+(.*)$/))) {
+      flushPara();
+      if (listType !== 'ol') { closeList(); html += `<ol start="${m[1]}">`; listType = 'ol'; }
+      html += `<li>${inline(m[2])}</li>`; continue;
+    }
+    closeList();
+    para.push(line);
+  }
+  flushPara(); closeList();
+  if (inComp) html += '</aside>';
+  return html.replace(/\uE000(\d+)\uE001/g, (_, i) => math[+i]);
+}
+const mdInline = t => markdownToHTML(t).replace(/^<p>([\s\S]*)<\/p>$/, '$1');
+
+/* =====================================================================
+   ALMACENAMIENTO (db privado por usuario, con respaldo local)
+   ===================================================================== */
+const Store = {
+  mode: 'local', db: null, uid: null,
+  async init() {
+    if (!window.claude || typeof claude.use !== 'function') return;
+    const [db, user] = await Promise.all([
+      claude.use('db').catch(() => null),
+      claude.use('user').catch(() => null)
+    ]);
+    if (db && user) {
+      try {
+        const id = await user.id();
+        if (id) { this.db = db; this.uid = id; this.mode = 'db'; }
+      } catch (e) { /* queda local */ }
+    }
+  },
+  base() { return `data/users/${this.uid}`; },
+  debilesRef() { return this.db.doc(`${this.base()}/progreso`).collection('debiles'); },
+  localGet(k, fallback) { try { const v = localStorage.getItem('gm_' + k); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } },
+  localSet(k, v) { try { localStorage.setItem('gm_' + k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+  async getDoc(name, fallback) {
+    if (this.mode === 'db') {
+      try { const s = await this.db.doc(`${this.base()}/${name}`).get(); return s.exists ? structuredClone(s.data()) : fallback; }
+      catch (e) { return this.localGet(name, fallback); }
+    }
+    return this.localGet(name, fallback);
+  },
+  async setDoc(name, data) {
+    if (this.mode === 'db') {
+      try { await this.db.doc(`${this.base()}/${name}`).set(data); return true; }
+      catch (e) { return this.localSet(name, data); }
+    }
+    return this.localSet(name, data);
+  },
+  async listDebiles() {
+    if (this.mode === 'db') {
+      try {
+        const snap = await this.debilesRef().orderBy('fecha', 'desc').get();
+        return snap.docs.map(d => ({ id: d.id, ...structuredClone(d.data()) }));
+      } catch (e) { /* respaldo */ }
+    }
+    return this.localGet('debiles', []);
+  },
+  async addDebil(item) {
+    if (this.mode === 'db') {
+      try { const ref = await this.debilesRef().add(item); return { id: ref.id, ...item }; }
+      catch (e) { /* respaldo */ }
+    }
+    const list = this.localGet('debiles', []);
+    const withId = { id: newId(), ...item };
+    list.unshift(withId);
+    this.localSet('debiles', list);
+    return withId;
+  },
+  async deleteDebil(id) {
+    if (this.mode === 'db') {
+      try { await this.debilesRef().doc(id).delete(); return; } catch (e) { /* respaldo */ }
+    }
+    this.localSet('debiles', this.localGet('debiles', []).filter(d => d.id !== id));
+  }
+};
+
+/* =====================================================================
+   ESTADO
+   ===================================================================== */
+const S = {
+  view: 'materias', tab: 'teoria',
+  materia: null, eje: null, sub: null,
+  config: { apuntes: {}, estilo: '', asignacion: {}, estricto: false, ejesGen: {}, planes: {} },
+  progreso: { temas: {} },
+  debiles: [],
+  cache: {}, sessions: {}
+};
+const ejesDe = m => [...m.ejes, ...((S.config.ejesGen || {})[m.id] || [])];
+const key = () => S.sub ? `${S.materia.id}/${S.eje.id}/${S.sub.id}` : null;
+function sess(k = key()) {
+  if (!k) return null;
+  return S.sessions[k] ||= {
+    turns: [], currentQ: '', draft: '', comprension: 0, entendido: [], falta: [], summary: null,
+    exercise: null, hints: 0, showSol: false, nivel: 'Parcial', resolucion: '', photo: null, correction: '',
+    exam: null, lab: null, analysis: '',
+    busy: {}, err: {}
+  };
+}
+
+/* =====================================================================
+   IA (capacidad sample) Y DESCARGAS
+   ===================================================================== */
+const AI = { sample: null, claudeImages: false, claudeTypes: 'image/*', images: true, imageTypes: 'image/jpeg,image/png,image/webp', downloads: null };
+
+// Proveedores disponibles. Los modelos son sugerencias: se puede escribir cualquier otro.
+const PROVIDERS = {
+  claude: { nombre: 'Claude integrado (solo dentro de claude.ai)', needsKey: false,
+    nota: 'Usa Claude sin clave cuando la app se abre como artefacto en claude.ai.' },
+  gemini: { nombre: 'Google Gemini', modelo: 'gemini-2.5-flash', modelos: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.5-flash-lite'],
+    keyUrl: 'https://aistudio.google.com/apikey', nota: 'Tiene un nivel gratuito generoso. Clave en Google AI Studio.' },
+  openrouter: { nombre: 'OpenRouter (cientos de modelos con una sola clave)', modelo: 'google/gemini-2.5-flash',
+    modelos: ['google/gemini-2.5-flash', 'openai/gpt-4o-mini', 'deepseek/deepseek-chat', 'meta-llama/llama-3.3-70b-instruct', 'qwen/qwen-2.5-72b-instruct'],
+    base: 'https://openrouter.ai/api/v1', keyUrl: 'https://openrouter.ai/keys', nota: 'Escribe el identificador del modelo tal como figura en openrouter.ai/models.' },
+  openai: { nombre: 'OpenAI', modelo: 'gpt-4o-mini', modelos: ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini', 'gpt-4.1'],
+    base: 'https://api.openai.com/v1', keyUrl: 'https://platform.openai.com/api-keys', nota: '' },
+  anthropic: { nombre: 'Anthropic (API directa)', modelo: 'claude-sonnet-5', modelos: ['claude-sonnet-5', 'claude-opus-5-5', 'claude-haiku-4-5-20251001'],
+    keyUrl: 'https://console.anthropic.com/settings/keys', nota: '' },
+  compatible: { nombre: 'Otro compatible con OpenAI (Groq, DeepSeek, Mistral, Ollama, LM Studio…)', modelo: 'llama3.1', modelos: [],
+    base: 'http://localhost:11434/v1', keyOptional: true,
+    nota: 'Cualquier servicio con endpoint /chat/completions. Para Ollama local inicia el servidor con OLLAMA_ORIGINS=* para permitir el navegador.' }
+};
+const IA = { provider: null, keys: {}, models: {}, bases: {} };
+function loadIA() {
+  try { Object.assign(IA, JSON.parse(localStorage.getItem('gm_ia') || '{}')); } catch (e) { /* sin datos */ }
+  IA.keys ||= {}; IA.models ||= {}; IA.bases ||= {};
+}
+function saveIA() { try { localStorage.setItem('gm_ia', JSON.stringify(IA)); } catch (e) { /* sin persistencia */ } }
+const inClaude = () => !!(window.claude && typeof claude.use === 'function');
+const modelOf = p => (IA.models[p] || PROVIDERS[p].modelo || '').trim();
+const baseOf = p => (IA.bases[p] || PROVIDERS[p].base || '').trim().replace(/\/+$/, '');
+function aiReady() {
+  const p = IA.provider;
+  if (!p) return false;
+  if (p === 'claude') return !!AI.sample;
+  if (inClaude()) return false; // la política de seguridad de claude.ai bloquea llamadas externas
+  return !!(IA.keys[p] || PROVIDERS[p].keyOptional) && !!modelOf(p);
+}
+function applyIA() {
+  const p = IA.provider;
+  AI.images = p === 'claude' ? AI.claudeImages : true;
+  AI.imageTypes = p === 'claude' ? AI.claudeTypes : 'image/jpeg,image/png,image/webp';
+  const notice = $('#ai-notice');
+  if (aiReady()) { notice.hidden = true; }
+  else {
+    const msg = inClaude() && p !== 'claude'
+      ? 'Dentro de claude.ai solo funciona «Claude integrado». Para usar otro proveedor, abre el archivo HTML en tu navegador.'
+      : 'Configura un proveedor de IA (Gemini, OpenRouter, OpenAI, Anthropic o uno local) para activar el mentor. El laboratorio gráfico funciona igual.';
+    notice.innerHTML = `${escapeHTML(msg)}<button class="btn sm" data-open-config>⚙️ Configurar</button>`;
+    notice.hidden = false;
+  }
+  const la = $('#lab-analyze');
+  if (la) la.disabled = !aiReady();
+}
+
+const SAMPLE_ERRORS = {
+  unavailable: 'El mentor con IA no está disponible. Configura un proveedor en ⚙️ Config.',
+  no_key: 'Falta la API key del proveedor elegido. Agrégala en ⚙️ Config.',
+  no_model: 'Falta el nombre del modelo. Escríbelo en ⚙️ Config.',
+  timeout: 'El proveedor tardó demasiado en responder. Prueba de nuevo o elige un modelo más rápido.',
+  network: 'No se pudo conectar con el proveedor. Revisa tu conexión, la URL base o, si usas un servidor local, que permita solicitudes del navegador (CORS).',
+  bad_key: 'La API key fue rechazada. Revisa que esté bien copiada y activa.',
+  not_found: 'El proveedor no encontró ese modelo o endpoint. Revisa el nombre del modelo y la URL base.',
+  empty: 'El modelo respondió vacío. Prueba de nuevo o con otro modelo.',
+  blocked: 'El proveedor bloqueó la respuesta por sus filtros de seguridad. Reformula o prueba otro modelo.',
+  not_granted: 'No se concedió permiso para usar Claude en esta página.',
+  rate_limited: 'Demasiadas consultas seguidas o cuota agotada. Espera un momento y vuelve a intentarlo.',
+  prompt_too_large: 'El material es demasiado largo para una consulta. Quita algunos apuntes e inténtalo de nuevo.',
+  images_unavailable: 'Esta vista no permite enviar imágenes.',
+  image_rejected: 'La imagen fue rechazada. Prueba con una foto en JPG o PNG.',
+  session_expired: 'La sesión expiró. Recarga la página.',
+  sampling_disabled: 'El uso de Claude está desactivado para esta página.',
+  refused: 'El modelo no pudo responder a esta solicitud.'
+};
+const aiError = e => SAMPLE_ERRORS[e?.code] || `No se pudo completar la consulta (${e?.message || e?.code || 'error desconocido'}).`;
+const coded = (code, message) => Object.assign(new Error(message || code), { code });
+
+async function initCapabilities() {
+  loadIA();
+  if (inClaude()) {
+    const [sample, downloads] = await Promise.all([
+      claude.use('sample').catch(() => null),
+      claude.use('downloads').catch(() => null)
+    ]);
+    AI.sample = sample;
+    AI.downloads = downloads;
+    if (sample) {
+      const lim = await sample.limits().catch(() => null);
+      AI.claudeImages = !!lim?.images;
+      if (lim?.images?.mediaTypes?.length) AI.claudeTypes = lim.images.mediaTypes.join(',');
+    }
+    if (sample) IA.provider = 'claude';
+  } else if (!IA.provider || IA.provider === 'claude') {
+    IA.provider = 'gemini';
+  }
+  applyIA();
+  rerenderCurrent();
+}
+
+function blobToB64(blob) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => { const url = r.result; res({ mime: blob.type || 'image/jpeg', data: url.split(',')[1], url }); };
+    r.onerror = () => rej(new Error('No se pudo leer la imagen.'));
+    r.readAsDataURL(blob);
+  });
+}
+async function httpJSON(url, headers, body, signal) {
+  let res;
+  try {
+    res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body), signal });
+  } catch (e) {
+    if (e.name === 'AbortError') throw coded('timeout');
+    throw coded('network');
+  }
+  let data = null;
+  try { data = await res.json(); } catch (e) { /* sin cuerpo JSON */ }
+  if (!res.ok) {
+    const msg = data?.error?.message || data?.message || (typeof data?.error === 'string' ? data.error : '') || `HTTP ${res.status}`;
+    if (res.status === 401 || res.status === 403) throw coded('bad_key', msg);
+    if (res.status === 404) throw coded('not_found', msg);
+    if (res.status === 429) throw coded('rate_limited', msg);
+    if (res.status === 413) throw coded('prompt_too_large', msg);
+    throw coded('http', msg);
+  }
+  return data || {};
+}
+const textOf = c => typeof c === 'string' ? c : Array.isArray(c) ? c.map(p => p?.text || '').join('') : '';
+
+async function callProvider(p, prompt, images, cfg = {}) {
+  const key = (cfg.key ?? IA.keys[p] ?? '').trim();
+  const model = (cfg.model ?? modelOf(p)).trim();
+  const base = (cfg.base ?? baseOf(p)).replace(/\/+$/, '');
+  if (!key && !PROVIDERS[p].keyOptional) throw coded('no_key');
+  if (!model) throw coded('no_model');
+  const imgs = images?.length ? await Promise.all(images.map(blobToB64)) : [];
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 180000);
+  try {
+    if (p === 'gemini') {
+      const parts = [{ text: prompt }, ...imgs.map(i => ({ inline_data: { mime_type: i.mime, data: i.data } }))];
+      const data = await httpJSON(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+        { 'x-goog-api-key': key }, { contents: [{ role: 'user', parts }] }, ctrl.signal);
+      if (data.promptFeedback?.blockReason) throw coded('blocked');
+      const cand = data.candidates?.[0];
+      if (cand?.finishReason === 'SAFETY') throw coded('blocked');
+      const text = (cand?.content?.parts || []).filter(x => !x.thought).map(x => x.text || '').join('');
+      if (!text.trim()) throw coded('empty');
+      return text;
+    }
+    if (p === 'anthropic') {
+      const content = [...imgs.map(i => ({ type: 'image', source: { type: 'base64', media_type: i.mime, data: i.data } })), { type: 'text', text: prompt }];
+      const data = await httpJSON('https://api.anthropic.com/v1/messages', {
+        'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true'
+      }, { model, max_tokens: 8000, messages: [{ role: 'user', content }] }, ctrl.signal);
+      const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+      if (!text.trim()) throw coded(data.stop_reason === 'refusal' ? 'refused' : 'empty');
+      return text;
+    }
+    // OpenRouter, OpenAI y cualquier endpoint compatible
+    const content = imgs.length ? [{ type: 'text', text: prompt }, ...imgs.map(i => ({ type: 'image_url', image_url: { url: i.url } }))] : prompt;
+    const headers = key ? { Authorization: `Bearer ${key}` } : {};
+    if (p === 'openrouter') { headers['X-Title'] = 'GeoMentor'; if (/^https?:/.test(location.href)) headers['HTTP-Referer'] = location.origin; }
+    const data = await httpJSON(`${base}/chat/completions`, headers, { model, messages: [{ role: 'user', content }] }, ctrl.signal);
+    const text = textOf(data.choices?.[0]?.message?.content);
+    if (!text.trim()) throw coded(data.choices?.[0]?.finish_reason === 'content_filter' ? 'blocked' : 'empty');
+    return text.replace(/<think>[\s\S]*?<\/think>/g, '');
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function ask(prompt, { images = null, fresh = false } = {}) {
+  const p = IA.provider;
+  if (p === 'claude') {
+    if (!AI.sample) throw coded('unavailable');
+    const opts = {};
+    if (images) opts.images = images;
+    if (fresh) opts.cache = false;
+    const { text } = await AI.sample(prompt, opts);
+    return text;
+  }
+  if (!p || !aiReady()) throw coded(inClaude() ? 'unavailable' : (!IA.keys[p] && !PROVIDERS[p]?.keyOptional ? 'no_key' : 'unavailable'));
+  return callProvider(p, prompt, images);
+}
+
+async function saveFile(data, filename) {
+  const blob = data instanceof Blob ? data : new Blob([data], { type: 'application/octet-stream' });
+  if (AI.downloads) {
+    try { await AI.downloads.save({ filename, data: blob }); return true; }
+    catch (e) {
+      if (e?.code !== 'declined') mentor('No se pudo guardar el archivo: ' + (e?.message || e?.code || 'error'));
+      return false;
+    }
+  }
+  try {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.style.display = 'none';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    return true;
+  } catch (e) {
+    mentor('No se pudo descargar el archivo en este navegador.');
+    return false;
+  }
+}
+
+/* ---------- Panel de configuración de IA ---------- */
+let iaDraft = null;
+function renderIAConfig() {
+  iaDraft ||= { provider: IA.provider, keys: { ...IA.keys }, models: { ...IA.models }, bases: { ...IA.bases } };
+  const sel = $('#ia-provider');
+  sel.innerHTML = Object.entries(PROVIDERS)
+    .filter(([id]) => id !== 'claude' || AI.sample)
+    .map(([id, pr]) => `<option value="${id}" ${id === iaDraft.provider ? 'selected' : ''}>${escapeHTML(pr.nombre)}</option>`).join('');
+  const p = iaDraft.provider, pr = PROVIDERS[p];
+  const external = p !== 'claude';
+  $('#ia-provider-note').textContent = (inClaude() && external)
+    ? '⚠️ Dentro de claude.ai las llamadas a otros proveedores están bloqueadas. Descarga el HTML y ábrelo en tu navegador para usarlos.'
+    : pr.nota || '';
+  $('#ia-key-row').hidden = !external;
+  $('#ia-model-row').hidden = !external;
+  $('#ia-base-row').hidden = !(p === 'compatible' || p === 'openai');
+  $('#ia-key-opt').textContent = pr.keyOptional ? '(opcional en servidores locales)' : '';
+  $('#ia-key').value = iaDraft.keys[p] || '';
+  $('#ia-model').value = iaDraft.models[p] || pr.modelo || '';
+  $('#ia-models').innerHTML = (pr.modelos || []).map(m => `<option value="${escapeHTML(m)}">`).join('');
+  $('#ia-base').value = iaDraft.bases[p] || pr.base || '';
+  const link = $('#ia-key-link');
+  link.hidden = !pr.keyUrl;
+  if (pr.keyUrl) { link.href = pr.keyUrl; link.textContent = '🔑 Obtener una API key'; }
+  $('#ia-test-result').textContent = '';
+}
+function readIADraft() {
+  if (!iaDraft) return;
+  const p = iaDraft.provider;
+  if (p === 'claude') return;
+  iaDraft.keys[p] = $('#ia-key').value.trim();
+  iaDraft.models[p] = $('#ia-model').value.trim();
+  if (p === 'compatible' || p === 'openai') iaDraft.bases[p] = $('#ia-base').value.trim();
+}
+function commitIA() {
+  readIADraft();
+  if (!iaDraft) return;
+  Object.assign(IA, { provider: iaDraft.provider, keys: iaDraft.keys, models: iaDraft.models, bases: iaDraft.bases });
+  iaDraft = null;
+  saveIA();
+  applyIA();
+}
+async function testIA() {
+  readIADraft();
+  const p = iaDraft.provider;
+  const out = $('#ia-test-result');
+  out.innerHTML = `${spinnerHTML} Probando…`;
+  out.style.color = '';
+  try {
+    let text;
+    if (p === 'claude') { if (!AI.sample) throw coded('unavailable'); text = (await AI.sample('Responde únicamente con la palabra OK.', { cache: false })).text; }
+    else {
+      if (inClaude()) throw coded('network');
+      text = await callProvider(p, 'Responde únicamente con la palabra OK.', null, { key: iaDraft.keys[p] || '', model: iaDraft.models[p] || PROVIDERS[p].modelo || '', base: iaDraft.bases[p] || PROVIDERS[p].base || '' });
+    }
+    out.textContent = `✔ Conectado. Respuesta: «${clip(text.trim(), 40)}»`;
+    out.style.color = 'var(--ok)';
+  } catch (e) {
+    out.textContent = '✖ ' + aiError(e);
+    out.style.color = 'var(--bad)';
+  }
+}
+
+/* =====================================================================
+   CONTEXTO PARA LOS PROMPTS
+   ===================================================================== */
+const STOP = new Set(['para', 'como', 'entre', 'sobre', 'desde', 'segun', 'ecuacion', 'ecuaciones', 'funcion', 'funciones', 'tema', 'temas', 'plano']);
+// Grupos de sinónimos matemáticos (sin tildes). Si el tema menciona un término, se buscan todos los del grupo.
+const SINONIMOS = [
+  ['producto escalar', 'producto interno', 'producto punto'],
+  ['producto vectorial', 'producto cruz', 'producto externo'],
+  ['modulo', 'norma', 'magnitud', 'longitud del vector'],
+  ['versor', 'vector unitario'],
+  ['ortogonal', 'perpendicular'],
+  ['paralel', 'colineal'],
+  ['proyeccion', 'componente ortogonal'],
+  ['pendiente', 'coeficiente angular'],
+  ['distancia punto', 'distancia de un punto'],
+  ['circunferencia', 'circulo'],
+  ['elipse', 'excentricidad', 'semieje'],
+  ['hiperbola', 'asintota'],
+  ['parabola', 'directriz'],
+  ['segundo grado', 'completar cuadrado', 'conica'],
+  ['ecuacion del plano', 'vector normal'],
+  ['limite', 'tiende a'],
+  ['indeterminacion', 'indeterminada'],
+  ['continuidad', 'discontinuidad'],
+  ['derivada', 'derivacion', 'diferenciable', 'recta tangente'],
+  ['regla de la cadena', 'funcion compuesta'],
+  ['extremo', 'maximo', 'minimo', 'punto critico'],
+  ['concavidad', 'inflexion', 'segunda derivada'],
+  ['optimizacion', 'maximizar', 'minimizar'],
+  ['logaritmo', 'logaritmica'],
+  ['exponencial', 'crecimiento exponencial'],
+  ['trigonometric', 'seno', 'coseno'],
+  ['radian', 'circulo trigonometrico', 'circunferencia trigonometrica'],
+  ['identidad', 'identidades'],
+  ['matriz', 'matrices'],
+  ['determinante', 'sarrus', 'cofactor'],
+  ['inversa', 'invertible', 'adjunta'],
+  ['gauss', 'escalonad', 'sistema de ecuaciones'],
+  ['rouche', 'compatible', 'rango'],
+  ['transformacion lineal', 'aplicacion lineal', 'matriz asociada'],
+  ['rotacion', 'simetria', 'homotecia']
+];
+const stem = w => w.length > 6 ? w.slice(0, -2) : w;
+function keywords() {
+  const txt = norm([S.eje?.nombre, S.eje?.desc, S.sub?.nombre, S.sub?.desc].join(' '));
+  const words = txt.split(/[^a-z0-9]+/).filter(w => w.length >= 4 && !STOP.has(w));
+  const terms = new Map(words.map(w => [stem(w), 1]));
+  for (const grupo of SINONIMOS) {
+    if (grupo.some(t => txt.includes(t) || words.some(w => t.startsWith(stem(w)) && stem(w).length >= 5))) {
+      for (const t of grupo) terms.set(t, t.includes(' ') ? 3 : 2);
+    }
+  }
+  return [...terms].map(([t, w]) => ({ t, w }));
+}
+// Estado del archivo respecto del subtema actual: asignado a él, asignado a otro tema o libre.
+function scopeState(name) {
+  if (S.sub?.archivos?.includes(name)) return 'asignado';
+  const sc = (S.config.asignacion || {})[name] || '';
+  if (!sc) return 'libre';
+  const k = key() || '';
+  return (k === sc || k.startsWith(sc + '/')) ? 'asignado' : 'otro';
+}
+function chunksOf(name, text) {
+  const out = [];
+  const push = t => { if (t.trim()) out.push({ file: name, p: t }); };
+  for (const para of String(text).split(/\n\s*\n/)) {
+    if (para.length <= 1500) { push(para); continue; }
+    let buf = '';
+    for (let line of para.split('\n')) {
+      while (line.length > 1500) { push(buf); buf = ''; push(line.slice(0, 1200)); line = line.slice(1200); }
+      if (buf && buf.length + line.length > 1200) { push(buf); buf = ''; }
+      buf += (buf ? '\n' : '') + line;
+    }
+    push(buf);
+  }
+  return out;
+}
+const Apuntes = { last: { files: [], total: 0 }, excluir: new Set() };
+function apuntesRelevantes(budget) {
+  const files = Object.entries(S.config.apuntes || {});
+  const elegibles = files.filter(([n]) => scopeState(n) !== 'otro' && !Apuntes.excluir.has(n));
+  Apuntes.last = { files: [], total: files.length };
+  if (!elegibles.length || budget <= 0) return '';
+  const kw = keywords();
+  const chunks = elegibles.flatMap(([n, t]) => chunksOf(n, t)).map((c, i) => {
+    const np = norm(c.p);
+    let score = kw.reduce((acc, { t, w }) => acc + w * (np.split(t).length - 1), 0);
+    if (scopeState(c.file) === 'asignado') score += 1000;
+    return { ...c, i, score };
+  });
+  const chosen = [];
+  let used = 0;
+  for (const it of [...chunks].sort((a, b) => b.score - a.score || a.i - b.i)) {
+    if (used + it.p.length + 2 > budget) continue;
+    chosen.push(it); used += it.p.length + 2;
+  }
+  chosen.sort((a, b) => a.i - b.i);
+  Apuntes.last = { files: [...new Set(chosen.map(c => c.file))], total: files.length };
+  let out = '', cur = null;
+  for (const c of chosen) {
+    if (c.file !== cur) { out += `${out ? '\n\n' : ''}=== ${c.file}${scopeState(c.file) === 'asignado' ? ' (asignado por el estudiante a este tema)' : ''} ===\n`; cur = c.file; }
+    else out += '\n\n';
+    out += c.p;
+  }
+  return out;
+}
+function fuentesHTML(f) {
+  if (!f || !f.total) return '';
+  return `<p class="fuentes">${f.files.length ? `📚 Basado en tus apuntes: ${f.files.map(escapeHTML).join(', ')}` : '📚 Ningún apunte cargado corresponde a este tema: respuesta con conocimiento general.'}</p>`;
+}
+function debilesDelTema() {
+  const k = key();
+  return S.debiles.filter(d => d.key === k).flatMap(d => d.puntos || []).slice(0, 12);
+}
+const FORMAT_RULES = 'FORMATO: fórmulas en LaTeX con $...$ en línea y $$...$$ en bloque; Markdown simple (### títulos, **negrita**, listas con "- "). Sin tablas ni bloques de código. Responde SOLO con las etiquetas pedidas, sin texto fuera de ellas.';
+const LAB_SYNTAX = `SINTAXIS DEL LABORATORIO GRÁFICO (una expresión por línea, texto plano, NUNCA LaTeX):
+- Parámetro con deslizador: k = 2
+- Función: y = a*x^2 + b*x + c   (también f(x) = ...; potencias con ^; funciones sen, cos, tan, sqrt, abs, ln, exp; constante pi)
+- Ecuación implícita (cónicas, rectas generales): x^2/9 + y^2/4 = 1   ó   2x + 3y - 6 = 0
+- Recta vertical: x = 3
+- Punto: A = (2, 3)
+- Vector desde el origen: u = vector(3, 4); vector entre puntos: w = vector(A, B)
+- Segmento: s = segmento(A, B); recta por dos puntos: r = recta(A, B); recta por un punto con dirección: r = recta(A, u)
+- Nombres: una letra, opcionalmente con subíndice (a_1, P_2). No uses x, y ni e como nombres.
+- Define los datos numéricos como parámetros con deslizador para que el estudiante pueda variarlos.`;
+
+const CITE_RULES = 'CITAS: cuando una definición, propiedad, fórmula o método provenga de los apuntes, termina esa frase con la cita del archivo entre paréntesis, así: (según NOMBRE_DEL_ARCHIVO), usando el nombre exacto que figura en los encabezados «=== ... ===». No pongas citas dentro de fórmulas ni en las opciones de un examen.';
+const STRICT_RULES = `MODO ESTRICTO: explica, resuelve y evalúa SOLO con lo que está en los apuntes. Si hace falta algo que no figura en ellos, agrégalo en un bloque aparte con este formato exacto (cada marca en su propia línea):
+:::complemento
+**Qué agrego:** el contenido que falta.
+**Por qué:** qué falta o no está claro en los apuntes.
+**Para qué:** qué le permite entender o resolver al estudiante.
+:::
+Fuera de esos bloques no incluyas contenido que no esté en los apuntes. En las opciones de un examen no uses bloques; si una explicación necesita un complemento, indícalo con «(complemento: …, porque los apuntes no lo tratan)».`;
+function header(budget) {
+  const ap = apuntesRelevantes(budget);
+  const est = S.config.estilo ? clip(S.config.estilo, budget >= 12000 ? 11000 : budget >= 6000 ? 6000 : 3000) : '';
+  const deb = debilesDelTema();
+  return `Eres GeoMentor, un tutor universitario de matemática que prepara a un estudiante para exámenes reglamentados. Escribe en español neutro, con tono cercano y riguroso.
+MATERIA: ${S.materia.nombre}
+EJE TEMÁTICO: ${S.eje.nombre}
+SUBTEMA: ${S.sub.nombre} (${S.sub.desc})
+
+${ap ? `[APUNTES DEL CURSO · FUENTE PRINCIPAL]
+${ap}
+
+PRIORIDAD DE FUENTES: los apuntes anteriores son la referencia principal. Usa sus definiciones, su notación, sus nombres y sus métodos de resolución, aunque difieran de otros textos. ${S.config.estricto ? STRICT_RULES : 'Si necesitas algo que no está en los apuntes, compleméntalo con conocimiento general y márcalo con «(complemento: no figura en tus apuntes)».'} Si los apuntes tienen un error evidente, señálalo con respeto en lugar de repetirlo.
+
+${CITE_RULES}` : `[APUNTES DEL CURSO]
+${Object.keys(S.config.apuntes || {}).length ? '(Ninguno de los apuntes cargados corresponde a este subtema: usa el programa universitario estándar.)' : '(No hay apuntes cargados: usa el programa universitario estándar.)'}`}
+
+[ESTILO Y CRITERIOS DEL PROFESOR]
+${est || '(Sin indicaciones: exige notación rigurosa, justificación de cada paso y verificación de condiciones.)'}
+
+[PUNTOS DÉBILES GUARDADOS DEL ESTUDIANTE EN ESTE SUBTEMA]
+${deb.length ? deb.map(p => '- ' + p).join('\n') : '(ninguno todavía)'}`;
+}
+function fitPrompt(build) {
+  for (const b of [20000, 12000, 6000, 2000, 0]) {
+    const p = build(b);
+    if (byteLen(p) < 60000) return p;
+  }
+  return build(0).slice(0, 25000);
+}
+
+/* =====================================================================
+   MENTOR FLOTANTE
+   ===================================================================== */
+let mentorTimer = null;
+function mentor(msg) {
+  $('#mentor-text').textContent = msg;
+  const b = $('#mentor-bubble');
+  b.hidden = false;
+  b.style.animation = 'none'; void b.offsetWidth; b.style.animation = '';
+  clearTimeout(mentorTimer);
+  if (window.innerWidth < 760) mentorTimer = setTimeout(() => { b.hidden = true; }, 9000);
+}
+function tipFor(tab) {
+  const c = S.cache[key()];
+  const tips = c?.tips || [];
+  const base = {
+    teoria: 'Responde el chequeo con tus palabras: equivocarte aquí es la forma más barata de encontrar lo que te falta.',
+    lab: 'Mueve un deslizador por vez y observa qué cambia: así conectas la fórmula con la figura.',
+    ejercicios: 'Intenta resolver sin pistas primero. Pide una pista solo cuando lleves un rato trabado.',
+    examen: 'Lee cada opción antes de elegir: los distractores salen de errores típicos.'
+  }[tab];
+  if (tips.length && Math.random() < 0.6) return '💡 ' + tips[Math.floor(Math.random() * tips.length)];
+  return base;
+}
+
+/* =====================================================================
+   NAVEGACIÓN
+   ===================================================================== */
+function setAccent(m) {
+  const r = document.documentElement.style;
+  r.setProperty('--accent-l', m ? m.acc[0] : '#0e7490');
+  r.setProperty('--accent-d', m ? m.acc[1] : '#22d3ee');
+  if (window.Lab) Lab.draw();
+}
+function go(view) {
+  S.view = view;
+  for (const v of ['materias', 'ejes', 'subtemas', 'mentoria']) $('#view-' + v).hidden = v !== view;
+  if (view === 'materias') renderMaterias();
+  if (view === 'ejes') renderEjes();
+  if (view === 'subtemas') renderSubtemas();
+  renderCrumbs();
+  window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+}
+function renderCrumbs() {
+  const steps = [
+    { v: 'materias', label: S.materia ? S.materia.nombre : '1. Materia' },
+    { v: 'ejes', label: S.eje ? S.eje.nombre : '2. Eje temático', need: S.materia },
+    { v: 'subtemas', label: S.sub ? S.sub.nombre : '3. Subtema', need: S.eje },
+    { v: 'mentoria', label: '4. Mentoría guiada', need: S.sub }
+  ];
+  const order = ['materias', 'ejes', 'subtemas', 'mentoria'];
+  const cur = order.indexOf(S.view);
+  $('#crumbs').innerHTML = steps.map((s, i) => {
+    if (i === cur) return `<span class="current">${escapeHTML(['1. Materia', '2. Eje temático', '3. Subtema', '4. Mentoría guiada'][i])}</span>`;
+    if (i < cur) return `<button data-go="${s.v}">${escapeHTML(s.label)}</button>`;
+    return `<span>${escapeHTML(['1. Materia', '2. Eje temático', '3. Subtema', '4. Mentoría guiada'][i])}</span>`;
+  }).join('<span class="sep">›</span>');
+}
+
+function pickCard({ icon, title, desc, badges = '', onPick }) {
+  const b = document.createElement('button');
+  b.className = 'pick';
+  b.type = 'button';
+  b.innerHTML = `${icon ? `<span class="icon" aria-hidden="true">${icon}</span>` : ''}<h3>${escapeHTML(title)}</h3><p>${escapeHTML(desc)}</p>${badges ? `<div class="badges">${badges}</div>` : ''}`;
+  b.addEventListener('click', () => {
+    $$('.pick.selected').forEach(x => x.classList.remove('selected'));
+    b.classList.add('selected');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(onPick, reduce ? 0 : 230);
+  });
+  return b;
+}
+function countDebiles(prefix) { return S.debiles.filter(d => (d.key || '').startsWith(prefix)).reduce((a, d) => a + (d.puntos?.length || 0), 0); }
+
+function renderMaterias() {
+  setAccent(null);
+  const grid = $('#grid-materias');
+  grid.innerHTML = '';
+  for (const m of MATERIAS) {
+    const n = countDebiles(m.id + '/');
+    grid.appendChild(pickCard({
+      icon: m.icono, title: m.nombre, desc: m.desc,
+      badges: `<span class="pill">${ejesDe(m).length} ejes</span>${n ? `<span class="pill warn">📌 ${n} puntos débiles</span>` : ''}`,
+      onPick: () => { S.materia = m; S.eje = null; S.sub = null; setAccent(m); go('ejes'); mentor(`¡Buena elección! ${m.nombre} tiene ${ejesDe(m).length} ejes. Empieza por el que más te cuesta.`); }
+    }));
+  }
+}
+function renderEjes() {
+  const m = S.materia;
+  setAccent(m);
+  $('#ejes-title').textContent = 'Selecciona un eje temático';
+  $('#ejes-lead').textContent = `Elige la unidad de ${m.nombre} que quieres repasar hoy.`;
+  const grid = $('#grid-ejes');
+  grid.innerHTML = '';
+  for (const e of ejesDe(m)) {
+    const n = countDebiles(`${m.id}/${e.id}/`);
+    grid.appendChild(pickCard({
+      icon: e.icono, title: e.nombre, desc: e.desc,
+      badges: `${e.generado ? '<span class="pill accent">📚 De tus apuntes</span>' : ''}<span class="pill">${e.subtemas.length} subtemas</span>${n ? `<span class="pill warn">📌 ${n}</span>` : ''}`,
+      onPick: () => { S.eje = e; S.sub = null; go('subtemas'); mentor('Vas por buen camino. Ahora elige el subtema que corresponde a tu clase.'); }
+    }));
+  }
+}
+function renderSubtemas() {
+  const m = S.materia, e = S.eje;
+  $('#subtemas-title').textContent = e.nombre;
+  const grid = $('#grid-subtemas');
+  grid.innerHTML = '';
+  const subs = [...e.subtemas, ...(e.custom || [])];
+  for (const s of subs) {
+    const k = `${m.id}/${e.id}/${s.id}`;
+    const p = S.progreso.temas?.[k];
+    const n = countDebiles(k);
+    let badges = '';
+    if (p?.comprension != null) badges += `<span class="pill accent">Comprensión ${p.comprension}%</span>`;
+    if (p?.examenMejor != null) badges += `<span class="pill accent">Examen ${p.examenMejor}/10</span>`;
+    if (n) badges += `<span class="pill warn">📌 ${n}</span>`;
+    grid.appendChild(pickCard({ title: s.nombre, desc: s.desc, badges, onPick: () => enterSubtema(s) }));
+  }
+}
+
+function enterSubtema(sub) {
+  S.sub = sub;
+  $('#mentoria-title').textContent = sub.nombre;
+  go('mentoria');
+  const s = sess();
+  Lab.setLines(s.lab || S.cache[key()]?.grafico || []);
+  showTab('teoria');
+  if (!S.cache[key()]) loadContent(false);
+  const n = debilesDelTema().length;
+  mentor(n ? `Tienes ${n} puntos débiles guardados en este subtema. El mentor los va a reforzar en las preguntas y ejercicios.` : '¡Excelente elección! Lee la teoría y luego pon a prueba tu comprensión en el chequeo.');
+}
+
+function showTab(tab) {
+  S.tab = tab;
+  $$('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.tab === tab)));
+  for (const t of ['teoria', 'lab', 'ejercicios', 'examen']) $('#tab-' + t).hidden = t !== tab;
+  if (tab === 'teoria') renderTeoria();
+  if (tab === 'lab') { renderLabPresets(); renderAnalysis(); requestAnimationFrame(() => Lab.resize()); }
+  if (tab === 'ejercicios') { const s = sess(); if (!s.exercise && !s.busy.ejercicio && !s.err.ejercicio) generarEjercicio(false); else renderEjercicios(); }
+  if (tab === 'examen') { const s = sess(); if (!s.exam && !s.busy.examen && !s.err.examen) generarExamen(false); else renderExamen(); }
+}
+function rerenderCurrent() {
+  if (S.view !== 'mentoria') return;
+  if (S.tab === 'teoria') renderTeoria();
+  if (S.tab === 'ejercicios') renderEjercicios();
+  if (S.tab === 'examen') renderExamen();
+  if (S.tab === 'lab') { renderLabPresets(); renderAnalysis(); }
+}
+
+const loadingHTML = msg => `<div class="loading">${spinnerHTML}<span>${escapeHTML(msg)}</span></div>`;
+const errorBlock = (msg, action, label = 'Reintentar') => `<div class="empty"><p class="error-text">${escapeHTML(msg)}</p><button class="btn" data-action="${action}">${label}</button></div>`;
+
+/* =====================================================================
+   PESTAÑA 1 · TEORÍA Y CHEQUEO SOCRÁTICO
+   ===================================================================== */
+async function loadContent(fresh) {
+  const k = key(), s = sess(k), sub = S.sub;
+  s.busy.teoria = true; s.err.teoria = '';
+  if (S.tab === 'teoria') renderTeoria();
+  const prompt = fitPrompt(b => `${header(b)}
+
+TAREA: prepara el material de estudio del subtema.
+<teoria>Explicación de 300 a 500 palabras: definiciones, fórmulas en LaTeX, notación que se exige en examen, un ejemplo resuelto breve y los errores frecuentes. Usa ### para los apartados.</teoria>
+<ideas_clave>Entre 6 y 10 líneas, cada una empezando con "- ".</ideas_clave>
+<pregunta>Una pregunta socrática inicial que obligue a razonar (no a recitar una definición). Si hay puntos débiles guardados, apunta a uno de ellos.</pregunta>
+<tips>3 o 4 consejos de examen muy breves, cada uno en una línea que empiece con "- ", sin LaTeX.</tips>
+<grafico>De 2 a 6 líneas en la sintaxis del laboratorio que ilustren el subtema.</grafico>
+
+${LAB_SYNTAX}
+
+${FORMAT_RULES}`);
+  try {
+    const fuentes = Apuntes.last;
+    const text = await ask(prompt, { fresh });
+    const teoria = getTag(text, 'teoria');
+    if (!teoria) throw new Error('La respuesta no trajo el contenido esperado. Vuelve a intentarlo.');
+    const c = {
+      teoria,
+      ideas: toList(getTag(text, 'ideas_clave')).slice(0, 10),
+      pregunta: getTag(text, 'pregunta') || `Explica con tus palabras la idea central de «${sub.nombre}».`,
+      tips: toList(getTag(text, 'tips')),
+      grafico: getTag(text, 'grafico').split('\n').map(l => l.replace(/^\s*[-*]\s+/, '').replace(/`/g, '').trim()).filter(Boolean)
+    };
+    c.fuentes = fuentes;
+    S.cache[k] = c;
+    if (!s.currentQ) s.currentQ = c.pregunta;
+    if (!s.lab) { s.lab = c.grafico; if (key() === k) Lab.setLines(c.grafico); }
+  } catch (e) {
+    s.err.teoria = e.code ? aiError(e) : e.message;
+  } finally {
+    s.busy.teoria = false;
+    if (key() === k) rerenderCurrent();
+  }
+}
+
+function renderTeoria() {
+  const el = $('#tab-teoria');
+  const k = key(), s = sess(), c = S.cache[k];
+  if (!k) return;
+  if (s.busy.teoria) { el.innerHTML = loadingHTML('Preparando la teoría del subtema…'); return; }
+  if (!c) { el.innerHTML = errorBlock(s.err.teoria || 'Todavía no se generó la teoría de este subtema.', 'regen-teoria', s.err.teoria ? 'Reintentar' : 'Generar teoría'); return; }
+  if (!s.currentQ) s.currentQ = c.pregunta;
+
+  const busy = s.busy.chequeo || s.busy.resumen;
+  const turns = s.turns.map((t, i) => `
+    <article class="turn">
+      <p class="turn-q"><span class="turn-n">${i + 1}</span><span>${mdInline(t.q)}</span></p>
+      <blockquote class="turn-a">${escapeHTML(t.a).replace(/\n/g, '<br>')}</blockquote>
+      <div class="turn-f md">${markdownToHTML(t.feedback)}</div>${fuentesHTML(t.fuentes)}
+    </article>`).join('');
+  const chips = s.turns.length ? `
+    <div class="chips-block">
+      <div><h4>✔ Lo que ya entendiste</h4><div class="chips">${s.entendido.length ? s.entendido.map(x => `<span class="chip ok">${mdInline(x)}</span>`).join('') : '<span class="muted small">Aún nada firme.</span>'}</div></div>
+      <div><h4>✖ Lo que te falta</h4><div class="chips">${s.falta.length ? s.falta.map(x => `<span class="chip bad">${mdInline(x)}</span>`).join('') : '<span class="muted small">Nada pendiente detectado.</span>'}</div></div>
+    </div>` : '';
+
+  el.innerHTML = `
+  <div class="stack">
+    <section class="panel-card">
+      <div class="card-head"><h2>${escapeHTML(S.sub.nombre)}</h2><button class="btn ghost sm" data-action="regen-teoria">↻ Regenerar</button></div>
+      <div class="md">${markdownToHTML(c.teoria)}</div>
+      ${fuentesHTML(c.fuentes)}
+    </section>
+    ${c.ideas.length ? `<section class="panel-card"><h3 style="margin-bottom:.5rem">🔑 Ideas clave</h3><ul class="ideas">${c.ideas.map(i => `<li>${mdInline(i)}</li>`).join('')}</ul></section>` : ''}
+    <section class="panel-card socratic">
+      <div class="card-head" style="margin-bottom:.4rem"><h3>🤔 Chequeo socrático de comprensión</h3>${s.turns.length ? `<span class="pill accent">Comprensión ${s.comprension}%</span>` : ''}</div>
+      ${s.turns.length ? `<div class="meter" aria-label="Comprensión estimada"><span style="width:${s.comprension}%"></span></div>` : '<p class="muted small" style="margin-bottom:.5rem">Responde con tus palabras. El mentor evalúa tu razonamiento, te dice qué entendiste y qué te falta, y te hace una nueva pregunta. Puedes iterar todas las veces que quieras.</p>'}
+      ${turns}
+      ${chips}
+      <div class="current-q">
+        <p class="q-label">${s.turns.length ? 'SIGUIENTE PREGUNTA' : 'PREGUNTA'}</p>
+        <div class="q-text">${mdInline(s.currentQ)}</div>
+        <textarea id="answer" rows="4" placeholder="Explica tu razonamiento paso a paso…" ${busy ? 'disabled' : ''}>${escapeHTML(s.draft)}</textarea>
+        <div class="btn-row">
+          <button class="btn primary" data-action="verificar" ${busy ? 'disabled' : ''}>${s.busy.chequeo ? spinnerHTML + ' Evaluando…' : 'Verificar razonamiento'}</button>
+          <button class="btn" data-action="export-resumen" ${!s.turns.length || busy ? 'disabled' : ''} title="${s.turns.length ? 'Genera el resumen, guarda tus puntos débiles y descarga un .txt' : 'Responde al menos una pregunta primero'}">${s.busy.resumen ? spinnerHTML + ' Generando resumen…' : '📄 Resumen de la sesión (.txt)'}</button>
+          <button class="btn ghost" data-action="nose" ${busy ? 'disabled' : ''}>No lo sé, explícame</button>
+        </div>
+        ${s.err.chequeo ? `<p class="error-text">${escapeHTML(s.err.chequeo)}</p>` : ''}
+      </div>
+    </section>
+    ${summaryCard(s)}
+  </div>`;
+}
+
+function summaryCard(s) {
+  const r = s.summary;
+  if (!r) return '';
+  const li = arr => arr.map(x => `<li>${escapeHTML(x)}</li>`).join('');
+  return `
+  <section class="panel-card summary-card">
+    <h3>🧾 Resumen de la sesión</h3>
+    <p>${escapeHTML(r.general)}</p>${fuentesHTML(r.fuentes)}
+    ${r.fuertes.length ? `<h4>✔ Puntos fuertes</h4><ul>${li(r.fuertes)}</ul>` : ''}
+    ${r.debiles.length ? `<h4>✖ Puntos débiles</h4><ul>${li(r.debiles)}</ul>` : ''}
+    ${r.plan.length ? `<h4>🗺️ Plan de repaso</h4><ol>${li(r.plan)}</ol>` : ''}
+    ${r.saved ? `<p class="saved-note">📌 Guardé ${r.debiles.length} puntos débiles. El mentor los reforzará la próxima vez que estudies este subtema.</p>` : ''}
+    <div class="btn-row" style="margin-top:.75rem"><button class="btn sm" data-action="descargar-resumen">⬇️ Descargar .txt</button></div>
+  </section>`;
+}
+
+async function verificar(noSe) {
+  const k = key(), s = sess(k), c = S.cache[k];
+  if (!c) return;
+  const ta = $('#answer');
+  if (ta) s.draft = ta.value;
+  const answer = noSe ? '(El estudiante indica que no sabe cómo responder y pide que se lo expliquen.)' : s.draft.trim();
+  if (!answer) { mentor('Escribe tu razonamiento antes de verificarlo, aunque sea incompleto.'); ta?.focus(); return; }
+  s.busy.chequeo = true; s.err.chequeo = '';
+  renderTeoria();
+
+  const prev = s.turns.slice(-5).map(t => `Pregunta: ${t.q}\nRespuesta del estudiante: ${t.a}\nDevolución: ${clip(t.feedback, 700)}`).join('\n\n');
+  const prompt = fitPrompt(b => `${header(b)}
+
+Estás en un chequeo socrático de comprensión del subtema.
+[IDEAS CLAVE]
+${c.ideas.map(i => '- ' + i).join('\n')}
+
+[INTERCAMBIOS ANTERIORES]
+${prev || '(ninguno)'}
+
+[LO QUE YA ENTENDÍA]
+${s.entendido.map(x => '- ' + x).join('\n') || '(sin datos)'}
+[LO QUE LE FALTABA]
+${s.falta.map(x => '- ' + x).join('\n') || '(sin datos)'}
+
+[PREGUNTA ACTUAL]
+${s.currentQ}
+
+[RESPUESTA DEL ESTUDIANTE]
+${answer}
+
+TAREA: evalúa el razonamiento con criterio de profesor. Si está bien, confírmalo y profundiza; si tiene errores, señálalos con precisión y guíalo sin darle todo resuelto; si dice que no sabe, explica la idea con un ejemplo corto.
+<feedback>Devolución de 60 a 180 palabras.</feedback>
+<comprension>Número entero de 0 a 100: comprensión global del subtema demostrada hasta ahora.</comprension>
+<entendido>Lista acumulada y actualizada de lo que YA demostró entender, cada ítem en una línea con "- " (máximo 8, frases cortas).</entendido>
+<falta>Lista acumulada y actualizada de lo que AÚN le falta, concreta y autocontenida, cada ítem con "- " (máximo 8). Quita lo que ya demostró entender.</falta>
+<siguiente_pregunta>Nueva pregunta que ataque su punto débil principal, o que profundice si ya domina lo básico.</siguiente_pregunta>
+<tip>Una frase breve de ánimo o consejo de examen, sin LaTeX.</tip>
+
+${FORMAT_RULES}`);
+  try {
+    const fuentes = Apuntes.last;
+    const text = await ask(prompt, { fresh: true });
+    const feedback = getTag(text, 'feedback');
+    if (!feedback) throw new Error('No llegó la devolución del mentor. Vuelve a intentarlo.');
+    const comp = parseInt(getTag(text, 'comprension'), 10);
+    s.turns.push({ q: s.currentQ, a: answer, feedback, fuentes });
+    s.comprension = Number.isFinite(comp) ? Math.max(0, Math.min(100, comp)) : s.comprension;
+    s.entendido = toList(getTag(text, 'entendido')).slice(0, 8);
+    s.falta = toList(getTag(text, 'falta')).slice(0, 8);
+    s.currentQ = getTag(text, 'siguiente_pregunta') || s.currentQ;
+    if (!noSe) s.draft = '';
+    await saveProgreso(k, { comprension: s.comprension });
+    const tip = getTag(text, 'tip');
+    if (tip && key() === k) mentor(tip);
+  } catch (e) {
+    s.err.chequeo = e.code ? aiError(e) : e.message;
+  } finally {
+    s.busy.chequeo = false;
+    if (key() === k && S.tab === 'teoria') {
+      renderTeoria();
+      $('.current-q')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+}
+
+function buildResumenTxt(s, meta) {
+  const r = s.summary;
+  const L = [];
+  const line = '='.repeat(60);
+  L.push(line, 'GEOMENTOR · RESUMEN DE LA SESIÓN DE COMPRENSIÓN', line);
+  L.push(`Materia:   ${meta.materia}`, `Eje:       ${meta.eje}`, `Subtema:   ${meta.subtema}`, `Fecha:     ${stamp(new Date(r.fecha))}`, `Comprensión estimada: ${r.comprension}%`);
+  if (r.fuentes?.total) L.push(`Apuntes consultados: ${r.fuentes.files.length ? r.fuentes.files.join(', ') : 'ninguno corresponde a este tema'}`);
+  L.push('');
+  L.push('RESUMEN GENERAL', '-'.repeat(60), r.general, '');
+  if (r.fuertes.length) L.push('LO QUE YA ENTENDISTE', '-'.repeat(60), ...r.fuertes.map(x => '  ✔ ' + x), '');
+  if (r.debiles.length) L.push('PUNTOS DÉBILES A REFORZAR', '-'.repeat(60), ...r.debiles.map(x => '  ✖ ' + x), '');
+  if (r.plan.length) L.push('PLAN DE REPASO', '-'.repeat(60), ...r.plan.map((x, i) => `  ${i + 1}. ${x}`), '');
+  if (r.ejercicio) L.push('EJERCICIO SUGERIDO', '-'.repeat(60), r.ejercicio, '');
+  L.push(line, 'ANEXO · REGISTRO DE LA SESIÓN (fórmulas en notación LaTeX)', line);
+  s.turns.forEach((t, i) => L.push(`[${i + 1}] Pregunta: ${t.q}`, `    Tu respuesta: ${t.a}`, `    Devolución del mentor:`, t.feedback.split('\n').map(x => '    ' + x).join('\n'), ''));
+  return L.join('\n');
+}
+
+async function exportResumen() {
+  const k = key(), s = sess(k);
+  if (!s.turns.length) return;
+  const meta = { materia: S.materia.nombre, eje: S.eje.nombre, subtema: S.sub.nombre };
+  const materiaId = S.materia.id, ejeId = S.eje.id, subId = S.sub.id;
+  s.busy.resumen = true; s.err.chequeo = '';
+  renderTeoria();
+  const transcript = s.turns.map((t, i) => `[${i + 1}] Pregunta: ${t.q}\nRespuesta: ${t.a}\nDevolución: ${t.feedback}`).join('\n\n');
+  const prompt = fitPrompt(b => `${header(Math.min(b, 6000))}
+
+TAREA: resume la sesión de comprensión para que el estudiante repase después. Escribe en TEXTO PLANO (irá a un archivo .txt): sin LaTeX ni Markdown; usa notación legible como u·v, ‖u‖, x², √2, ≤, θ.
+[REGISTRO DE LA SESIÓN]
+${clip(transcript, 14000)}
+
+[ÚLTIMA EVALUACIÓN]
+Comprensión: ${s.comprension}%
+Entendido: ${s.entendido.join('; ') || '-'}
+Falta: ${s.falta.join('; ') || '-'}
+
+<resumen_general>3 a 5 frases sobre qué entendió y cómo razonó.</resumen_general>
+<puntos_fuertes>Una línea por punto, empezando con "- ".</puntos_fuertes>
+<puntos_debiles>Una línea por punto débil, empezando con "- ". Cada punto debe ser concreto y autocontenido (que se entienda sin leer la sesión). Máximo 8.</puntos_debiles>
+<plan_de_repaso>De 3 a 5 pasos concretos, uno por línea con "- ".</plan_de_repaso>
+<ejercicio_sugerido>Un ejercicio corto para practicar el punto débil principal (sin solución).</ejercicio_sugerido>
+Responde SOLO con las etiquetas pedidas.`);
+  try {
+    const fuentes = Apuntes.last;
+    const text = await ask(prompt, { fresh: true });
+    const general = getTag(text, 'resumen_general');
+    if (!general) throw new Error('No se pudo generar el resumen. Vuelve a intentarlo.');
+    s.summary = {
+      general,
+      fuertes: toList(getTag(text, 'puntos_fuertes')),
+      debiles: toList(getTag(text, 'puntos_debiles')).slice(0, 8),
+      plan: toList(getTag(text, 'plan_de_repaso')),
+      ejercicio: getTag(text, 'ejercicio_sugerido'),
+      comprension: s.comprension, fecha: new Date().toISOString(), meta, saved: false, fuentes
+    };
+    if (s.summary.debiles.length) {
+      const item = await Store.addDebil({
+        key: k, materiaId, ejeId, subId,
+        materia: meta.materia, eje: meta.eje, subtema: meta.subtema,
+        fecha: s.summary.fecha, origen: 'Chequeo de comprensión',
+        comprension: s.comprension, resumen: general, puntos: s.summary.debiles
+      });
+      S.debiles.unshift(item);
+      s.summary.saved = true;
+      updateDebilesCount();
+    }
+    s.busy.resumen = false;
+    if (key() === k) renderTeoria();
+    const ok = await saveFile(new Blob([buildResumenTxt(s, meta)], { type: 'text/plain;charset=utf-8' }), `resumen_${slug(meta.subtema)}_${today()}.txt`);
+    if (key() === k) mentor(s.summary.saved ? `Guardé tus puntos débiles${ok ? ' y descargué el resumen' : ''}. La próxima vez que estudies este subtema los voy a reforzar.` : 'Resumen listo. No detecté puntos débiles para guardar: ¡muy bien!');
+  } catch (e) {
+    s.err.chequeo = e.code ? aiError(e) : e.message;
+  } finally {
+    s.busy.resumen = false;
+    if (key() === k && S.tab === 'teoria') renderTeoria();
+  }
+}
+
+/* =====================================================================
+   PESTAÑA 3 · EJERCICIOS GUIADOS
+   ===================================================================== */
+async function generarEjercicio(fresh) {
+  const k = key(), s = sess(k);
+  s.busy.ejercicio = true; s.err.ejercicio = '';
+  renderEjercicios();
+  const prev = s.exercise ? `\nNo repitas este ejercicio anterior: ${clip(s.exercise.enunciado, 400)}` : '';
+  const prompt = fitPrompt(b => `${header(b)}
+
+TAREA: crea UN ejercicio guiado tipo examen del subtema, nivel ${s.nivel}. Si hay puntos débiles guardados, el ejercicio debe trabajar al menos uno.${prev}
+<enunciado>Enunciado completo con los datos, sin la solución.</enunciado>
+<pista>Pista 1: orienta hacia el concepto a usar, sin cálculos.</pista>
+<pista>Pista 2: plantea la ecuación o el procedimiento.</pista>
+<pista>Pista 3: casi resuelto, deja solo el último paso.</pista>
+<solucion>Resolución completa, paso a paso, con justificación y verificación final.</solucion>
+<grafico>De 2 a 6 líneas en la sintaxis del laboratorio que representen los DATOS del ejercicio, con los valores numéricos como parámetros con deslizador.</grafico>
+
+${LAB_SYNTAX}
+
+${FORMAT_RULES}`);
+  try {
+    const fuentes = Apuntes.last;
+    const text = await ask(prompt, { fresh });
+    const enunciado = getTag(text, 'enunciado');
+    if (!enunciado) throw new Error('No llegó el ejercicio. Vuelve a intentarlo.');
+    s.exercise = {
+      fuentes,
+      enunciado, pistas: getTags(text, 'pista').slice(0, 3), solucion: getTag(text, 'solucion'),
+      grafico: getTag(text, 'grafico').split('\n').map(l => l.replace(/^\s*[-*]\s+/, '').replace(/`/g, '').trim()).filter(Boolean)
+    };
+    s.hints = 0; s.showSol = false; s.correction = ''; s.resolucion = ''; s.photo = null;
+  } catch (e) {
+    s.err.ejercicio = e.code ? aiError(e) : e.message;
+  } finally {
+    s.busy.ejercicio = false;
+    if (key() === k && S.tab === 'ejercicios') renderEjercicios();
+  }
+}
+
+function renderEjercicios() {
+  const el = $('#tab-ejercicios');
+  const s = sess();
+  if (!s) return;
+  const niveles = ['Básico', 'Parcial', 'Examen reglamentado'];
+  const nivelSel = `<select id="ej-nivel" style="width:auto">${niveles.map(n => `<option ${n === s.nivel ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
+  if (s.busy.ejercicio) { el.innerHTML = loadingHTML('Preparando un ejercicio tipo examen…'); return; }
+  if (!s.exercise) { el.innerHTML = s.err.ejercicio ? errorBlock(s.err.ejercicio, 'nuevo-ej') : `<div class="empty"><p class="muted">Genera un ejercicio para practicar.</p><div class="btn-row">${nivelSel}<button class="btn primary" data-action="nuevo-ej">Generar ejercicio</button></div></div>`; return; }
+  const ex = s.exercise;
+  const hints = ex.pistas.slice(0, s.hints).map((p, i) => `<div class="hint-box"><strong>Pista ${i + 1}:</strong> ${mdInline(p)}</div>`).join('');
+  const busyC = s.busy.correccion;
+  el.innerHTML = `
+  <div class="stack">
+    <section class="panel-card">
+      <div class="card-head"><h2>📌 Ejercicio guiado tipo examen</h2><div class="btn-row">${nivelSel}<button class="btn sm" data-action="nuevo-ej">↻ Nuevo ejercicio</button></div></div>
+      <div class="md">${markdownToHTML(ex.enunciado)}</div>${fuentesHTML(ex.fuentes)}
+      <div class="btn-row" style="margin:.9rem 0">
+        <button class="btn" data-action="pista" ${s.hints >= ex.pistas.length ? 'disabled' : ''}>💡 Pedir pista (${s.hints}/${ex.pistas.length})</button>
+        <button class="btn" data-action="solucion">${s.showSol ? '🙈 Ocultar solución' : '👁️ Ver solución'}</button>
+        ${ex.grafico.length ? '<button class="btn" data-action="abrir-lab">📐 Abrir datos en el laboratorio</button>' : ''}
+      </div>
+      <div class="stack" style="gap:.6rem">${hints}</div>
+      ${s.showSol ? `<div class="solution-box md" style="margin-top:.8rem"><strong>Solución</strong>${markdownToHTML(ex.solucion)}</div>` : ''}
+    </section>
+    <section class="panel-card">
+      <h3>✍️ Tu resolución</h3>
+      <p class="muted small" style="margin:.3rem 0 .6rem">Escribe tu desarrollo${AI.images ? ' o sube una foto de tu hoja' : ''}. El mentor lo corrige con el criterio del profesor.</p>
+      <textarea id="resolucion" rows="5" placeholder="Planteo, cálculos y conclusión…" ${busyC ? 'disabled' : ''}>${escapeHTML(s.resolucion)}</textarea>
+      ${AI.images ? `<div class="photo-row" style="margin-top:.6rem">
+        <label class="btn file-btn">📸 ${s.photo ? 'Cambiar foto' : 'Subir foto'}<input type="file" id="in-photo" accept="${escapeHTML(AI.imageTypes)}"></label>
+        ${s.photo ? '<button class="btn ghost sm" data-action="quitar-foto">Quitar foto</button>' : ''}
+      </div>
+      ${s.photo ? `<div class="photo-preview"><img src="${s.photo.dataUrl}" alt="Foto de tu desarrollo manuscrito"></div>` : ''}` : ''}
+      <div class="btn-row" style="margin-top:.75rem"><button class="btn primary" data-action="corregir" ${busyC ? 'disabled' : ''}>${busyC ? spinnerHTML + ' Corrigiendo…' : '🔍 Corregir mi resolución'}</button></div>
+      ${s.err.correccion ? `<p class="error-text">${escapeHTML(s.err.correccion)}</p>` : ''}
+      ${s.correction ? `<div class="turn-f md" style="margin-top:.9rem">${markdownToHTML(s.correction)}</div>${fuentesHTML(s.correctionFuentes)}` : ''}
+    </section>
+  </div>`;
+}
+
+function loadPhoto(file) {
+  const k = key(), s = sess(k);
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    const MAX = 1600;
+    const scale = Math.min(1, MAX / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement('canvas');
+    c.width = Math.round(img.naturalWidth * scale); c.height = Math.round(img.naturalHeight * scale);
+    const cx = c.getContext('2d');
+    cx.fillStyle = '#fff'; cx.fillRect(0, 0, c.width, c.height);
+    cx.drawImage(img, 0, 0, c.width, c.height);
+    URL.revokeObjectURL(url);
+    const dataUrl = c.toDataURL('image/jpeg', 0.85);
+    c.toBlob(blob => { s.photo = { blob, dataUrl }; if (key() === k) renderEjercicios(); }, 'image/jpeg', 0.85);
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); mentor('No pude abrir esa imagen. Si es HEIC (iPhone), conviértela a JPG o PNG.'); };
+  img.src = url;
+}
+
+async function corregir() {
+  const k = key(), s = sess(k), ex = s.exercise;
+  const ta = $('#resolucion');
+  if (ta) s.resolucion = ta.value;
+  if (!s.resolucion.trim() && !s.photo) { mentor('Escribe tu desarrollo o sube una foto para que pueda corregirlo.'); return; }
+  s.busy.correccion = true; s.err.correccion = '';
+  renderEjercicios();
+  const prompt = fitPrompt(b => `${header(b)}
+
+TAREA: corrige la resolución del estudiante como lo haría el profesor en un examen.
+[ENUNCIADO]
+${ex.enunciado}
+[SOLUCIÓN DE REFERENCIA]
+${ex.solucion}
+[RESOLUCIÓN ESCRITA DEL ESTUDIANTE]
+${s.resolucion.trim() || '(ver la foto adjunta)'}
+${s.photo ? '\nSe adjunta una foto del desarrollo manuscrito. Si alguna parte es ilegible, dilo en lugar de suponer.' : ''}
+<correccion>
+### Lo que interpreté
+Breve transcripción de lo que hizo.
+### Análisis de pasos
+Aciertos y errores concretos en planteo, despejes, signos y notación.
+### Criterio del profesor
+Si cumple con lo que se exige (gráfico, justificación, verificación).
+### Calificación conceptual
+Sobresaliente / Aprobado / Requiere corrección, con una frase que lo justifique.
+</correccion>
+<falta>Puntos débiles concretos que revela esta resolución, uno por línea con "- " (puede quedar vacío).</falta>
+
+${FORMAT_RULES}`);
+  try {
+    const fuentes = Apuntes.last;
+    const text = await ask(prompt, { fresh: true, images: s.photo ? [s.photo.blob] : null });
+    s.correction = getTag(text, 'correccion') || text;
+    s.correctionFuentes = fuentes;
+    const falta = toList(getTag(text, 'falta'));
+    if (falta.length) s.falta = [...new Set([...s.falta, ...falta])].slice(0, 10);
+    if (key() === k) mentor(falta.length ? 'Sumé lo que te faltó en este ejercicio a tu lista de la pestaña Teoría. Exporta el resumen para guardarlo.' : '¡Buen trabajo! Prueba ahora con un ejercicio de nivel más alto.');
+  } catch (e) {
+    s.err.correccion = e.code ? aiError(e) : e.message;
+  } finally {
+    s.busy.correccion = false;
+    if (key() === k && S.tab === 'ejercicios') renderEjercicios();
+  }
+}
+
+/* =====================================================================
+   PESTAÑA 4 · EXAMEN TIPO TEST
+   ===================================================================== */
+async function generarExamen(fresh) {
+  const k = key(), s = sess(k);
+  s.busy.examen = true; s.err.examen = '';
+  renderExamen();
+  const prompt = fitPrompt(b => `${header(b)}
+
+TAREA: crea un examen de práctica de 5 preguntas de opción múltiple (una sola correcta) sobre el subtema. Mezcla cálculo y concepto. Los distractores deben salir de errores típicos de estudiantes. Distribuye la letra correcta entre A, B, C y D. Si hay puntos débiles guardados, al menos 2 preguntas deben evaluarlos. Opciones breves.
+Formato EXACTO, repetido 5 veces:
+<pregunta>
+<enunciado>...</enunciado>
+<a>...</a>
+<b>...</b>
+<c>...</c>
+<d>...</d>
+<correcta>LETRA</correcta>
+<explicacion>Por qué la correcta es correcta, con el cálculo clave (1 o 2 frases).</explicacion>
+<por_que_a>Por qué A es correcta o incorrecta (1 frase).</por_que_a>
+<por_que_b>...</por_que_b>
+<por_que_c>...</por_que_c>
+<por_que_d>...</por_que_d>
+</pregunta>
+
+${FORMAT_RULES}`);
+  try {
+    const fuentes = Apuntes.last;
+    const text = await ask(prompt, { fresh });
+    const qs = getTags(text, 'pregunta').map(block => ({
+      enunciado: getTag(block, 'enunciado'),
+      opciones: ['a', 'b', 'c', 'd'].map(l => getTag(block, l)),
+      correcta: 'ABCD'.indexOf((getTag(block, 'correcta').trim().toUpperCase().match(/[ABCD]/) || [''])[0]),
+      explicacion: getTag(block, 'explicacion'),
+      porQue: ['a', 'b', 'c', 'd'].map(l => getTag(block, 'por_que_' + l))
+    })).filter(q => q.enunciado && q.opciones.every(Boolean) && q.correcta >= 0);
+    if (qs.length < 3) throw new Error('El examen llegó incompleto. Vuelve a generarlo.');
+    s.exam = { fuentes, questions: qs.slice(0, 5), answers: Array(Math.min(5, qs.length)).fill(null), submitted: false, score: 0 };
+  } catch (e) {
+    s.err.examen = e.code ? aiError(e) : e.message;
+  } finally {
+    s.busy.examen = false;
+    if (key() === k && S.tab === 'examen') renderExamen();
+  }
+}
+
+function renderExamen() {
+  const el = $('#tab-examen');
+  const s = sess();
+  if (!s) return;
+  if (s.busy.examen) { el.innerHTML = loadingHTML('Armando tu examen de práctica…'); return; }
+  if (!s.exam) { el.innerHTML = errorBlock(s.err.examen || 'Genera un examen de práctica de 5 preguntas.', 'nuevo-exam', s.err.examen ? 'Reintentar' : 'Generar examen'); return; }
+  const ex = s.exam;
+  const L = 'ABCD';
+  const answered = ex.answers.filter(a => a !== null).length;
+  const n = ex.questions.length;
+  const score = ex.score;
+  const band = score >= 7 ? 'high' : score >= 4 ? 'mid' : 'low';
+  const wrong = ex.submitted ? ex.questions.filter((q, i) => ex.answers[i] !== q.correcta).length : 0;
+
+  const result = ex.submitted ? `
+    <section class="result-card">
+      <h3>Resultado del examen de práctica</h3>
+      <div class="grade">${score.toFixed(1).replace('.0', '')} / 10</div>
+      <div class="score-bar ${band}" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="${score}"><span style="width:${score * 10}%"></span></div>
+      <p class="muted" style="margin-top:.6rem">${n - wrong} de ${n} correctas. ${score >= 7 ? '¡Muy bien!' : score >= 4 ? 'Vas en camino: repasa las explicaciones.' : 'Conviene volver a la teoría antes de reintentar.'}</p>
+    </section>` : '';
+
+  const questions = ex.questions.map((q, i) => {
+    const chosen = ex.answers[i];
+    const opts = q.opciones.map((o, j) => {
+      let cls = 'opt';
+      if (!ex.submitted && chosen === j) cls += ' selected';
+      if (ex.submitted && j === q.correcta) cls += ' correct';
+      if (ex.submitted && chosen === j && j !== q.correcta) cls += ' wrong';
+      return `<button class="${cls}" data-action="opt" data-q="${i}" data-o="${j}" ${ex.submitted ? 'disabled' : ''} aria-pressed="${chosen === j}"><span class="letter">${L[j]})</span><span>${mdInline(o)}</span></button>`;
+    }).join('');
+    let explain = '';
+    if (ex.submitted) {
+      const ok = chosen === q.correcta;
+      explain = `<div class="explain">
+        <p class="${ok ? 'good' : 'badx'}"><strong>${ok ? '✔ ¡Correcto!' : `✖ Respuesta correcta: ${L[q.correcta]}`}</strong> ${mdInline(q.explicacion)}</p>
+        ${!ok && chosen !== null && q.porQue[chosen] ? `<p class="muted"><strong>Tu elección (${L[chosen]}):</strong> ${mdInline(q.porQue[chosen])}</p>` : ''}
+      </div>`;
+    }
+    return `<section class="q-card"><p class="q-title"><span>${i + 1}.</span><span>${mdInline(q.enunciado)}</span></p><div class="opts">${opts}</div>${explain}</section>`;
+  }).join('');
+
+  const foot = ex.submitted
+    ? `<div class="btn-row">
+        <button class="btn primary" data-action="reintentar">↺ Reintentar examen</button>
+        <button class="btn" data-action="nuevo-exam">Nuevo examen</button>
+        ${wrong ? `<button class="btn" data-action="guardar-errores" ${ex.savedErrors ? 'disabled' : ''}>${ex.savedErrors ? '✔ Errores guardados' : '📌 Guardar mis errores como puntos débiles'}</button>` : ''}
+        <button class="btn" data-action="pdf">📄 Exportar ficha PDF</button>
+      </div>`
+    : `<div class="btn-row"><button class="btn primary" data-action="entregar" ${answered < n ? 'disabled' : ''}>Entregar examen (${answered}/${n})</button></div>`;
+
+  el.innerHTML = `<div class="stack">${fuentesHTML(ex.fuentes)}${result}${questions}<div class="exam-foot">${foot}</div></div>`;
+}
+
+async function entregarExamen() {
+  const k = key(), s = sess(k), ex = s.exam;
+  const correct = ex.questions.reduce((a, q, i) => a + (ex.answers[i] === q.correcta ? 1 : 0), 0);
+  ex.score = Math.round((correct / ex.questions.length) * 100) / 10;
+  ex.submitted = true;
+  renderExamen();
+  window.scrollTo({ top: $('#tab-examen').getBoundingClientRect().top + window.scrollY - 90, behavior: 'smooth' });
+  const prev = S.progreso.temas[k]?.examenMejor ?? 0;
+  await saveProgreso(k, { examenUltimo: ex.score, examenMejor: Math.max(prev, ex.score) });
+  mentor(ex.score >= 8 ? '🎯 ¡Excelente progreso! El estudio constante te asegura la nota reglamentada.' : ex.score >= 5 ? 'Buen intento. Lee las explicaciones de las que fallaste y reintenta.' : 'No te desanimes: vuelve al chequeo de la pestaña Teoría y después reintenta.');
+}
+
+async function guardarErrores() {
+  const k = key(), s = sess(k), ex = s.exam;
+  const puntos = ex.questions.filter((q, i) => ex.answers[i] !== q.correcta)
+    .map(q => `${q.enunciado.replace(/\s+/g, ' ')} → ${q.explicacion.replace(/\s+/g, ' ')}`.slice(0, 400));
+  if (!puntos.length) return;
+  const item = await Store.addDebil({
+    key: k, materiaId: S.materia.id, ejeId: S.eje.id, subId: S.sub.id,
+    materia: S.materia.nombre, eje: S.eje.nombre, subtema: S.sub.nombre,
+    fecha: new Date().toISOString(), origen: `Examen de práctica (${ex.score}/10)`, puntos
+  });
+  S.debiles.unshift(item);
+  ex.savedErrors = true;
+  updateDebilesCount();
+  renderExamen();
+  mentor(`Guardé ${puntos.length} ${puntos.length === 1 ? 'error' : 'errores'} como puntos débiles. Los voy a reforzar en tus próximas sesiones.`);
+}
+
+async function saveProgreso(k, patch) {
+  S.progreso.temas[k] = { ...(S.progreso.temas[k] || {}), ...patch, fecha: new Date().toISOString() };
+  await Store.setDoc('estado', { progreso: S.progreso });
+}
+
+/* =====================================================================
+   EJES GENERADOS DESDE LOS APUNTES
+   ===================================================================== */
+const Gen = { draft: null, busy: false, err: '' };
+function apuntesDeMateria(m) {
+  return Object.entries(S.config.apuntes || {}).filter(([n]) => {
+    const sc = (S.config.asignacion || {})[n] || '';
+    return !sc || sc === m.id || sc.startsWith(m.id + '/');
+  });
+}
+// Si algún apunte trae una sección «ESTRUCTURA DEL PLAN», se usa tal cual.
+function estructuraDePlan(files) {
+  const pref = S.materia ? (S.config.planes || {})[S.materia.id] : null;
+  const orden = [...files].sort((a, b) => (b[0] === pref) - (a[0] === pref));
+  for (const [n, t] of orden) {
+    const i = t.search(/^#{1,3}\s*ESTRUCTURA DEL PLAN/im);
+    if (i < 0) continue;
+    const rest = t.slice(i);
+    const end = rest.slice(1).search(/\n---|\n#{1,2}\s/);
+    return { file: n, text: end >= 0 ? rest.slice(0, end + 1) : rest.slice(0, 8000) };
+  }
+  return null;
+}
+// Etapa 1: material para decidir la estructura (texto completo o índices por partes).
+async function materialDeApuntes(m, files, onProgress, cancelado = () => false) {
+  const total = files.reduce((a, [, t]) => a + t.length, 0);
+  if (total <= 28000) return files.map(([n, t]) => `=== ${n} ===\n${t}`).join('\n\n');
+  const lotes = [];
+  let cur = [], size = 0;
+  for (const c of files.flatMap(([n, t]) => chunksOf(n, t))) {
+    if (size + c.p.length > 24000 && cur.length) { lotes.push(cur); cur = []; size = 0; }
+    cur.push(c); size += c.p.length;
+  }
+  if (cur.length) lotes.push(cur);
+  const indices = [];
+  for (let i = 0; i < lotes.length; i++) {
+    if (cancelado()) throw coded('cancelado', 'Cancelado.');
+    onProgress(`Leyendo tus apuntes (parte ${i + 1} de ${lotes.length})…`);
+    let txt = '', fileCur = null;
+    for (const c of lotes[i]) { if (c.file !== fileCur) { txt += `\n\n=== ${c.file} ===\n`; fileCur = c.file; } else txt += '\n\n'; txt += c.p; }
+    const out = await ask(`Eres un asistente que ordena apuntes universitarios de ${m.nombre}.
+[FRAGMENTO DE APUNTES]
+${txt}
+
+TAREA: extrae el índice detallado de este fragmento, en el orden en que aparece. Una línea por tema con el formato:
+- [nombre_del_archivo] Tema: qué se ve (definiciones, fórmulas y métodos clave)
+Máximo 40 líneas. Responde solo con la lista.`, { fresh: true });
+    indices.push(out.trim());
+  }
+  return `(Índices extraídos de los apuntes, en orden)\n${clip(indices.join('\n'), 40000)}`;
+}
+// Etapa 2: ejes y subtemas en etiquetas.
+async function proponerEstructura(m, material, nombres, { completar = false, explicita = false } = {}) {
+  const tarea = explicita
+    ? 'TAREA: el material trae una estructura de plan definida por el estudiante. Reprodúcela EXACTAMENTE: mismos ejes, subtemas, nombres y orden (puedes quitar la numeración de los nombres).'
+    : `TAREA: organiza el contenido de los apuntes en ejes temáticos y subtemas para preparar el examen. Respeta el orden y los nombres que usan los apuntes. ${completar
+      ? 'Incluye todos los temas de los apuntes y AGREGA los temas típicos del programa que falten y sean necesarios para el examen; marca esos subtemas agregados terminando su nombre con « (complemento)».'
+      : 'Incluye SOLO temas que aparezcan en ellos.'} Entre 1 y 8 ejes; cada eje con 2 a 8 subtemas.`;
+  const text = await ask(`Eres GeoMentor, tutor universitario de matemática. MATERIA: ${m.nombre}.
+Archivos disponibles: ${nombres.join(', ')}
+
+[MATERIAL]
+${material}
+
+${tarea}
+Formato exacto, repetido por cada eje:
+<eje>
+<nombre>nombre del eje</nombre>
+<icono>un solo emoji</icono>
+<desc>una frase que resuma el eje</desc>
+<subtema><nombre>nombre del subtema</nombre><desc>qué se estudia, en una frase</desc><archivos>nombres exactos de los archivos donde está, separados por coma (vacío si es complemento)</archivos></subtema>
+</eje>
+Responde solo con las etiquetas.`, { fresh: true });
+  const lower = nombres.map(n => n.toLowerCase());
+  const ejes = getTags(text, 'eje').map(block => {
+    const head = block.split('<subtema>')[0];
+    return {
+      nombre: getTag(head, 'nombre'),
+      icono: [...(getTag(head, 'icono') || '📚')].slice(0, 2).join('') || '📚',
+      desc: getTag(head, 'desc'),
+      subtemas: getTags(block, 'subtema').map(sb => ({
+        nombre: getTag(sb, 'nombre'),
+        desc: getTag(sb, 'desc'),
+        archivos: getTag(sb, 'archivos').split(/[,;\n]/).map(x => x.trim().replace(/^\[|\]$/g, '')).map(x => { const i = lower.indexOf(x.toLowerCase()); return i >= 0 ? nombres[i] : null; }).filter(Boolean)
+      })).filter(x => x.nombre)
+    };
+  }).filter(e => e.nombre && e.subtemas.length);
+  if (!ejes.length) throw new Error('No se pudieron armar ejes con la respuesta del modelo. Prueba de nuevo.');
+  return ejes;
+}
+async function generarEjes() {
+  const m = S.materia;
+  const files = apuntesDeMateria(m);
+  Gen.err = ''; Gen.draft = null;
+  if (!files.length) { Gen.err = 'No hay apuntes para esta materia. Súbelos en ⚙️ Config (o revisa que no estén asignados a otra materia).'; renderGenEjes(); $('#dlg-ejes').showModal(); return; }
+  if (!aiReady()) { Gen.err = 'Configura un proveedor de IA en ⚙️ Config para generar los ejes.'; renderGenEjes(); $('#dlg-ejes').showModal(); return; }
+  Gen.busy = true; Gen.progress = 'Leyendo tus apuntes…';
+  renderGenEjes(); $('#dlg-ejes').showModal();
+  const nombres = files.map(([n]) => n);
+  try {
+    const plan = estructuraDePlan(files);
+    let ejes;
+    if (plan) {
+      Gen.progress = `Usando la estructura de ${plan.file}…`; renderGenEjes();
+      ejes = await proponerEstructura(m, plan.text, nombres, { explicita: true });
+      for (const e of ejes) for (const sb of e.subtemas) if (!sb.archivos.includes(plan.file)) sb.archivos.unshift(plan.file);
+    } else {
+      const material = await materialDeApuntes(m, files, t => { Gen.progress = t; renderGenEjes(); });
+      Gen.progress = 'Organizando ejes y subtemas…'; renderGenEjes();
+      ejes = await proponerEstructura(m, material, nombres);
+    }
+    Gen.draft = ejes;
+  } catch (e) {
+    Gen.err = e.code ? aiError(e) : e.message;
+  } finally {
+    Gen.busy = false;
+    renderGenEjes();
+  }
+}
+function renderGenEjes() {
+  const body = $('#ejes-gen-body');
+  const m = S.materia;
+  const prev = ((S.config.ejesGen || {})[m.id] || []).length;
+  const quitar = prev ? `<button class="btn ghost sm" data-gact="quitar">🗑️ Quitar los ${prev} ejes generados de ${escapeHTML(m.nombre)}</button>` : '';
+  if (Gen.busy) { body.innerHTML = loadingHTML(Gen.progress || 'Generando…'); return; }
+  if (Gen.err) { body.innerHTML = `<p class="error-text">${escapeHTML(Gen.err)}</p><div class="btn-row">${aiReady() && apuntesDeMateria(m).length ? '<button class="btn" data-gact="regen">↻ Reintentar</button>' : ''}${quitar}</div>`; return; }
+  if (!Gen.draft) { body.innerHTML = `<p class="muted">Sin propuesta.</p><div class="btn-row">${quitar}</div>`; return; }
+  body.innerHTML = `
+    <p class="muted small">Revisa la propuesta: puedes cambiar nombres, emojis y descripciones, o quitar lo que no corresponda. Cada subtema queda vinculado a los archivos de donde salió.${prev ? ` Al guardar, reemplaza los ${prev} ejes generados antes para ${escapeHTML(m.nombre)}.` : ''}</p>
+    ${Gen.draft.map((e, i) => `
+      <div class="gen-eje" data-eje="${i}">
+        <div class="gen-row">
+          <input class="emoji" data-f="icono" value="${escapeHTML(e.icono)}" aria-label="Emoji del eje">
+          <input data-f="nombre" value="${escapeHTML(e.nombre)}" aria-label="Nombre del eje">
+          <button class="btn ghost sm" data-gact="del-eje" data-i="${i}" aria-label="Quitar eje">✕</button>
+        </div>
+        <input data-f="desc" value="${escapeHTML(e.desc)}" aria-label="Descripción del eje" style="min-height:38px;padding:.35rem .6rem">
+        <div class="gen-subs">
+          ${e.subtemas.map((sb, j) => `
+            <div data-sub="${j}">
+              <div class="gen-row">
+                <input data-f="nombre" value="${escapeHTML(sb.nombre)}" aria-label="Nombre del subtema">
+                <button class="btn ghost sm" data-gact="del-sub" data-i="${i}" data-j="${j}" aria-label="Quitar subtema">✕</button>
+              </div>
+              <div class="gen-files">📄 ${sb.archivos.length ? sb.archivos.map(escapeHTML).join(', ') : 'sin archivo identificado (se usará la búsqueda automática)'}</div>
+            </div>`).join('')}
+        </div>
+      </div>`).join('')}
+    <div class="btn-row">
+      <button class="btn primary" data-gact="guardar">Guardar ejes</button>
+      <button class="btn" data-gact="regen">↻ Regenerar</button>
+      ${quitar}
+    </div>`;
+}
+function leerDraft() {
+  if (!Gen.draft) return;
+  $$('#ejes-gen-body [data-eje]').forEach(el => {
+    const e = Gen.draft[+el.dataset.eje];
+    for (const inp of el.querySelectorAll(':scope > .gen-row input, :scope > input')) e[inp.dataset.f] = inp.value.trim();
+    el.querySelectorAll('[data-sub]').forEach(sEl => { e.subtemas[+sEl.dataset.sub].nombre = sEl.querySelector('input').value.trim(); });
+  });
+}
+function normalizarEjes(m, draft) {
+  const usados = new Set(m.ejes.map(e => e.id));
+  return draft.filter(e => e.nombre && e.subtemas.some(x => x.nombre)).map(e => {
+    let id = 'ap-' + slug(e.nombre), n = 2;
+    while (usados.has(id)) id = `ap-${slug(e.nombre)}-${n++}`;
+    usados.add(id);
+    const subIds = new Set();
+    return {
+      id, nombre: e.nombre, icono: e.icono || '📚', desc: e.desc || 'Generado desde tus apuntes.', generado: true,
+      subtemas: e.subtemas.filter(x => x.nombre).map(x => {
+        let sid = slug(x.nombre), k = 2;
+        while (subIds.has(sid)) sid = `${slug(x.nombre)}-${k++}`;
+        subIds.add(sid);
+        return { id: sid, nombre: x.nombre, desc: x.desc || 'Tema de tus apuntes.', archivos: x.archivos };
+      })
+    };
+  });
+}
+async function guardarEjes() {
+  leerDraft();
+  const m = S.materia;
+  const ejes = normalizarEjes(m, Gen.draft);
+  (S.config.ejesGen ||= {})[m.id] = ejes;
+  const ok = await Store.setDoc('config', S.config);
+  $('#dlg-ejes').close();
+  Gen.draft = null;
+  renderEjes();
+  mentor(`Agregué ${ejes.length} ${ejes.length === 1 ? 'eje' : 'ejes'} desde tus apuntes (marcados con 📚).${ok ? '' : ' No se pudieron guardar de forma permanente.'}`);
+}
+$('#btn-gen-ejes').addEventListener('click', () => {
+  if (Gen.busy) { $('#dlg-ejes').showModal(); return; }
+  generarEjes();
+});
+$('#ejes-gen-body').addEventListener('click', async ev => {
+  const b = ev.target.closest('[data-gact]');
+  if (!b) return;
+  const act = b.dataset.gact;
+  if (act === 'regen') { generarEjes(); return; }
+  if (act === 'guardar') { guardarEjes(); return; }
+  if (act === 'quitar') {
+    if (!confirm('¿Quitar los ejes generados desde tus apuntes en esta materia? Tus apuntes no se borran.')) return;
+    delete S.config.ejesGen[S.materia.id];
+    await Store.setDoc('config', S.config);
+    $('#dlg-ejes').close();
+    renderEjes();
+    mentor('Quité los ejes generados. Puedes volver a generarlos cuando quieras.');
+    return;
+  }
+  leerDraft();
+  if (act === 'del-eje') Gen.draft.splice(+b.dataset.i, 1);
+  if (act === 'del-sub') { const e = Gen.draft[+b.dataset.i]; e.subtemas.splice(+b.dataset.j, 1); if (!e.subtemas.length) Gen.draft.splice(+b.dataset.i, 1); }
+  if (!Gen.draft.length) { Gen.draft = null; Gen.err = 'Quitaste todos los ejes. Pulsa «Reintentar» para generar otra propuesta.'; }
+  renderGenEjes();
+});
+
+/* =====================================================================
+   CONSOLIDACIÓN DE APUNTES EN UN PLAN DE ESTUDIOS
+   ===================================================================== */
+const Plan = { busy: false, cancel: false, progress: '', err: '', result: null, dias: 12, completar: true, crearEjes: true };
+const planFileName = m => `plan_de_estudios_${slug(m.nombre)}.md`;
+const esPlan = t => /^#\s*PLAN DE ESTUDIOS CONSOLIDADO/m.test(t) && /ESTRUCTURA DEL PLAN/.test(t);
+// Fuentes para consolidar: los apuntes de la materia que no son ya un plan consolidado.
+function fuentesPlan(m) {
+  const fname = planFileName(m);
+  const todos = apuntesDeMateria(m).filter(([n]) => n !== fname);
+  return { files: todos.filter(([, t]) => !esPlan(t)), omitidos: todos.filter(([, t]) => esPlan(t)).map(([n]) => n) };
+}
+
+function conTema(m, e, sb, fn) {
+  const prev = { materia: S.materia, eje: S.eje, sub: S.sub };
+  S.materia = m;
+  S.eje = { id: 'tmp-eje', nombre: e.nombre, desc: e.desc || '', subtemas: [] };
+  S.sub = { id: 'tmp-sub', nombre: sb.nombre, desc: sb.desc || '', archivos: sb.archivos || [] };
+  try { return fn(); } finally { Object.assign(S, prev); }
+}
+function promptSeccion(m, e, sb, num, completar) {
+  const esComp = /\(complemento\)\s*$/i.test(sb.nombre);
+  return conTema(m, e, sb, () => fitPrompt(b => `${header(b)}
+
+TAREA: redacta la sección ${num} de un PLAN DE ESTUDIOS CONSOLIDADO para el examen, sobre el subtema «${sb.nombre}» (eje «${e.nombre}»). El plan reemplaza a los apuntes originales, así que debe ser completo, limpio y coherente.
+Reglas:
+- Une lo que dicen todas las fuentes sobre este subtema sin repetir contenido.
+- Elimina marcas de citas numéricas como [12] o «1, 2», y cualquier pregunta final de chatbot (por ejemplo «¿Querés que…?»).
+- Usa la notación y los métodos del ESTILO DEL PROFESOR. Si las fuentes se contradicen o contradicen al profesor, sigue al profesor y aclara la corrección en una frase.
+- Valores exactos: fracciones simplificadas y radicales extraídos. Un decimal solo entre paréntesis como aproximación, por ejemplo $\\sqrt{5}$ ($\\approx 2{,}24$).
+- Verifica cada cálculo del ejercicio modelo antes de escribirlo.
+- Para esta tarea ignora la regla de CITAS: en lugar de citar en el texto, lista los archivos usados en la línea «**Fuentes:**».
+- ${completar
+    ? `Si falta algo necesario para el examen, agrégalo SOLO dentro de bloques con este formato exacto (cada marca en su línea):
+:::complemento
+**Qué agrego:** …
+**Por qué:** qué falta en los apuntes.
+**Para qué:** qué le permite entender o resolver al estudiante.
+:::${esComp ? '\n- Este subtema entero no figura en los apuntes: todo su contenido va dentro de bloques «complemento».' : ''}`
+    : 'Usa SOLO lo que está en los apuntes; si algo falta, dilo en una frase sin completarlo.'}
+- Extensión: entre 250 y 650 palabras.
+
+Formato exacto (Markdown, sin texto antes ni después):
+## ${num} ${sb.nombre}
+
+**Fuentes:** nombres exactos de los archivos usados (o «complemento»)
+
+### Teoría
+### Fórmulas clave
+### Notación y criterios del profesor
+### Errores y trampas de parcial
+### Ejercicio modelo
+Resolución con los pasos del profesor: identificación de datos, fórmula completa, desarrollo exacto, verificación, qué debe mostrar el gráfico y respuesta final.`));
+}
+function limpiarSeccion(txt, num, nombre) {
+  let t = String(txt || '').replace(/^```[a-z]*\n?|```\s*$/gim, '').trim();
+  const i = t.search(/^##\s/m);
+  if (i > 0) t = t.slice(i);
+  if (!/^##\s/.test(t)) t = `## ${num} ${nombre}\n\n${t}`;
+  return t;
+}
+function cronogramaPlan(ejes, dias) {
+  dias = Math.max(3, Math.min(90, Math.round(dias) || 12));
+  const subs = ejes.flatMap((e, i) => e.subtemas.map((s, j) => ({ eje: i + 1, num: `${i + 1}.${j + 1}`, nombre: s.nombre, ultimo: j === e.subtemas.length - 1 })));
+  const reserva = dias >= 6 ? 2 : 1;
+  const estudio = dias - reserva;
+  const per = subs.length / estudio;
+  const L = [];
+  for (let d = 0; d < estudio; d++) {
+    const del = subs.slice(Math.round(d * per), Math.round((d + 1) * per));
+    const cierre = del.filter(x => x.ultimo).map(x => `Examen de práctica del Eje ${x.eje}.`).join(' ');
+    L.push(`- **Día ${d + 1}:** ${del.length ? del.map(x => `${x.num} ${x.nombre}`).join(', ') + '.' : 'repaso de lo visto y ejercicios extra de nivel «Parcial».'}${cierre ? ' ' + cierre : ''}`);
+  }
+  if (reserva === 2) L.push(`- **Día ${dias - 1}:** repaso de todos los 📌 puntos débiles guardados y un examen de práctica por eje.`);
+  L.push(`- **Día ${dias}:** simulacro completo en nivel «Examen reglamentado» y descanso.`);
+  return { dias, texto: L.join('\n') };
+}
+function armarPlan(m, ejes, secciones, nombres, dias, completar) {
+  const cr = cronogramaPlan(ejes, dias);
+  const estructura = ejes.map((e, i) => `- **Eje ${i + 1}: ${e.nombre}**\n${e.subtemas.map((s, j) => `  - ${i + 1}.${j + 1} ${s.nombre}`).join('\n')}`).join('\n');
+  return `# PLAN DE ESTUDIOS CONSOLIDADO · ${m.nombre}
+
+**Generado:** ${stamp()}
+**Fuentes consolidadas:** ${nombres.join(' · ')}
+**Criterios de notación y corrección:** estilo del profesor cargado en Config.
+
+**Cómo leer este plan.** El contenido proviene de las fuentes listadas.${completar ? ' Lo que no figuraba en ellas aparece dentro de bloques «complemento», con qué se agrega, por qué y para qué.' : ''}
+
+---
+
+## ESTRUCTURA DEL PLAN (ejes y subtemas)
+
+${estructura}
+
+---
+
+## CRONOGRAMA (${cr.dias} días)
+
+Rutina diaria en GeoMentor para cada subtema del día: (1) leer la teoría y responder el chequeo socrático hasta llegar a 70 % de comprensión; (2) resolver un ejercicio nivel «Parcial» con los pasos del profesor, gráfico incluido, y corregirlo; (3) exportar el resumen de la sesión para guardar los puntos débiles.
+
+${cr.texto}
+
+---
+
+${secciones.join('\n\n---\n\n')}
+`;
+}
+
+async function consolidarApuntes() {
+  const m = S.materia;
+  const fname = planFileName(m);
+  const { files } = fuentesPlan(m);
+  Plan.err = ''; Plan.result = null; Plan.cancel = false;
+  if (!files.length) { Plan.err = 'No hay apuntes para esta materia. Súbelos en ⚙️ Config.'; renderPlanDlg(); return; }
+  if (!aiReady()) { Plan.err = 'Configura un proveedor de IA en ⚙️ Config.'; renderPlanDlg(); return; }
+  Plan.busy = true;
+  const setP = t => { Plan.progress = t; renderPlanDlg(); };
+  const cancelado = () => Plan.cancel;
+  const nombres = files.map(([n]) => n);
+  Apuntes.excluir = new Set([fname, ...fuentesPlan(m).omitidos]);
+  try {
+    setP('Leyendo tus apuntes…');
+    const material = await materialDeApuntes(m, files, setP, cancelado);
+    if (cancelado()) throw coded('cancelado', 'Cancelado.');
+    setP('Definiendo ejes y subtemas del plan…');
+    const ejes = await proponerEstructura(m, material, nombres, { completar: Plan.completar });
+    const total = ejes.reduce((a, e) => a + e.subtemas.length, 0);
+    const secciones = [];
+    let n = 0;
+    for (const [i, e] of ejes.entries()) {
+      const partes = [`# EJE ${i + 1}: ${e.nombre}`];
+      for (const [j, sb] of e.subtemas.entries()) {
+        if (cancelado()) throw coded('cancelado', 'Cancelado.');
+        n++;
+        setP(`Redactando la sección ${n} de ${total}: ${sb.nombre}…`);
+        const num = `${i + 1}.${j + 1}`;
+        const txt = await ask(promptSeccion(m, e, sb, num, Plan.completar), { fresh: true });
+        partes.push(limpiarSeccion(txt, num, sb.nombre));
+      }
+      secciones.push(partes.join('\n\n'));
+    }
+    const md = armarPlan(m, ejes, secciones, nombres, Plan.dias, Plan.completar);
+    S.config.apuntes[fname] = md;
+    (S.config.asignacion ||= {})[fname] = m.id;
+    (S.config.planes ||= {})[m.id] = fname;
+    let ejesCreados = 0;
+    if (Plan.crearEjes) {
+      const conPlan = ejes.map(e => ({ ...e, subtemas: e.subtemas.map(sb => ({ ...sb, archivos: [fname, ...sb.archivos.filter(a => a !== fname)] })) }));
+      (S.config.ejesGen ||= {})[m.id] = normalizarEjes(m, conPlan);
+      ejesCreados = ejes.length;
+    }
+    const ok = await Store.setDoc('config', S.config);
+    Plan.result = { md, fname, ejes: ejes.length, subtemas: total, complementos: (md.match(/^:::complemento/gm) || []).length, ejesCreados, ok };
+    renderApuntes();
+    if (S.view === 'ejes') renderEjes();
+  } catch (e) {
+    Plan.err = e.code === 'cancelado' ? 'Consolidación cancelada. No se guardó nada.' : (e.code ? aiError(e) : e.message);
+  } finally {
+    Apuntes.excluir = new Set();
+    Plan.busy = false;
+    renderPlanDlg();
+  }
+}
+function renderPlanDlg() {
+  const body = $('#plan-body');
+  const m = S.materia;
+  if (!m) return;
+  if (Plan.busy) {
+    body.innerHTML = `${loadingHTML(Plan.progress || 'Trabajando…')}<p class="muted small">Se hace una consulta por subtema, así que puede tardar varios minutos. Puedes cerrar esta ventana: el trabajo sigue.</p><div class="btn-row"><button class="btn" data-pact="cancelar" ${Plan.cancel ? 'disabled' : ''}>${Plan.cancel ? 'Cancelando…' : 'Cancelar'}</button></div>`;
+    return;
+  }
+  if (Plan.result) {
+    const r = Plan.result;
+    body.innerHTML = `
+      <p>✔ Plan listo: <strong>${r.ejes} ejes</strong> y <strong>${r.subtemas} subtemas</strong>${r.complementos ? `, con ${r.complementos} ${r.complementos === 1 ? 'complemento marcado' : 'complementos marcados'}` : ''}.</p>
+      <p class="muted small">Quedó guardado como apunte «${escapeHTML(r.fname)}», asignado a ${escapeHTML(m.nombre)}.${r.ejesCreados ? ' Los ejes del plan ya aparecen marcados con 📚.' : ''} Tus archivos originales siguen cargados como respaldo.${r.ok ? '' : ' No se pudo guardar de forma permanente (el plan es muy grande).'}</p>
+      <div class="btn-row">
+        <button class="btn primary" data-pact="descargar">⬇️ Descargar plan (.md)</button>
+        <button class="btn" data-pact="cerrar">Ver los ejes</button>
+      </div>`;
+    return;
+  }
+  const { files, omitidos } = fuentesPlan(m);
+  const previo = S.config.apuntes?.[planFileName(m)];
+  body.innerHTML = `
+    ${Plan.err ? `<p class="error-text">${escapeHTML(Plan.err)}</p>` : ''}
+    <p class="muted small">Une tus ${files.length} ${files.length === 1 ? 'archivo' : 'archivos'} de apuntes de ${escapeHTML(m.nombre)} en un solo plan: elimina duplicados y ruido, sigue la notación del estilo del profesor, pasa los decimales a valores exactos y agrega un cronograma. Hace una consulta por subtema.</p>
+    ${previo ? '<p class="small" style="color:var(--hint)">Ya hay un plan de esta materia: el nuevo lo reemplaza.</p>' : ''}
+    ${omitidos.length ? `<p class="muted small">Se omite${omitidos.length > 1 ? 'n' : ''} ${omitidos.map(escapeHTML).join(', ')} porque ya ${omitidos.length > 1 ? 'son planes consolidados' : 'es un plan consolidado'}.</p>` : ''}
+    ${!S.config.estilo ? '<p class="small" style="color:var(--hint)">No cargaste el estilo del profesor en ⚙️ Config: el plan usará criterios generales.</p>' : ''}
+    <label class="field">Días hasta el examen<input type="number" id="plan-dias" min="3" max="90" value="${Plan.dias}" style="max-width:140px"></label>
+    <label class="toggle"><input type="checkbox" id="plan-completar" ${Plan.completar ? 'checked' : ''}><span>Completar temas típicos que falten en los apuntes, marcados como complemento (qué, por qué y para qué).</span></label>
+    <label class="toggle"><input type="checkbox" id="plan-ejes" ${Plan.crearEjes ? 'checked' : ''}><span>Crear también los ejes y subtemas del plan en la app (reemplaza los generados antes para esta materia).</span></label>
+    <div class="btn-row"><button class="btn primary" data-pact="crear" ${files.length && aiReady() ? '' : 'disabled'}>🧩 Crear plan</button></div>`;
+}
+$('#btn-plan').addEventListener('click', () => { if (!Plan.busy) { Plan.result = null; Plan.err = ''; } renderPlanDlg(); $('#dlg-plan').showModal(); });
+$('#plan-body').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-pact]');
+  if (!b) return;
+  const act = b.dataset.pact;
+  if (act === 'crear') {
+    Plan.dias = Number($('#plan-dias').value) || 12;
+    Plan.completar = $('#plan-completar').checked;
+    Plan.crearEjes = $('#plan-ejes').checked;
+    consolidarApuntes();
+  }
+  if (act === 'cancelar') { Plan.cancel = true; renderPlanDlg(); }
+  if (act === 'descargar' && Plan.result) saveFile(new Blob([Plan.result.md], { type: 'text/markdown;charset=utf-8' }), Plan.result.fname);
+  if (act === 'cerrar') { $('#dlg-plan').close(); Plan.result = null; }
+});
+
+/* =====================================================================
+   PUNTOS DÉBILES GUARDADOS
+   ===================================================================== */
+function updateDebilesCount() {
+  const n = S.debiles.reduce((a, d) => a + (d.puntos?.length || 0), 0);
+  const c = $('#debiles-count');
+  c.textContent = n; c.hidden = !n;
+}
+function renderDebiles() {
+  const body = $('#debiles-body');
+  if (!S.debiles.length) {
+    body.innerHTML = '<p class="muted">Todavía no hay puntos débiles guardados. Se guardan cuando generas el resumen de un chequeo de comprensión o cuando guardas los errores de un examen.</p>';
+    return;
+  }
+  const where = Store.mode === 'db' ? 'Se guardan en tu cuenta y solo tú puedes verlos.' : 'Se guardan en este navegador.';
+  body.innerHTML = `<p class="muted small">${where}</p>
+    <div class="btn-row"><button class="btn sm" data-dact="export-all">⬇️ Exportar todo (.txt)</button></div>
+    ${S.debiles.map(d => `
+    <article class="weak-item">
+      <h4>${escapeHTML(d.subtema)}</h4>
+      <p class="meta">${escapeHTML(d.materia)} › ${escapeHTML(d.eje)} · ${escapeHTML(d.origen || '')} · ${stamp(new Date(d.fecha))}</p>
+      <ul>${(d.puntos || []).map(p => `<li>${mdInline(p)}</li>`).join('')}</ul>
+      <div class="btn-row">
+        <button class="btn sm primary" data-dact="repasar" data-id="${escapeHTML(d.id)}">Repasar este tema</button>
+        <button class="btn sm" data-dact="superado" data-id="${escapeHTML(d.id)}">✔ Marcar como superado</button>
+      </div>
+    </article>`).join('')}`;
+}
+function findSub(d) {
+  const m = MATERIAS.find(x => x.id === d.materiaId);
+  const e = m ? ejesDe(m).find(x => x.id === d.ejeId) : null;
+  if (!m || !e) return null;
+  let s = [...e.subtemas, ...(e.custom || [])].find(x => x.id === d.subId);
+  if (!s) { s = { id: d.subId, nombre: d.subtema, desc: 'Tema personalizado' }; (e.custom ||= []).push(s); }
+  return { m, e, s };
+}
+function exportAllDebiles() {
+  const L = ['GEOMENTOR · PUNTOS DÉBILES GUARDADOS', `Exportado: ${stamp()}`, ''];
+  for (const d of S.debiles) {
+    L.push('='.repeat(60), `${d.materia} › ${d.eje} › ${d.subtema}`, `${d.origen || ''} · ${stamp(new Date(d.fecha))}`, '-'.repeat(60));
+    (d.puntos || []).forEach(p => L.push('  ✖ ' + p));
+    L.push('');
+  }
+  saveFile(new Blob([L.join('\n')], { type: 'text/plain;charset=utf-8' }), `puntos_debiles_${today()}.txt`);
+}
+
+/* =====================================================================
+   APUNTES
+   ===================================================================== */
+function scopeOptions(sel) {
+  const opt = (v, label) => `<option value="${v}" ${v === sel ? 'selected' : ''}>${escapeHTML(label)}</option>`;
+  let h = opt('', 'Todos los temas (búsqueda automática)');
+  for (const m of MATERIAS) {
+    h += `<optgroup label="${escapeHTML(m.nombre)}">${opt(m.id, `${m.nombre}: toda la materia`)}`;
+    for (const e of ejesDe(m)) {
+      h += opt(`${m.id}/${e.id}`, `\u00a0\u00a0${e.nombre} (eje completo)`);
+      for (const sb of e.subtemas) h += opt(`${m.id}/${e.id}/${sb.id}`, `\u00a0\u00a0\u00a0\u00a0· ${sb.nombre}`);
+    }
+    h += '</optgroup>';
+  }
+  return h;
+}
+function renderApuntes() {
+  const files = Object.entries(S.config.apuntes || {});
+  $('#apuntes-list').innerHTML = files.length
+    ? files.map(([n, t]) => `<div class="file-item"><div class="file-info"><span>📄 ${escapeHTML(n)} <span class="muted">· ${Math.round(t.length / 1000)} mil caracteres</span></span><select data-scope="${escapeHTML(n)}" aria-label="Tema al que corresponde ${escapeHTML(n)}">${scopeOptions((S.config.asignacion || {})[n] || '')}</select></div><button class="btn ghost sm" data-remove="${escapeHTML(n)}" aria-label="Quitar ${escapeHTML(n)}">✕</button></div>`).join('')
+    : '<p class="muted small">No hay apuntes cargados.</p>';
+  $('#estilo-text').value = S.config.estilo || '';
+  $('#estricto').checked = !!S.config.estricto;
+  $('#storage-note').textContent = Store.mode === 'db' ? 'Tus apuntes se guardan en tu cuenta, de forma privada.' : 'Tus apuntes se guardan en este navegador.';
+  $('#apuntes-dot').hidden = !files.length && !S.config.estilo;
+}
+async function saveApuntes() {
+  commitIA();
+  S.config.estilo = $('#estilo-text').value;
+  S.config.estricto = $('#estricto').checked;
+  let total = JSON.stringify(S.config).length;
+  const ok = total < 240000 ? await Store.setDoc('config', S.config) : false;
+  renderApuntes();
+  $('#dlg-apuntes').close();
+  rerenderCurrent();
+  mentor(!aiReady() ? 'Configuración guardada, pero falta completar el proveedor de IA (clave o modelo).' : ok ? `Listo: uso ${PROVIDERS[IA.provider].nombre.split(' (')[0]}${IA.provider !== 'claude' ? ' · ' + modelOf(IA.provider) : ''}. Tus apuntes quedaron guardados.` : 'Los apuntes se usarán en esta sesión, pero son demasiado grandes para guardarlos. Divide los archivos si quieres conservarlos.');
+}
+
+/* =====================================================================
+   EXPORTAR FICHA PDF
+   ===================================================================== */
+async function exportPDF() {
+  if (!S.sub) { mentor('Entra a un subtema para exportar su ficha.'); return; }
+  if (typeof html2pdf === 'undefined') { mentor('La librería de PDF no cargó. Revisa tu conexión y recarga la página.'); return; }
+  const k = key(), c = S.cache[k], s = sess(k);
+  if (!c) { mentor('Primero genera la teoría del subtema.'); return; }
+  const L = 'ABCD';
+  const doc = document.createElement('div');
+  doc.className = 'pdf-doc';
+  doc.innerHTML = `
+    <h1>GeoMentor · Ficha de estudio</h1>
+    <p>${escapeHTML(S.materia.nombre)} › ${escapeHTML(S.eje.nombre)} › <strong>${escapeHTML(S.sub.nombre)}</strong> · ${stamp()}</p>
+    <h2>Teoría y notación</h2><div class="md">${markdownToHTML(c.teoria)}</div>
+    ${c.ideas.length ? `<h2>Ideas clave</h2><ul>${c.ideas.map(i => `<li>${mdInline(i)}</li>`).join('')}</ul>` : ''}
+    ${s.turns.length ? `<h2>Chequeo de comprensión (${s.comprension}%)</h2>
+      ${s.entendido.length ? `<p><strong>Entendido:</strong></p><ul>${s.entendido.map(x => `<li>${mdInline(x)}</li>`).join('')}</ul>` : ''}
+      ${s.falta.length ? `<p><strong>Por reforzar:</strong></p><ul>${s.falta.map(x => `<li>${mdInline(x)}</li>`).join('')}</ul>` : ''}` : ''}
+    ${s.exercise ? `<h2>Ejercicio guiado</h2><div class="box md">${markdownToHTML(s.exercise.enunciado)}</div>${s.showSol ? `<p><strong>Solución</strong></p><div class="md">${markdownToHTML(s.exercise.solucion)}</div>` : ''}` : ''}
+    ${s.exam?.submitted ? `<h2>Examen de práctica: ${s.exam.score}/10</h2>${s.exam.questions.map((q, i) => `
+      <div class="box"><p><strong>${i + 1}.</strong> ${mdInline(q.enunciado)}</p>
+      <p>Tu respuesta: ${s.exam.answers[i] !== null ? L[s.exam.answers[i]] : '-'} · Correcta: ${L[q.correcta]} ${s.exam.answers[i] === q.correcta ? '✔' : '✖'}</p>
+      <p>${mdInline(q.explicacion)}</p></div>`).join('')}` : ''}`;
+  doc.querySelectorAll('mjx-assistive-mml').forEach(n => n.remove());
+  mentor('Generando la ficha en PDF…');
+  try {
+    const blob = await html2pdf().set({
+      margin: 0.5, image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, backgroundColor: '#ffffff' },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'], avoid: ['.box', 'li', '.math-block'] }
+    }).from(doc).outputPdf('blob');
+    const ok = await saveFile(blob, `ficha_${slug(S.sub.nombre)}_${today()}.pdf`);
+    if (ok) mentor('Ficha exportada. Guárdala para repasar antes del examen.');
+  } catch (e) {
+    mentor('No se pudo generar el PDF: ' + (e?.message || 'error'));
+  }
+}
+
+/* =====================================================================
+   LABORATORIO · INTÉRPRETE DE EXPRESIONES
+   ===================================================================== */
+// ==PARSER-START==
+const FUNCS = {
+  sin: Math.sin, sen: Math.sin, cos: Math.cos, tan: Math.tan, tg: Math.tan,
+  asin: Math.asin, acos: Math.acos, atan: Math.atan, arcsen: Math.asin, arccos: Math.acos, arctan: Math.atan,
+  sec: x => 1 / Math.cos(x), csc: x => 1 / Math.sin(x), cot: x => 1 / Math.tan(x),
+  sqrt: Math.sqrt, raiz: Math.sqrt, abs: Math.abs, ln: Math.log, log: Math.log10, exp: Math.exp,
+  floor: Math.floor, ceil: Math.ceil, sign: Math.sign
+};
+const SPECIAL = ['vector', 'segmento', 'segment', 'recta', 'line', 'punto', 'point', 'norma', 'modulo', 'angulo', 'cruz', 'cross', 'min', 'max'];
+const CONSTS = { pi: Math.PI, e: Math.E };
+const WORDS = [...Object.keys(FUNCS), ...SPECIAL, ...Object.keys(CONSTS)].sort((a, b) => b.length - a.length);
+
+class UndefErr extends Error { constructor(n) { super(`«${n}» no está definida.`); this.varName = n; } }
+
+function tokenize(src) {
+  const s = src.replace(/²/g, '^2').replace(/³/g, '^3').replace(/π/g, 'pi').replace(/[·×]/g, '*')
+    .replace(/[−–]/g, '-').replace(/√/g, 'sqrt').replace(/÷/g, '/').replace(/\*\*/g, '^')
+    .replace(/[\[{]/g, '(').replace(/[\]}]/g, ')');
+  const toks = [];
+  let i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (/\s/.test(c)) { i++; continue; }
+    if (/[0-9.]/.test(c)) {
+      const m = s.slice(i).match(/^(\d+\.?\d*|\.\d+)/);
+      if (!m) throw new Error('Número mal escrito.');
+      toks.push({ t: 'num', v: parseFloat(m[0]) }); i += m[0].length; continue;
+    }
+    if (/[A-Za-z\u0370-\u03FF]/.test(c)) {
+      const rest = s.slice(i);
+      const w = WORDS.find(w => rest.startsWith(w));
+      if (w) {
+        toks.push(w in CONSTS ? { t: 'const', v: w } : { t: 'fn', v: w });
+        i += w.length; continue;
+      }
+      const m = rest.match(/^[A-Za-z\u0370-\u03FF](?:_([0-9A-Za-z]+)|([0-9]+))?/);
+      const sub = m[1] || m[2];
+      toks.push({ t: 'id', v: sub ? `${m[0][0]}_${sub}` : m[0][0] });
+      i += m[0].length; continue;
+    }
+    if ('+-*/^(),|'.includes(c)) { toks.push({ t: c }); i++; continue; }
+    throw new Error(`Carácter no reconocido: «${c}».`);
+  }
+  return toks;
+}
+
+function parse(src) {
+  const toks = tokenize(src);
+  let p = 0;
+  const peek = () => toks[p];
+  const next = () => toks[p++];
+  const tokStr = k => k ? (k.v ?? k.t) : 'el final';
+  const expect = t => { const k = next(); if (!k || k.t !== t) throw new Error(t === ')' ? 'Falta cerrar un paréntesis.' : `Se esperaba «${t}».`); return k; };
+  const startsPrimary = k => k && (k.t === 'num' || k.t === 'id' || k.t === 'fn' || k.t === 'const' || k.t === '(');
+
+  function expr() {
+    let a = mult();
+    while (peek() && (peek().t === '+' || peek().t === '-')) { const op = next().t; a = { t: 'bin', op, a, b: mult() }; }
+    return a;
+  }
+  function mult() {
+    let a = unary();
+    for (;;) {
+      const k = peek();
+      if (k && (k.t === '*' || k.t === '/')) { next(); a = { t: 'bin', op: k.t, a, b: unary() }; }
+      else if (startsPrimary(k)) { a = { t: 'bin', op: '*', a, b: power() }; }
+      else break;
+    }
+    return a;
+  }
+  function unary() {
+    const k = peek();
+    if (k && k.t === '-') { next(); return { t: 'neg', a: unary() }; }
+    if (k && k.t === '+') { next(); return unary(); }
+    return power();
+  }
+  function power() {
+    const base = primary();
+    if (peek() && peek().t === '^') { next(); return { t: 'bin', op: '^', a: base, b: unary() }; }
+    return base;
+  }
+  function primary() {
+    const k = next();
+    if (!k) throw new Error('La expresión está incompleta.');
+    if (k.t === 'num') return { t: 'num', v: k.v };
+    if (k.t === 'const') return { t: 'num', v: CONSTS[k.v] };
+    if (k.t === 'id') return { t: 'var', n: k.v };
+    if (k.t === 'fn') {
+      if (peek() && peek().t === '(') {
+        next();
+        const args = [];
+        if (peek() && peek().t !== ')') { args.push(expr()); while (peek() && peek().t === ',') { next(); args.push(expr()); } }
+        expect(')');
+        return { t: 'call', f: k.v, args };
+      }
+      let arg = power();
+      while (peek() && (peek().t === 'num' || peek().t === 'id' || peek().t === 'const')) arg = { t: 'bin', op: '*', a: arg, b: power() };
+      return { t: 'call', f: k.v, args: [arg] };
+    }
+    if (k.t === '(') {
+      const items = [expr()];
+      while (peek() && peek().t === ',') { next(); items.push(expr()); }
+      expect(')');
+      return items.length === 1 ? items[0] : { t: 'tuple', items };
+    }
+    if (k.t === '|') { const inner = expr(); expect('|'); return { t: 'call', f: 'abs', args: [inner] }; }
+    throw new Error(`No se esperaba «${tokStr(k)}».`);
+  }
+  const node = expr();
+  if (p < toks.length) throw new Error(`Sobra algo cerca de «${tokStr(toks[p])}».`);
+  return node;
+}
+
+function varsOf(node, set = new Set()) {
+  if (!node) return set;
+  if (node.t === 'var') set.add(node.n);
+  else if (node.t === 'bin') { varsOf(node.a, set); varsOf(node.b, set); }
+  else if (node.t === 'neg') varsOf(node.a, set);
+  else if (node.t === 'call') node.args.forEach(a => varsOf(a, set));
+  else if (node.t === 'tuple') node.items.forEach(a => varsOf(a, set));
+  return set;
+}
+
+// Tipos de valor: número · arreglo (punto o vector de R^n) · {k:'vec', o, d} · {k:'seg', a, b} · {k:'line', a, d}
+const isNum = v => typeof v === 'number';
+const isArr = v => Array.isArray(v);
+const isVec = v => v && v.k === 'vec';
+const comps = v => isArr(v) ? v : isVec(v) ? v.d : null;
+const vec = (o, d) => ({ k: 'vec', o, d });
+function need2(v, what) { if (!isArr(v) || v.length !== 2) throw new Error(`${what} necesita un punto del plano (x, y).`); return v; }
+
+const OPS = {
+  '+'(a, b) {
+    if (isNum(a) && isNum(b)) return a + b;
+    if (isArr(a) && isArr(b) && a.length === b.length) return a.map((x, i) => x + b[i]);
+    if (isVec(a) && isVec(b)) return vec(a.o, [a.d[0] + b.d[0], a.d[1] + b.d[1]]);
+    if (isArr(a) && isVec(b) && a.length === 2) return [a[0] + b.d[0], a[1] + b.d[1]];
+    if (isVec(a) && isArr(b) && b.length === 2) return [b[0] + a.d[0], b[1] + a.d[1]];
+    throw new Error('No se puede sumar un número con un punto o vector.');
+  },
+  '-'(a, b) {
+    if (isNum(a) && isNum(b)) return a - b;
+    if (isArr(a) && isArr(b) && a.length === b.length) return a.length === 2 ? vec(b, [a[0] - b[0], a[1] - b[1]]) : a.map((x, i) => x - b[i]);
+    if (isVec(a) && isVec(b)) return vec(a.o, [a.d[0] - b.d[0], a.d[1] - b.d[1]]);
+    if (isArr(a) && isVec(b) && a.length === 2) return [a[0] - b.d[0], a[1] - b.d[1]];
+    throw new Error('Resta no válida entre esos objetos.');
+  },
+  '*'(a, b) {
+    if (isNum(a) && isNum(b)) return a * b;
+    if (isNum(a) && isArr(b)) return b.map(x => a * x);
+    if (isArr(a) && isNum(b)) return a.map(x => x * b);
+    if (isNum(a) && isVec(b)) return vec(b.o, b.d.map(x => a * x));
+    if (isVec(a) && isNum(b)) return vec(a.o, a.d.map(x => x * b));
+    const ca = comps(a), cb = comps(b);
+    if (ca && cb && ca.length === cb.length) return ca.reduce((s, x, i) => s + x * cb[i], 0);
+    throw new Error('Producto no válido entre esos objetos.');
+  },
+  '/'(a, b) {
+    if (isNum(a) && isNum(b)) return a / b;
+    if (isArr(a) && isNum(b)) return a.map(x => x / b);
+    if (isVec(a) && isNum(b)) return vec(a.o, a.d.map(x => x / b));
+    throw new Error('Solo se puede dividir entre un número.');
+  },
+  '^'(a, b) {
+    if (isNum(a) && isNum(b)) return Math.pow(a, b);
+    throw new Error('Las potencias solo se aplican a números.');
+  }
+};
+function negV(v) {
+  if (isNum(v)) return -v;
+  if (isArr(v)) return v.map(x => -x);
+  if (isVec(v)) return vec(v.o, v.d.map(x => -x));
+  throw new Error('No se puede cambiar el signo de ese objeto.');
+}
+function callSpecial(f, args) {
+  const nums = args.every(isNum);
+  switch (f) {
+    case 'vector':
+      if (args.length === 2 && nums) return vec([0, 0], args);
+      if (args.length === 2 && isArr(args[0]) && isArr(args[1])) { const a = need2(args[0], 'vector'), b = need2(args[1], 'vector'); return vec(a, [b[0] - a[0], b[1] - a[1]]); }
+      if (args.length === 1 && isArr(args[0])) return args[0].length === 2 ? vec([0, 0], args[0]) : args[0];
+      if (args.length === 1 && isVec(args[0])) return args[0];
+      if (args.length === 3 && nums) return args;
+      throw new Error('Usa vector(a, b) o vector(A, B).');
+    case 'punto': case 'point':
+      if (nums && (args.length === 2 || args.length === 3)) return args;
+      throw new Error('Usa punto(x, y).');
+    case 'segmento': case 'segment':
+      if (args.length === 2) return { k: 'seg', a: need2(args[0], 'segmento'), b: need2(args[1], 'segmento') };
+      throw new Error('Usa segmento(A, B).');
+    case 'recta': case 'line': {
+      if (args.length !== 2) throw new Error('Usa recta(A, B) o recta(A, u).');
+      const a = need2(args[0], 'recta');
+      const d = isVec(args[1]) ? args[1].d : (() => { const b = need2(args[1], 'recta'); return [b[0] - a[0], b[1] - a[1]]; })();
+      return { k: 'line', a, d };
+    }
+    case 'norma': case 'modulo': {
+      const c = comps(args[0]);
+      if (!c) { if (isNum(args[0])) return Math.abs(args[0]); throw new Error('norma() necesita un vector.'); }
+      return Math.hypot(...c);
+    }
+    case 'angulo': {
+      const a = comps(args[0]), b = comps(args[1]);
+      if (!a || !b || a.length !== b.length) throw new Error('angulo(u, v) necesita dos vectores de la misma dimensión.');
+      const dot = a.reduce((s, x, i) => s + x * b[i], 0);
+      return Math.acos(Math.max(-1, Math.min(1, dot / (Math.hypot(...a) * Math.hypot(...b))))) * 180 / Math.PI;
+    }
+    case 'cruz': case 'cross': {
+      const a = comps(args[0]), b = comps(args[1]);
+      if (!a || !b) throw new Error('cruz(u, v) necesita dos vectores.');
+      if (a.length === 2 && b.length === 2) return a[0] * b[1] - a[1] * b[0];
+      if (a.length === 3 && b.length === 3) return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+      throw new Error('cruz(u, v) necesita vectores de R³.');
+    }
+    case 'min': if (nums && args.length) return Math.min(...args); break;
+    case 'max': if (nums && args.length) return Math.max(...args); break;
+  }
+  throw new Error(`${f}() recibió argumentos no válidos.`);
+}
+
+function compile(node) {
+  switch (node.t) {
+    case 'num': { const v = node.v; return () => v; }
+    case 'var': { const n = node.n; return env => { const v = env[n]; if (v === undefined) throw new UndefErr(n); return v; }; }
+    case 'neg': { const a = compile(node.a); return env => negV(a(env)); }
+    case 'bin': { const a = compile(node.a), b = compile(node.b), f = OPS[node.op]; return env => f(a(env), b(env)); }
+    case 'tuple': {
+      const items = node.items.map(compile);
+      return env => items.map(f => { const v = f(env); if (!isNum(v)) throw new Error('Las coordenadas deben ser números.'); return v; });
+    }
+    case 'call': {
+      const args = node.args.map(compile);
+      if (node.f in FUNCS) {
+        const fn = FUNCS[node.f];
+        if (node.args.length !== 1) throw new Error(`${node.f}() recibe un solo argumento.`);
+        return env => { const v = args[0](env); if (!isNum(v)) throw new Error(`${node.f}() necesita un número.`); return fn(v); };
+      }
+      return env => callSpecial(node.f, args.map(a => a(env)));
+    }
+  }
+  throw new Error('Expresión no válida.');
+}
+
+const NAME_RE = /^([A-Za-z\u0370-\u03FF])(?:_([0-9A-Za-z]+)|([0-9]+))?$/;
+function litNum(n) {
+  if (n.t === 'num') return n.v;
+  if (n.t === 'neg' && n.a.t === 'num') return -n.a.v;
+  return null;
+}
+function literalInfo(node) {
+  const v = litNum(node);
+  if (v !== null) return { type: 'num', v };
+  if (node.t === 'tuple' && node.items.length === 2) {
+    const x = litNum(node.items[0]), y = litNum(node.items[1]);
+    if (x !== null && y !== null) return { type: 'point' };
+  }
+  if (node.t === 'call' && (node.f === 'vector') && node.args.length === 2) {
+    const x = litNum(node.args[0]), y = litNum(node.args[1]);
+    if (x !== null && y !== null) return { type: 'vector' };
+  }
+  if (node.t === 'call' && (node.f === 'punto' || node.f === 'point') && node.args.length === 2) {
+    const x = litNum(node.args[0]), y = litNum(node.args[1]);
+    if (x !== null && y !== null) return { type: 'point' };
+  }
+  return null;
+}
+
+// Clasifica una línea del laboratorio.
+function analyzeLine(text) {
+  const r = { kind: 'empty', error: null, name: null, node: null, fn: null, literal: null };
+  const src = text.trim();
+  if (!src || src.startsWith('//') || src.startsWith('#')) return r;
+  try {
+    const fdef = src.match(/^([A-Za-z])\s*\(\s*x\s*\)\s*=(.*)$/);
+    if (fdef && fdef[1] !== 'y' && fdef[1] !== 'x') {
+      const node = parse(fdef[2]);
+      if (varsOf(node).has('y')) throw new Error('Una función f(x) no puede usar y.');
+      return Object.assign(r, { kind: 'fx', name: fdef[1], node, fn: compile(node) });
+    }
+    const parts = src.split('=');
+    if (parts.length > 2) throw new Error('Usa un solo signo «=».');
+    if (parts.length === 2) {
+      const L = parts[0].trim(), R = parts[1].trim();
+      if (!L || !R) throw new Error('Falta un lado de la igualdad.');
+      const rNode = parse(R), rv = varsOf(rNode);
+      if (L === 'y' && !rv.has('y')) return Object.assign(r, { kind: 'fx', node: rNode, fn: compile(rNode) });
+      if (L === 'x' && !rv.has('x')) return Object.assign(r, { kind: 'gy', node: rNode, fn: compile(rNode) });
+      const nm = L.match(NAME_RE);
+      if (nm && !rv.has('x') && !rv.has('y') && L !== 'x' && L !== 'y') {
+        if (L === 'e') throw new Error('«e» es la constante de Euler; usa otro nombre.');
+        const name = nm[2] || nm[3] ? `${nm[1]}_${nm[2] || nm[3]}` : nm[1];
+        if (rv.has(name)) throw new Error(`«${name}» no puede depender de sí misma.`);
+        return Object.assign(r, { kind: 'def', name, node: rNode, fn: compile(rNode), literal: literalInfo(rNode) });
+      }
+      const lNode = parse(L);
+      const all = new Set([...varsOf(lNode), ...rv]);
+      if (!all.has('x') && !all.has('y')) throw new Error('Una ecuación debe usar x o y. Para definir un valor escribe, por ejemplo, a = 2.');
+      const node = { t: 'bin', op: '-', a: lNode, b: rNode };
+      return Object.assign(r, { kind: 'implicit', node, fn: compile(node) });
+    }
+    const node = parse(src), v = varsOf(node);
+    if (v.has('y')) throw new Error('Si usas y, escribe una ecuación (por ejemplo, x^2 + y^2 = 9).');
+    if (v.has('x')) return Object.assign(r, { kind: 'fx', node, fn: compile(node) });
+    return Object.assign(r, { kind: 'value', node, fn: compile(node) });
+  } catch (err) {
+    return Object.assign(r, { kind: 'error', error: err.message });
+  }
+}
+
+// Evalúa definiciones en orden, resolviendo dependencias entre ellas.
+function evaluateAll(list) {
+  const env = {};
+  const seen = new Set();
+  for (const e of list) {
+    e.value = undefined; e.evalError = null; e.undef = [];
+    if (e.kind === 'def') {
+      if (seen.has(e.name)) { e.evalError = `«${e.name}» ya está definida en otra línea.`; e.dup = true; }
+      else { seen.add(e.name); e.dup = false; }
+    }
+  }
+  let pending = list.filter(e => e.kind === 'def' && !e.dup);
+  for (let pass = 0; pending.length && pass <= list.length; pass++) {
+    const still = [];
+    for (const d of pending) {
+      try { d.value = d.fn(env); env[d.name] = d.value; d.evalError = null; }
+      catch (err) { d.evalError = err.message; if (err instanceof UndefErr) still.push(d); }
+    }
+    if (still.length === pending.length) break;
+    pending = still;
+  }
+  for (const e of list) {
+    if (!e.node || e.kind === 'error') continue;
+    const missing = [...varsOf(e.node)].filter(n => n !== 'x' && n !== 'y' && !(n in env) && n !== e.name);
+    if (missing.length) { e.undef = missing; e.evalError = `${missing.map(n => `«${n}»`).join(', ')} ${missing.length > 1 ? 'no están definidas' : 'no está definida'}.`; continue; }
+    if (e.kind === 'value') { try { e.value = e.fn(env); } catch (err) { e.evalError = err.message; } }
+    if (e.kind === 'fx' || e.kind === 'gy' || e.kind === 'implicit') {
+      try { const t = e.fn({ ...env, x: 0.37, y: 0.41 }); if (!isNum(t)) e.evalError = 'La expresión debe dar un número, no un punto o vector.'; }
+      catch (err) { if (!(err instanceof UndefErr)) e.evalError = err.message; }
+    }
+  }
+  return env;
+}
+
+function fmtNum(v) {
+  if (!Number.isFinite(v)) return 'indefinido';
+  if (Math.abs(v) < 1e-10) return '0';
+  const r = Math.round(v * 1e4) / 1e4;
+  return String(r);
+}
+// ==PARSER-END==
+
+/* =====================================================================
+   LABORATORIO · LIENZO INTERACTIVO
+   ===================================================================== */
+const Lab = (() => {
+  const canvas = $('#plot');
+  const ctx = canvas.getContext('2d');
+  const wrap = $('#plot-wrap');
+  const listEl = $('#expr-list');
+  const coordsEl = $('#plot-coords');
+  const COLORS = ['#3b82f6', '#ef4444', '#10b981', '#a855f7', '#f97316', '#06b6d4', '#ec4899', '#84cc16'];
+  let W = 0, H = 0, dpr = 1;
+  const view = { cx: 0, cy: 0, scale: 40 };
+  let exprs = [];
+  let colorIdx = 0;
+  let handles = [];
+  let lastEnv = {};
+  let onChange = () => {};
+  let raf = 0;
+
+  const toPx = (x, y) => [W / 2 + (x - view.cx) * view.scale, H / 2 - (y - view.cy) * view.scale];
+  const toWorld = (px, py) => [view.cx + (px - W / 2) / view.scale, view.cy - (py - H / 2) / view.scale];
+  function niceStep(raw) {
+    const p = Math.pow(10, Math.floor(Math.log10(raw)));
+    for (const m of [1, 2, 5, 10]) if (m * p >= raw) return m * p;
+    return 10 * p;
+  }
+  const decimalsFor = step => Math.max(0, -Math.floor(Math.log10(step) + 1e-9));
+
+  function makeExpr(text) {
+    const e = { id: newId(), text, color: COLORS[colorIdx++ % COLORS.length], visible: true, slider: null };
+    Object.assign(e, analyzeLine(text));
+    return e;
+  }
+  function reanalyze(e) { Object.assign(e, analyzeLine(e.text)); }
+
+  function resize() {
+    const w = wrap.clientWidth;
+    if (w < 10) return;
+    W = w;
+    H = Math.max(300, Math.min(600, Math.round(W * 0.72)));
+    dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.height = H + 'px';
+    draw();
+  }
+  function schedule() { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { draw(); updateMetas(); }); }
+
+  function colorsFromCSS() {
+    const cs = getComputedStyle(document.documentElement);
+    const g = n => cs.getPropertyValue(n).trim();
+    return { bg: g('--plot-bg'), minor: g('--plot-minor'), major: g('--plot-major'), axis: g('--plot-axis'), label: g('--plot-label'), font: '12px Lexend, system-ui, sans-serif' };
+  }
+
+  function draw() {
+    if (!W) return;
+    const C = colorsFromCSS();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+    drawGrid(C);
+    lastEnv = evaluateAll(exprs);
+    handles = [];
+    for (const e of exprs) {
+      if (!e.visible || e.evalError) continue;
+      try { drawExpr(e, C); } catch (err) { /* un error de dibujo no detiene al resto */ }
+    }
+  }
+
+  function drawGrid(C) {
+    const step = niceStep(80 / view.scale);
+    const minor = step / (String(step).startsWith('2') ? 4 : 5);
+    const [x0, y1] = toWorld(0, 0), [x1, y0] = toWorld(W, H);
+    ctx.lineWidth = 1;
+    if (minor * view.scale >= 9) {
+      ctx.strokeStyle = C.minor; ctx.beginPath();
+      for (let i = Math.ceil(x0 / minor); i <= Math.floor(x1 / minor); i++) { const px = Math.round(toPx(i * minor, 0)[0]) + .5; ctx.moveTo(px, 0); ctx.lineTo(px, H); }
+      for (let i = Math.ceil(y0 / minor); i <= Math.floor(y1 / minor); i++) { const py = Math.round(toPx(0, i * minor)[1]) + .5; ctx.moveTo(0, py); ctx.lineTo(W, py); }
+      ctx.stroke();
+    }
+    ctx.strokeStyle = C.major; ctx.beginPath();
+    for (let i = Math.ceil(x0 / step); i <= Math.floor(x1 / step); i++) { const px = Math.round(toPx(i * step, 0)[0]) + .5; ctx.moveTo(px, 0); ctx.lineTo(px, H); }
+    for (let i = Math.ceil(y0 / step); i <= Math.floor(y1 / step); i++) { const py = Math.round(toPx(0, i * step)[1]) + .5; ctx.moveTo(0, py); ctx.lineTo(W, py); }
+    ctx.stroke();
+
+    const [ax, ay] = toPx(0, 0);
+    ctx.strokeStyle = C.axis; ctx.lineWidth = 1.5; ctx.beginPath();
+    if (ay >= 0 && ay <= H) { ctx.moveTo(0, ay); ctx.lineTo(W, ay); }
+    if (ax >= 0 && ax <= W) { ctx.moveTo(ax, 0); ctx.lineTo(ax, H); }
+    ctx.stroke();
+
+    ctx.fillStyle = C.label; ctx.font = C.font;
+    const dec = decimalsFor(step);
+    const ly = Math.min(Math.max(ay + 14, 14), H - 4);
+    ctx.textAlign = 'center';
+    for (let i = Math.ceil(x0 / step); i <= Math.floor(x1 / step); i++) {
+      if (i === 0) continue;
+      const [px] = toPx(i * step, 0);
+      ctx.fillText((i * step).toFixed(dec), px, ly);
+    }
+    const lx = Math.min(Math.max(ax - 6, 30), W - 4);
+    ctx.textAlign = 'right';
+    for (let i = Math.ceil(y0 / step); i <= Math.floor(y1 / step); i++) {
+      if (i === 0) continue;
+      const [, py] = toPx(0, i * step);
+      ctx.fillText((i * step).toFixed(dec), lx, py + 4);
+    }
+    if (ax >= 0 && ax <= W && ay >= 0 && ay <= H) { ctx.textAlign = 'right'; ctx.fillText('0', ax - 5, ay + 14); }
+    ctx.textAlign = 'left';
+    if (ay >= 0 && ay <= H) ctx.fillText('x', W - 14, ay - 6);
+    if (ax >= 0 && ax <= W) ctx.fillText('y', ax + 6, 14);
+  }
+
+  function drawExpr(e, C) {
+    ctx.strokeStyle = e.color; ctx.fillStyle = e.color; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const env = { ...lastEnv };
+    if (e.kind === 'fx') return plotFx(e.fn, env);
+    if (e.kind === 'gy') return plotGy(e.fn, env);
+    if (e.kind === 'implicit') return plotImplicit(e.fn, env);
+    if (e.kind === 'def' || e.kind === 'value') {
+      const v = e.value;
+      if (v === undefined || isNum(v)) return;
+      drawObject(v, e.color, e.kind === 'def' ? e.name : '', e, C);
+    }
+  }
+
+  function plotFx(fn, env) {
+    ctx.beginPath();
+    let pen = false, prevY = null;
+    for (let px = 0; px <= W; px += 1) {
+      env.x = toWorld(px, 0)[0];
+      let y;
+      try { y = fn(env); } catch (err) { y = NaN; }
+      if (!isNum(y) || !Number.isFinite(y)) { pen = false; prevY = null; continue; }
+      const py = toPx(0, y)[1];
+      if (Math.abs(py) > 1e5 || (prevY !== null && Math.abs(py - prevY) > H * 1.2)) { pen = false; prevY = null; continue; }
+      if (pen) ctx.lineTo(px, py); else { ctx.moveTo(px, py); pen = true; }
+      prevY = py;
+    }
+    ctx.stroke();
+  }
+  function plotGy(fn, env) {
+    ctx.beginPath();
+    let pen = false, prevX = null;
+    for (let py = 0; py <= H; py += 1) {
+      env.y = toWorld(0, py)[1];
+      let x;
+      try { x = fn(env); } catch (err) { x = NaN; }
+      if (!isNum(x) || !Number.isFinite(x)) { pen = false; prevX = null; continue; }
+      const px = toPx(x, 0)[0];
+      if (Math.abs(px) > 1e5 || (prevX !== null && Math.abs(px - prevX) > W * 1.2)) { pen = false; prevX = null; continue; }
+      if (pen) ctx.lineTo(px, py); else { ctx.moveTo(px, py); pen = true; }
+      prevX = px;
+    }
+    ctx.stroke();
+  }
+  function plotImplicit(fn, env) {
+    const g = 5;
+    const nx = Math.ceil(W / g) + 1, ny = Math.ceil(H / g) + 1;
+    const val = new Float64Array(nx * ny);
+    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+      const [x, y] = toWorld(i * g, j * g);
+      env.x = x; env.y = y;
+      let v;
+      try { v = fn(env); } catch (err) { v = NaN; }
+      val[j * nx + i] = isNum(v) ? v : NaN;
+    }
+    ctx.beginPath();
+    const lerp = (a, b) => a / (a - b);
+    for (let j = 0; j < ny - 1; j++) for (let i = 0; i < nx - 1; i++) {
+      const a = val[j * nx + i], b = val[j * nx + i + 1], c = val[(j + 1) * nx + i + 1], d = val[(j + 1) * nx + i];
+      if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c) || !Number.isFinite(d)) continue;
+      const idx = (a > 0 ? 8 : 0) | (b > 0 ? 4 : 0) | (c > 0 ? 2 : 0) | (d > 0 ? 1 : 0);
+      if (idx === 0 || idx === 15) continue;
+      const x = i * g, y = j * g;
+      const T = [x + g * lerp(a, b), y], R = [x + g, y + g * lerp(b, c)], B = [x + g * lerp(d, c), y + g], Lp = [x, y + g * lerp(a, d)];
+      const seg = (p, q) => { ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); };
+      switch (idx) {
+        case 1: case 14: seg(Lp, B); break;
+        case 2: case 13: seg(B, R); break;
+        case 3: case 12: seg(Lp, R); break;
+        case 4: case 11: seg(T, R); break;
+        case 5: seg(Lp, T); seg(B, R); break;
+        case 6: case 9: seg(T, B); break;
+        case 7: case 8: seg(Lp, T); break;
+        case 10: seg(T, R); seg(Lp, B); break;
+      }
+    }
+    ctx.stroke();
+  }
+
+  function label(text, px, py, color, C) {
+    if (!text) return;
+    ctx.font = '600 13px Lexend, system-ui, sans-serif';
+    ctx.lineWidth = 4; ctx.strokeStyle = C.bg; ctx.strokeText(text, px, py);
+    ctx.fillStyle = color; ctx.fillText(text, px, py);
+  }
+  function drawObject(v, color, name, e, C) {
+    if (isArr(v)) {
+      if (v.length !== 2) return;
+      const [px, py] = toPx(v[0], v[1]);
+      ctx.beginPath(); ctx.arc(px, py, 5.5, 0, Math.PI * 2); ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = C.bg; ctx.stroke();
+      label(`${name ? name + ' ' : ''}(${fmtNum(v[0])}, ${fmtNum(v[1])})`, px + 9, py - 9, color, C);
+      if (e.kind === 'def' && e.literal?.type === 'point') handles.push({ e, px, py, type: 'point' });
+      return;
+    }
+    if (isVec(v)) {
+      const [x0, y0] = toPx(v.o[0], v.o[1]);
+      const [x1, y1] = toPx(v.o[0] + v.d[0], v.o[1] + v.d[1]);
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+      const ang = Math.atan2(y1 - y0, x1 - x0), L = 13;
+      if (Math.hypot(x1 - x0, y1 - y0) > 4) {
+        ctx.beginPath(); ctx.moveTo(x1, y1);
+        ctx.lineTo(x1 - L * Math.cos(ang - 0.4), y1 - L * Math.sin(ang - 0.4));
+        ctx.lineTo(x1 - L * Math.cos(ang + 0.4), y1 - L * Math.sin(ang + 0.4));
+        ctx.closePath(); ctx.fill();
+      }
+      label(name ? `${name}` : '', (x0 + x1) / 2 + 8, (y0 + y1) / 2 - 8, color, C);
+      if (e.kind === 'def' && e.literal?.type === 'vector') handles.push({ e, px: x1, py: y1, type: 'vector' });
+      return;
+    }
+    if (v.k === 'seg') {
+      const [x0, y0] = toPx(v.a[0], v.a[1]), [x1, y1] = toPx(v.b[0], v.b[1]);
+      ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+      label(name, (x0 + x1) / 2 + 8, (y0 + y1) / 2 - 8, color, C);
+      return;
+    }
+    if (v.k === 'line') {
+      const len = Math.hypot(v.d[0], v.d[1]);
+      if (!len) return;
+      const span = (Math.hypot(W, H) / view.scale) + Math.hypot(v.a[0] - view.cx, v.a[1] - view.cy);
+      const k = span / len;
+      const [x0, y0] = toPx(v.a[0] - v.d[0] * k, v.a[1] - v.d[1] * k), [x1, y1] = toPx(v.a[0] + v.d[0] * k, v.a[1] + v.d[1] * k);
+      ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+      const [lx, ly] = toPx(v.a[0], v.a[1]);
+      label(name, lx + 10, ly + 18, color, C);
+    }
+  }
+
+  /* ---------- Panel de expresiones ---------- */
+  function describeValue(e) {
+    const v = e.value;
+    if (v === undefined) return '';
+    if (isNum(v)) return `= ${fmtNum(v)}`;
+    if (isArr(v)) {
+      if (v.length === 2) return `punto (${fmtNum(v[0])}, ${fmtNum(v[1])})`;
+      return `(${v.map(fmtNum).join(', ')}) · en R³ no se grafica · módulo ${fmtNum(Math.hypot(...v))}`;
+    }
+    if (isVec(v)) return `componentes (${fmtNum(v.d[0])}, ${fmtNum(v.d[1])}) · módulo ${fmtNum(Math.hypot(...v.d))}`;
+    if (v.k === 'seg') return `longitud ${fmtNum(Math.hypot(v.b[0] - v.a[0], v.b[1] - v.a[1]))}`;
+    if (v.k === 'line') {
+      const [dx, dy] = v.d, [ax, ay] = v.a;
+      const A = dy, B = -dx, Cc = dx * ay - dy * ax;
+      const sgn = n => n < 0 ? ` − ${fmtNum(-n)}` : ` + ${fmtNum(n)}`;
+      const eq = `${fmtNum(A)}x${sgn(B)}y${sgn(Cc)} = 0`;
+      return Math.abs(dx) > 1e-12 ? `${eq} · pendiente ${fmtNum(dy / dx)}` : `${eq} · recta vertical`;
+    }
+    return '';
+  }
+
+  function updateMeta(e) {
+    const meta = e.row?.meta;
+    if (!meta) return;
+    e.row.el.classList.toggle('has-error', !!(e.error || e.evalError));
+    e.row.color.classList.toggle('off', !e.visible);
+    const isSlider = e.kind === 'def' && e.literal?.type === 'num' && !e.evalError;
+    if (isSlider) {
+      const v = e.literal.v;
+      if (!e.slider) e.slider = { min: Math.min(-10, Math.floor(v)), max: Math.max(10, Math.ceil(v)), step: 0.1 };
+      e.slider.min = Math.min(e.slider.min, v); e.slider.max = Math.max(e.slider.max, v);
+      if (!meta.querySelector('.slider')) {
+        meta.innerHTML = `<div class="slider" style="--c:${e.color}">
+          <input type="number" class="s-min" aria-label="Mínimo" step="any">
+          <input type="range" class="s-range" aria-label="Valor de ${escapeHTML(e.name)}">
+          <input type="number" class="s-max" aria-label="Máximo" step="any">
+          <span class="slider-val"></span></div>`;
+        const rng = meta.querySelector('.s-range'), mn = meta.querySelector('.s-min'), mx = meta.querySelector('.s-max');
+        rng.addEventListener('input', () => {
+          const val = Number(rng.value);
+          e.text = `${e.name} = ${fmtNum(val)}`;
+          e.row.input.value = e.text;
+          reanalyze(e); onChange(); schedule();
+        });
+        const setBounds = () => {
+          const a = Number(mn.value), b = Number(mx.value);
+          if (Number.isFinite(a) && Number.isFinite(b) && a < b) { e.slider.min = a; e.slider.max = b; e.slider.step = (b - a) > 40 ? 1 : (b - a) > 4 ? 0.1 : 0.01; }
+          updateMeta(e);
+        };
+        mn.addEventListener('change', setBounds); mx.addEventListener('change', setBounds);
+      }
+      const rng = meta.querySelector('.s-range');
+      rng.min = e.slider.min; rng.max = e.slider.max; rng.step = e.slider.step;
+      if (document.activeElement !== rng) rng.value = v;
+      const mn = meta.querySelector('.s-min'), mx = meta.querySelector('.s-max');
+      if (document.activeElement !== mn) mn.value = e.slider.min;
+      if (document.activeElement !== mx) mx.value = e.slider.max;
+      meta.querySelector('.slider-val').textContent = `${e.name} = ${fmtNum(v)}`;
+      return;
+    }
+    const err = e.error || e.evalError;
+    if (err) {
+      meta.innerHTML = `<span class="err">${escapeHTML(err)}</span>${(e.undef || []).map(n => `<button class="add-var" data-var="${escapeHTML(n)}">＋ deslizador ${escapeHTML(n)}</button>`).join('')}`;
+      return;
+    }
+    meta.textContent = (e.kind === 'def' || e.kind === 'value') ? describeValue(e) : '';
+  }
+  function updateMetas() { exprs.forEach(updateMeta); }
+
+  function buildRow(e) {
+    const el = document.createElement('div');
+    el.className = 'expr-row';
+    el.innerHTML = `<button class="expr-color" style="--c:${e.color}" title="Mostrar u ocultar" aria-label="Mostrar u ocultar"></button>
+      <input class="expr-input" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Expresión">
+      <button class="expr-del" aria-label="Eliminar expresión">×</button>
+      <div class="expr-meta"></div>`;
+    const input = el.querySelector('.expr-input');
+    input.value = e.text;
+    e.row = { el, input, meta: el.querySelector('.expr-meta'), color: el.querySelector('.expr-color') };
+    input.addEventListener('input', () => {
+      e.text = input.value;
+      reanalyze(e);
+      if (!(e.kind === 'def' && e.literal?.type === 'num')) e.slider = null;
+      onChange(); schedule();
+    });
+    e.row.color.addEventListener('click', () => { e.visible = !e.visible; schedule(); });
+    el.querySelector('.expr-del').addEventListener('click', () => { exprs = exprs.filter(x => x !== e); el.remove(); onChange(); schedule(); });
+    e.row.meta.addEventListener('click', ev => {
+      const b = ev.target.closest('[data-var]');
+      if (b) insertBefore(e, `${b.dataset.var} = 1`);
+    });
+    return el;
+  }
+  function renderList() {
+    listEl.innerHTML = '';
+    if (!exprs.length) listEl.innerHTML = '<p class="muted small">Sin expresiones. Escribe una abajo o carga el ejemplo del tema.</p>';
+    exprs.forEach(e => listEl.appendChild(buildRow(e)));
+    draw(); updateMetas();
+  }
+  function insertBefore(target, text) {
+    const e = makeExpr(text);
+    const i = exprs.indexOf(target);
+    exprs.splice(i < 0 ? 0 : i, 0, e);
+    renderList(); onChange();
+  }
+
+  /* ---------- Interacción con el lienzo ---------- */
+  const pointers = new Map();
+  let drag = null;
+  const pos = ev => { const r = canvas.getBoundingClientRect(); return { x: ev.clientX - r.left, y: ev.clientY - r.top }; };
+  function hit(p, tol) {
+    let best = null, bd = tol;
+    for (const h of handles) { const d = Math.hypot(h.px - p.x, h.py - p.y); if (d <= bd) { bd = d; best = h; } }
+    return best;
+  }
+  function zoomAt(p, f) {
+    const [wx, wy] = toWorld(p.x, p.y);
+    view.scale = Math.min(4000, Math.max(2, view.scale * f));
+    view.cx = wx - (p.x - W / 2) / view.scale;
+    view.cy = wy + (p.y - H / 2) / view.scale;
+    draw();
+  }
+  function snap(v) {
+    const st = niceStep(80 / view.scale) / 10;
+    const d = decimalsFor(st);
+    return Number((Math.round(v / st) * st).toFixed(d));
+  }
+  canvas.addEventListener('pointerdown', ev => {
+    canvas.setPointerCapture(ev.pointerId);
+    const p = pos(ev);
+    pointers.set(ev.pointerId, p);
+    if (pointers.size === 1) {
+      const h = hit(p, ev.pointerType === 'touch' ? 24 : 13);
+      drag = h ? { type: 'handle', h } : { type: 'pan', last: p };
+      canvas.style.cursor = h ? 'grabbing' : 'move';
+    } else if (pointers.size === 2) {
+      const [a, b] = [...pointers.values()];
+      const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      drag = { type: 'pinch', dist: Math.hypot(a.x - b.x, a.y - b.y) || 1, scale: view.scale, world: toWorld(mid.x, mid.y) };
+    }
+  });
+  canvas.addEventListener('pointermove', ev => {
+    const p = pos(ev);
+    const [wx, wy] = toWorld(p.x, p.y);
+    const dec = decimalsFor(niceStep(80 / view.scale) / 10);
+    coordsEl.textContent = `x = ${wx.toFixed(dec)}   y = ${wy.toFixed(dec)}`;
+    if (!pointers.has(ev.pointerId)) { canvas.style.cursor = hit(p, 13) ? 'grab' : 'crosshair'; return; }
+    pointers.set(ev.pointerId, p);
+    if (!drag) return;
+    if (drag.type === 'handle') {
+      const e = drag.h.e;
+      let nx = snap(wx), ny = snap(wy);
+      if (drag.h.type === 'vector') {
+        const o = isVec(e.value) ? e.value.o : [0, 0];
+        nx = snap(wx - o[0]); ny = snap(wy - o[1]);
+        e.text = `${e.name} = vector(${fmtNum(nx)}, ${fmtNum(ny)})`;
+      } else {
+        e.text = `${e.name} = (${fmtNum(nx)}, ${fmtNum(ny)})`;
+      }
+      if (e.row) e.row.input.value = e.text;
+      reanalyze(e); onChange(); schedule();
+    } else if (drag.type === 'pan') {
+      view.cx -= (p.x - drag.last.x) / view.scale;
+      view.cy += (p.y - drag.last.y) / view.scale;
+      drag.last = p; draw();
+    } else if (drag.type === 'pinch' && pointers.size >= 2) {
+      const [a, b] = [...pointers.values()];
+      const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      view.scale = Math.min(4000, Math.max(2, drag.scale * Math.hypot(a.x - b.x, a.y - b.y) / drag.dist));
+      view.cx = drag.world[0] - (mid.x - W / 2) / view.scale;
+      view.cy = drag.world[1] + (mid.y - H / 2) / view.scale;
+      draw();
+    }
+  });
+  const endPointer = ev => {
+    pointers.delete(ev.pointerId);
+    if (pointers.size === 1 && drag?.type === 'pinch') drag = { type: 'pan', last: [...pointers.values()][0] };
+    else if (!pointers.size) { drag = null; canvas.style.cursor = 'crosshair'; }
+  };
+  canvas.addEventListener('pointerup', endPointer);
+  canvas.addEventListener('pointercancel', endPointer);
+  canvas.addEventListener('pointerleave', () => { if (!pointers.size) coordsEl.textContent = 'Arrastra para moverte · rueda o pellizco para zoom'; });
+  canvas.addEventListener('wheel', ev => { ev.preventDefault(); zoomAt(pos(ev), Math.exp(-ev.deltaY * 0.0015)); }, { passive: false });
+  $$('.plot-zoom button').forEach(b => b.addEventListener('click', () => {
+    const c = { x: W / 2, y: H / 2 };
+    if (b.dataset.zoom === 'in') zoomAt(c, 1.4);
+    else if (b.dataset.zoom === 'out') zoomAt(c, 1 / 1.4);
+    else { view.cx = 0; view.cy = 0; view.scale = 40; draw(); }
+  }));
+  new ResizeObserver(() => resize()).observe(wrap);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => draw());
+
+  $('#expr-add').addEventListener('submit', ev => {
+    ev.preventDefault();
+    const inp = $('#expr-new');
+    const t = inp.value.trim();
+    if (!t) return;
+    exprs.push(makeExpr(t));
+    inp.value = '';
+    renderList(); onChange();
+  });
+
+  return {
+    setLines(lines) { colorIdx = 0; exprs = (lines || []).map(makeExpr); view.cx = 0; view.cy = 0; view.scale = 40; renderList(); },
+    getLines() { return exprs.map(e => e.text); },
+    describe() {
+      return exprs.map(e => {
+        const d = (e.kind === 'def' || e.kind === 'value') ? describeValue(e) : '';
+        return `${e.text}${d ? `   [${d}]` : ''}${e.evalError || e.error ? `   [error: ${e.evalError || e.error}]` : ''}${e.visible ? '' : '   [oculta]'}`;
+      }).join('\n');
+    },
+    onChange(fn) { onChange = fn; },
+    resize, draw
+  };
+})();
+window.Lab = Lab;
+Lab.onChange(() => { const s = sess(); if (s) s.lab = Lab.getLines(); });
+
+function renderLabPresets() {
+  const s = sess(), c = S.cache[key()];
+  const el = $('#lab-presets');
+  if (!s) return;
+  el.innerHTML = `
+    <button class="btn sm" data-lab="tema" ${c?.grafico?.length ? '' : 'disabled'}>📘 Ejemplo del tema</button>
+    <button class="btn sm" data-lab="ejercicio" ${s.exercise?.grafico?.length ? '' : 'disabled'}>📝 Datos del ejercicio</button>
+    <button class="btn sm ghost" data-lab="vaciar">Vaciar</button>`;
+}
+function renderAnalysis() {
+  const s = sess();
+  const el = $('#lab-analysis');
+  if (!s) return;
+  if (s.busy.analisis) { el.innerHTML = loadingHTML('Analizando el gráfico…'); return; }
+  el.innerHTML = s.err.analisis ? `<p class="error-text">${escapeHTML(s.err.analisis)}</p>` : s.analysis ? `<div class="turn-f md">${markdownToHTML(s.analysis)}</div>${fuentesHTML(s.analysisFuentes)}` : '';
+  $('#lab-analyze').disabled = !aiReady();
+}
+async function analizarGrafico() {
+  const k = key(), s = sess(k);
+  const desc = Lab.describe();
+  if (!desc.trim()) { mentor('Agrega alguna expresión al laboratorio para que pueda explicarla.'); return; }
+  s.busy.analisis = true; s.err.analisis = '';
+  renderAnalysis();
+  const prompt = fitPrompt(b => `${header(Math.min(b, 6000))}
+
+El estudiante está usando un graficador interactivo. Estas son las expresiones y sus valores actuales (entre corchetes, lo que calcula el graficador):
+${desc}
+
+TAREA: en 120 a 220 palabras explica qué se ve en el gráfico, cómo influye cada parámetro en la figura y qué conexión tiene con el subtema. Termina con una propuesta concreta del tipo «prueba a cambiar k a 3 y observa…».
+Responde con Markdown simple y LaTeX ($...$), sin etiquetas.`);
+  try {
+    s.analysisFuentes = Apuntes.last;
+    s.analysis = await ask(prompt, { fresh: true });
+  } catch (e) {
+    s.err.analisis = e.code ? aiError(e) : e.message;
+  } finally {
+    s.busy.analisis = false;
+    if (key() === k) renderAnalysis();
+  }
+}
+
+/* =====================================================================
+   EVENTOS
+   ===================================================================== */
+document.addEventListener('click', ev => {
+  const goBtn = ev.target.closest('[data-go]');
+  if (goBtn) {
+    const v = goBtn.dataset.go;
+    if (v === 'materias') { S.materia = S.eje = S.sub = null; }
+    if (v === 'ejes') { S.eje = S.sub = null; }
+    if (v === 'subtemas') { S.sub = null; }
+    go(v);
+    return;
+  }
+  const tab = ev.target.closest('.tab');
+  if (tab) { showTab(tab.dataset.tab); mentor(tipFor(tab.dataset.tab)); return; }
+
+  const lab = ev.target.closest('[data-lab]');
+  if (lab) {
+    const s = sess();
+    if (lab.dataset.lab === 'tema') Lab.setLines(S.cache[key()]?.grafico || []);
+    if (lab.dataset.lab === 'ejercicio') { Lab.setLines(s.exercise?.grafico || []); mentor('Cargué los datos del ejercicio. Mueve los deslizadores para ver qué pasa si cambian los datos.'); }
+    if (lab.dataset.lab === 'vaciar') Lab.setLines([]);
+    s.lab = Lab.getLines();
+    return;
+  }
+
+  const a = ev.target.closest('[data-action]');
+  if (!a) return;
+  const s = sess();
+  switch (a.dataset.action) {
+    case 'regen-teoria': loadContent(true); break;
+    case 'verificar': verificar(false); break;
+    case 'nose': verificar(true); break;
+    case 'export-resumen': exportResumen(); break;
+    case 'descargar-resumen':
+      if (s.summary) saveFile(new Blob([buildResumenTxt(s, s.summary.meta)], { type: 'text/plain;charset=utf-8' }), `resumen_${slug(s.summary.meta.subtema)}_${today()}.txt`);
+      break;
+    case 'nuevo-ej': generarEjercicio(true); break;
+    case 'pista': if (s.exercise && s.hints < s.exercise.pistas.length) { s.resolucion = $('#resolucion')?.value ?? s.resolucion; s.hints++; renderEjercicios(); } break;
+    case 'solucion': s.resolucion = $('#resolucion')?.value ?? s.resolucion; s.showSol = !s.showSol; renderEjercicios(); break;
+    case 'abrir-lab': Lab.setLines(s.exercise.grafico); s.lab = Lab.getLines(); showTab('lab'); mentor('Estos son los datos del ejercicio. Mueve los deslizadores para ver cómo cambia la figura.'); break;
+    case 'quitar-foto': s.photo = null; renderEjercicios(); break;
+    case 'corregir': corregir(); break;
+    case 'opt': {
+      const ex = s.exam;
+      if (!ex || ex.submitted) break;
+      ex.answers[+a.dataset.q] = +a.dataset.o;
+      const y = window.scrollY;
+      renderExamen();
+      window.scrollTo({ top: y });
+      break;
+    }
+    case 'entregar': entregarExamen(); break;
+    case 'reintentar': s.exam.answers = s.exam.answers.map(() => null); s.exam.submitted = false; s.exam.score = 0; s.exam.savedErrors = false; renderExamen(); mentor('¡A por la revancha! Esta vez lee cada opción con calma.'); break;
+    case 'nuevo-exam': generarExamen(true); break;
+    case 'guardar-errores': guardarErrores(); break;
+    case 'pdf': exportPDF(); break;
+  }
+});
+document.addEventListener('input', ev => {
+  const s = sess();
+  if (!s) return;
+  if (ev.target.id === 'answer') s.draft = ev.target.value;
+  if (ev.target.id === 'resolucion') s.resolucion = ev.target.value;
+});
+document.addEventListener('change', ev => {
+  const s = sess();
+  if (ev.target.id === 'ej-nivel' && s) s.nivel = ev.target.value;
+  if (ev.target.id === 'in-photo') loadPhoto(ev.target.files?.[0]);
+});
+
+$('#lab-analyze').addEventListener('click', analizarGrafico);
+$('#custom-sub-form').addEventListener('submit', ev => {
+  ev.preventDefault();
+  const name = $('#custom-sub-input').value.trim();
+  if (!name) return;
+  const sub = { id: 'custom-' + slug(name), nombre: name, desc: 'Tema personalizado' };
+  (S.eje.custom ||= []).some(x => x.id === sub.id) || S.eje.custom.push(sub);
+  $('#custom-sub-input').value = '';
+  enterSubtema(sub);
+});
+
+$('#mentor-btn').addEventListener('click', () => {
+  const b = $('#mentor-bubble');
+  if (b.hidden) mentor(S.view === 'mentoria' ? tipFor(S.tab) : $('#mentor-text').textContent);
+  else b.hidden = true;
+});
+$('#mentor-close').addEventListener('click', () => { $('#mentor-bubble').hidden = true; });
+
+$$('dialog [data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+function openConfig() { iaDraft = null; renderApuntes(); renderIAConfig(); $('#dlg-apuntes').showModal(); }
+$('#btn-apuntes').addEventListener('click', openConfig);
+$('#ai-notice').addEventListener('click', ev => { if (ev.target.closest('[data-open-config]')) openConfig(); });
+$('#ia-provider').addEventListener('change', ev => { readIADraft(); iaDraft.provider = ev.target.value; renderIAConfig(); });
+$('#ia-test').addEventListener('click', testIA);
+$('#ia-key-eye').addEventListener('click', () => { const k = $('#ia-key'); k.type = k.type === 'password' ? 'text' : 'password'; });
+$('#dlg-apuntes').addEventListener('close', () => { iaDraft = null; });
+$('#btn-debiles').addEventListener('click', () => { renderDebiles(); $('#dlg-debiles').showModal(); });
+$('#btn-pdf').addEventListener('click', exportPDF);
+$('#btn-reset').addEventListener('click', () => {
+  if (!confirm('¿Reiniciar la sesión? Se borra el avance de esta sesión (chequeos, ejercicios y exámenes). Tus apuntes y puntos débiles guardados se conservan.')) return;
+  S.cache = {}; S.sessions = {}; S.materia = S.eje = S.sub = null;
+  Lab.setLines([]);
+  go('materias');
+  mentor('Sesión reiniciada. Elige una materia para empezar de nuevo.');
+});
+
+$('#in-apuntes').addEventListener('change', async ev => {
+  const files = [...(ev.target.files || [])];
+  for (const f of files) {
+    try {
+      if (/\.pdf$/i.test(f.name) || f.type === 'application/pdf') {
+        $('#apuntes-list').insertAdjacentHTML('afterbegin', `<p class="loading small" id="pdf-loading">${spinnerHTML} Leyendo ${escapeHTML(f.name)}…</p>`);
+        const text = await pdfToText(f);
+        $('#pdf-loading')?.remove();
+        if (text.replace(/\s/g, '').length < 50) { mentor(`«${f.name}» parece escaneado: sus páginas son imágenes y no tienen texto para leer. Pásalo por un OCR o súbelo como .txt.`); continue; }
+        S.config.apuntes[f.name] = text;
+      } else {
+        S.config.apuntes[f.name] = await f.text();
+      }
+    } catch (e) { $('#pdf-loading')?.remove(); mentor('No pude leer ' + f.name + (e?.message ? ': ' + e.message : '')); }
+  }
+  ev.target.value = '';
+  renderApuntes();
+});
+// Lector de PDF (pdf.js), cargado solo cuando se sube un PDF.
+let pdfjsPromise = null;
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const el = document.createElement('script');
+    el.src = src; el.onload = res;
+    el.onerror = () => rej(new Error('no se pudo cargar el lector de PDF; revisa tu conexión'));
+    document.head.appendChild(el);
+  });
+}
+function loadPdfJs() {
+  return pdfjsPromise ||= (async () => {
+    const base = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+    await loadScript(base + 'pdf.worker.min.js'); // en el hilo principal: evita crear un Worker externo
+    await loadScript(base + 'pdf.min.js');
+    const lib = window.pdfjsLib || window['pdfjs-dist/build/pdf'];
+    if (!lib) throw new Error('el lector de PDF no se inicializó');
+    lib.GlobalWorkerOptions.workerSrc = base + 'pdf.worker.min.js';
+    return lib;
+  })().catch(e => { pdfjsPromise = null; throw e; });
+}
+async function pdfToText(file) {
+  const lib = await loadPdfJs();
+  const pdf = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+  const pages = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const tc = await page.getTextContent();
+    let t = '';
+    for (const it of tc.items) t += (it.str || '') + (it.hasEOL ? '\n' : ' ');
+    pages.push(t.replace(/[ \t]+\n/g, '\n').replace(/[ \t]{2,}/g, ' ').trim());
+  }
+  return pages.join('\n\n');
+}
+$('#in-estilo').addEventListener('change', async ev => {
+  const f = ev.target.files?.[0];
+  if (f) { try { $('#estilo-text').value = await f.text(); } catch (e) { mentor('No pude leer ' + f.name); } }
+  ev.target.value = '';
+});
+$('#apuntes-list').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-remove]');
+  if (b) { delete S.config.apuntes[b.dataset.remove]; if (S.config.asignacion) delete S.config.asignacion[b.dataset.remove]; renderApuntes(); }
+});
+$('#apuntes-list').addEventListener('change', ev => {
+  const sel = ev.target.closest('[data-scope]');
+  if (sel) { (S.config.asignacion ||= {})[sel.dataset.scope] = sel.value; if (!sel.value) delete S.config.asignacion[sel.dataset.scope]; }
+});
+$('#apuntes-save').addEventListener('click', saveApuntes);
+
+$('#debiles-body').addEventListener('click', async ev => {
+  const b = ev.target.closest('[data-dact]');
+  if (!b) return;
+  if (b.dataset.dact === 'export-all') { exportAllDebiles(); return; }
+  const d = S.debiles.find(x => x.id === b.dataset.id);
+  if (!d) return;
+  if (b.dataset.dact === 'superado') {
+    await Store.deleteDebil(d.id);
+    S.debiles = S.debiles.filter(x => x.id !== d.id);
+    updateDebilesCount(); renderDebiles();
+    mentor('¡Punto superado! Así se avanza.');
+  }
+  if (b.dataset.dact === 'repasar') {
+    const f = findSub(d);
+    if (!f) return;
+    $('#dlg-debiles').close();
+    S.materia = f.m; S.eje = f.e; setAccent(f.m);
+    enterSubtema(f.s);
+  }
+});
+
+window.addEventListener('math-ready', rerenderCurrent);
+window.addEventListener('load', () => { if (!window.__mjReady) rerenderCurrent(); });
+
+/* =====================================================================
+   ARRANQUE
+   ===================================================================== */
+(async function boot() {
+  go('materias');
+  $('#mentor-bubble').hidden = false;
+  initCapabilities();
+  await Store.init();
+  const [config, estado, debiles] = await Promise.all([
+    Store.getDoc('config', null), Store.getDoc('estado', null), Store.listDebiles()
+  ]);
+  if (config) S.config = { apuntes: config.apuntes || {}, estilo: config.estilo || '', asignacion: config.asignacion || {}, estricto: !!config.estricto, ejesGen: config.ejesGen || {}, planes: config.planes || {} };
+  if (estado?.progreso) S.progreso = { temas: estado.progreso.temas || {} };
+  S.debiles = Array.isArray(debiles) ? debiles : [];
+  updateDebilesCount();
+  renderApuntes();
+  if (S.view === 'materias') renderMaterias();
+  const n = S.debiles.reduce((a, d) => a + (d.puntos?.length || 0), 0);
+  if (n) mentor(`¡Hola de nuevo! Tienes ${n} puntos débiles guardados. Ábrelos con 📌 para repasarlos o elige una materia.`);
+})();
+</script>
+</body>
+</html>

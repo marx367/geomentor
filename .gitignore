@@ -1,0 +1,20 @@
+# Secretos
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Dependencias (por si en el futuro se usa npm)
+node_modules/
+
+# Editor y sistema
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Archivos temporales
+*.log
+*.tmp
