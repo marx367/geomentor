@@ -3,7 +3,7 @@
 import { $ } from './nucleo/dom.js';
 import { S } from './estado/estado.js';
 import { Store } from './estado/almacen.js';
-import { cargarCurso, guardarCurso } from './estado/curso.js';
+import { cargarCurso } from './estado/curso.js';
 import { cargarProfesor, cargarBiblioteca, guardarProfesor } from './estado/profesor.js';
 import { initCapabilities } from './ia/config-ia.js';
 import { applyIA } from './ia/panel-ia.js';
@@ -57,13 +57,10 @@ window.addEventListener('load', () => { if (!window.__mjReady) rerenderCurrent()
   cargarBiblioteca(biblioteca);
   if (!profesor && (config?.estilo || config?.estricto)) await Promise.all([guardarProfesor(), Store.setDoc('config', S.config)]);
   if (estado?.progreso) S.progreso = { temas: estado.progreso.temas || {} };
+  // Al arrancar no se escribe Mi curso: si la lectura fallara (red, dato dañado), un guardado acá pisaría
+  // el curso real con uno vacío. El progreso del catálogo viejo queda guardado pero no se muestra
+  // (sus claves no coinciden con ningún tema de Mi curso); ejesGen se descarta al próximo guardado de config.
   cargarCurso(curso);
-  // Primera vez con Mi curso: el progreso del catálogo fijo ya no corresponde a ningún tema, así que se borra.
-  // Los ejes generados viejos (ejesGen) tampoco se usan más. Los apuntes y puntos débiles se conservan.
-  if (!curso) {
-    S.progreso = { temas: {} };
-    await Promise.all([guardarCurso(), Store.setDoc('estado', { progreso: S.progreso }), config ? Store.setDoc('config', S.config) : null]);
-  }
   S.debiles = Array.isArray(debiles) ? debiles : [];
   updateDebilesCount();
   renderApuntes();

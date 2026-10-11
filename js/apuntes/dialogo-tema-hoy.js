@@ -17,7 +17,7 @@ const NUEVA = '__nueva', NUEVO = '__nuevo', IA_ELIGE = '__ia';
 // Estado del diálogo. paso: 'form' → 'busy' → 'propuesta'.
 const T = {};
 function reiniciar(materiaId = '', ejeId = IA_ELIGE) {
-  Object.assign(T, { paso: 'form', err: '', leyendo: '', fecha: today(), titulo: '', archivos: [], fuentes: [], materiaSel: materiaId || (S.curso.materias[0]?.id ?? NUEVA), materiaNueva: '', ejeSel: ejeId, ejeNuevo: '', propuesta: null });
+  Object.assign(T, { paso: 'form', err: '', leyendo: '', guardando: false, fecha: today(), titulo: '', archivos: [], fuentes: [], materiaSel: materiaId || (S.curso.materias[0]?.id ?? NUEVA), materiaNueva: '', ejeSel: ejeId, ejeNuevo: '', propuesta: null });
 }
 
 const opcion = (v, label, sel) => `<option value="${escapeHTML(v)}" ${v === sel ? 'selected' : ''}>${escapeHTML(label)}</option>`;
@@ -67,7 +67,7 @@ function renderPropuesta() {
       <label class="field">Eje<select id="tp-eje">${(m?.ejes || []).map(e => opcion(e.id, e.nombre, ejeSel)).join('')}${opcion(NUEVO, p.ejeNuevo ? `Nuevo: ${p.ejeNuevo.nombre}` : '＋ Nuevo eje…', ejeSel)}</select></label>
       ${ejeSel === NUEVO ? `
         <div class="gen-row">
-          <input class="emoji" id="tp-eje-icono" maxlength="4" value="${escapeHTML(p.ejeNuevo?.icono || '📚')}" aria-label="Emoji del eje">
+          <input class="emoji" id="tp-eje-icono" maxlength="8" value="${escapeHTML(p.ejeNuevo?.icono || '📚')}" aria-label="Emoji del eje">
           <input id="tp-eje-nombre" maxlength="80" value="${escapeHTML(p.ejeNuevo?.nombre || '')}" aria-label="Nombre del eje nuevo">
         </div>
         <input id="tp-eje-desc" maxlength="300" value="${escapeHTML(p.ejeNuevo?.desc || '')}" aria-label="Descripción del eje nuevo" placeholder="Descripción del eje (opcional)">` : ''}
@@ -156,8 +156,11 @@ async function confirmar() {
   const nombreEje = limpiarTexto(p.ejeNuevo?.nombre, 80);
   if (nombreSub.length < 2) { T.err = 'Escribe el nombre del subtema.'; render(); return; }
   if (!p.ejeId && nombreEje.length < 2) { T.err = 'Escribe el nombre del eje nuevo.'; render(); return; }
+  // Un doble clic llegaría acá dos veces mientras se espera el guardado: el segundo se ignora.
+  if (T.guardando) return;
+  T.guardando = true;
   const m = materiaElegida() || crearMateria(limpiarTexto(T.materiaNueva, 80));
-  const e = buscarEje(m, p.ejeId) || crearEje(m, { nombre: nombreEje, icono: limpiarTexto(p.ejeNuevo.icono, 4) || '📚', desc: p.ejeNuevo.desc });
+  const e = buscarEje(m, p.ejeId) || crearEje(m, { nombre: nombreEje, icono: limpiarTexto(p.ejeNuevo.icono, 8) || '📚', desc: p.ejeNuevo.desc });
   const nombres = T.archivos.map(a => {
     const n = nombreLibre(a.nombre, a.texto);
     S.config.apuntes[n] = a.texto;

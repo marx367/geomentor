@@ -7,7 +7,7 @@ export function pickCard({ icon, title, desc, badges = '', onPick }) {
   const b = document.createElement('button');
   b.className = 'pick';
   b.type = 'button';
-  b.innerHTML = `${icon ? `<span class="icon" aria-hidden="true">${icon}</span>` : ''}<h3>${escapeHTML(title)}</h3><p>${escapeHTML(desc)}</p>${badges ? `<div class="badges">${badges}</div>` : ''}`;
+  b.innerHTML = `${icon ? `<span class="icon" aria-hidden="true">${escapeHTML(icon)}</span>` : ''}<h3>${escapeHTML(title)}</h3><p>${escapeHTML(desc)}</p>${badges ? `<div class="badges">${badges}</div>` : ''}`;
   b.addEventListener('click', () => {
     $$('.pick.selected').forEach(x => x.classList.remove('selected'));
     b.classList.add('selected');

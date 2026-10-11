@@ -16,6 +16,8 @@ export function idUnico(base, usados) {
 
 // Lo guardado puede venir incompleto o de otra versión: se valida pieza por pieza.
 const lista = x => Array.isArray(x) ? x : [];
+// Un emoji puede ocupar varios caracteres (👩‍🏫 son 5): 8 alcanzan y cortan cualquier texto largo.
+const icono = (x, defecto) => limpiarTexto(x, 8) || defecto;
 function normalizarSubtema(sb) {
   return {
     id: String(sb.id || slug(sb.nombre)), nombre: limpiarTexto(sb.nombre) || 'Tema sin nombre', desc: limpiarTexto(sb.desc, 300),
@@ -26,12 +28,12 @@ function normalizarSubtema(sb) {
   };
 }
 function normalizarEje(e) {
-  return { id: String(e.id || slug(e.nombre)), nombre: limpiarTexto(e.nombre, 80) || 'Eje sin nombre', icono: e.icono || '📚', desc: limpiarTexto(e.desc, 300), creado: e.creado || today(), subtemas: lista(e.subtemas).map(normalizarSubtema) };
+  return { id: String(e.id || slug(e.nombre)), nombre: limpiarTexto(e.nombre, 80) || 'Eje sin nombre', icono: icono(e.icono, '📚'), desc: limpiarTexto(e.desc, 300), creado: e.creado || today(), subtemas: lista(e.subtemas).map(normalizarSubtema) };
 }
 function normalizarMateria(m, i) {
   const color = COLORES_MATERIAS[i % COLORES_MATERIAS.length];
   return {
-    id: String(m.id || slug(m.nombre)), nombre: limpiarTexto(m.nombre, 80) || 'Materia sin nombre', icono: m.icono || color.icono, desc: limpiarTexto(m.desc, 300),
+    id: String(m.id || slug(m.nombre)), nombre: limpiarTexto(m.nombre, 80) || 'Materia sin nombre', icono: icono(m.icono, color.icono), desc: limpiarTexto(m.desc, 300),
     acc: lista(m.acc).length === 2 ? m.acc : color.acc, creada: m.creada || today(), ejes: lista(m.ejes).map(normalizarEje)
   };
 }
