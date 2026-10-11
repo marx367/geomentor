@@ -14,8 +14,9 @@ export function iniciarLienzo() {
   lz.coordsEl = $('#plot-coords');
   iniciarInteraccion();
   new ResizeObserver(() => resize()).observe(lz.wrap);
-  // Si cambia el tema claro/oscuro del sistema, se redibuja con los colores nuevos.
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => draw());
+  // Si cambia el tema (menú o sistema operativo en Auto), se redibuja con los colores nuevos.
+  // El evento lo dispara ui/tema.js; acá solo se escucha, así esta capa no importa a ui/.
+  window.addEventListener('cambio-tema', () => draw());
 }
 
 export const Lab = {

@@ -1,6 +1,6 @@
 # Módulos
 
-Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó.
+Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2).
 
 ## Raíz
 | Archivo | Qué hace |
@@ -12,11 +12,11 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | Archivo | Qué hace |
 |---|---|
 | `estilos.css` | Entrada: `@import` del resto, en el mismo orden que el prototipo (la cascada depende del orden) |
-| `tema.css` | Variables de color (claro y oscuro azul marino/cian), tipografía, radios, sombras |
+| `tema.css` | Variables de color de los temas Light, Dim (azul marino, también Auto oscuro) y Dark (negro OLED), tipografía, radios, sombras [F2] |
 | `base.css` | Reset y estilos de elementos, mobile-first |
 | `layout.css` | Contenedor central y encabezado de cada vista |
 | `componentes/botones.css` | Botones y fila de botones |
-| `componentes/cabecera.css` | Barra superior, marca, acciones y aviso de IA |
+| `componentes/cabecera.css` | Barra superior, marca, acciones, botones de ícono (⚙️ y tema), menú de tema y línea de aviso de IA [F2] |
 | `componentes/migas.css` | Migas Materia › Eje › Subtema |
 | `componentes/tarjetas.css` | Tarjetas de selección y pastillas |
 | `componentes/formularios.css` | Campos, botón de archivo, clave, interruptor |
@@ -33,6 +33,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | Archivo | Qué hace |
 |---|---|
 | `config-mathjax.js` | Configuración de MathJax. Script clásico que se carga antes que MathJax; avisa con el evento `math-ready` [2] |
+| `tema-inicial.js` | Script clásico en `<head>`, antes de los estilos: aplica el tema guardado (`data-theme`) para que no haya parpadeo [F2] |
 | `main.js` | Punto de entrada: inicializa almacén, IA, lienzo, eventos y la primera vista [7] |
 | `nucleo/dom.js` | `$` y `$$` (selectores) [3] |
 | `nucleo/utilidades.js` | `newId`, `escapeHTML`, formateos [3] |
@@ -52,7 +53,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `ia/cliente-http.js` | POST JSON que traduce fallas HTTP a códigos; imagen → base64 [5] |
 | `ia/adaptadores/*.js` | Un formato de API por archivo (Gemini, OpenAI-compatible, Anthropic, Claude integrado, simulado para pruebas) [5] |
 | `ia/cliente-ia.js` | `ask()`: único punto de salida a la IA [5] |
-| `ia/panel-ia.js` | Aviso de IA sin configurar (`applyIA`), panel de configuración con borrador y "Probar conexión" [5] |
+| `ia/panel-ia.js` | Aviso de IA sin configurar (`applyIA`: línea breve afuera y detalle dentro del diálogo), panel de configuración con borrador y "Probar conexión" [5] |
 | `contexto/reglas-prompt.js` | Reglas de formato, citas, modo estricto y sintaxis del laboratorio [6] |
 | `contexto/busqueda-apuntes.js` | Palabras clave, trozos y apuntes relevantes [6] |
 | `contexto/cabecera-prompt.js` | Arma la cabecera y ajusta el prompt al presupuesto [6] |
@@ -69,7 +70,8 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `ui/tarjetas.js` | Tarjetas de selección y conteo de puntos débiles [7] |
 | `ui/mentor.js` | Mentor flotante y tips por pestaña [7] |
 | `ui/dialogos.js` | Botón ✕ de todos los diálogos [7] |
-| `ui/dialogo-config.js` | Diálogo ⚙️ Config: abre IA + apuntes y guarda todo [7] |
+| `ui/dialogo-config.js` | Diálogo ⚙️ Config (botón engranaje): abre IA + apuntes y guarda todo [7] |
+| `ui/tema.js` | Menú de tema (Light, Dim, Dark, Auto): guarda en localStorage y dispara el evento `cambio-tema` [F2] |
 | `ui/puntos-debiles.js` | Contador, diálogo 📌, repasar, marcar superado, exportar .txt [7] |
 | `ui/eventos.js` | Listeners delegados del documento (data-go, pestañas, data-lab, data-action, campos) [7] |
 | `exportacion/descargas.js` | `saveFile`: descarga con claude.ai o con enlace temporal [7] |

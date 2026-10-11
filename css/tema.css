@@ -1,4 +1,6 @@
-/* Tema: variables de color (claro y oscuro azul marino/cian), radios, sombras y tipografía */
+/* Tema: variables de color, radios, sombras y tipografía.
+   Light = :root · Dim = azul marino (también Auto con sistema oscuro) · Dark = negro OLED.
+   data-theme lo pone js/tema-inicial.js; sin atributo = Auto. */
 :root {
   --accent-l: #0e7490; --accent-d: #22d3ee;
   --bg: #f3f6fb; --surface: #ffffff; --surface-2: #eef3f9; --surface-3: #e2e9f3;
@@ -13,7 +15,7 @@
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme]) {
     --bg: #0f172a; --surface: #1a2436; --surface-2: #141e30; --surface-3: #22304a;
     --border: #2c3a52; --text: #eef2f8; --muted: #94a3b8;
     --accent: var(--accent-d); --on-accent: #06121f;
@@ -24,7 +26,7 @@
     color-scheme: dark;
   }
 }
-:root[data-theme="dark"] {
+:root[data-theme="dim"] {
   --bg: #0f172a; --surface: #1a2436; --surface-2: #141e30; --surface-3: #22304a;
   --border: #2c3a52; --text: #eef2f8; --muted: #94a3b8;
   --accent: var(--accent-d); --on-accent: #06121f;
@@ -32,5 +34,15 @@
   --hint: #fcd34d; --hint-soft: rgba(245,158,11,.12);
   --plot-bg: #0b1322; --plot-minor: #131d30; --plot-major: #22304a; --plot-axis: #94a3b8; --plot-label: #94a3b8;
   --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+:root[data-theme="dark"] {
+  --bg: #000000; --surface: #0b0b0d; --surface-2: #060607; --surface-3: #18181b;
+  --border: #27272a; --text: #f4f4f5; --muted: #a1a1aa;
+  --accent: var(--accent-d); --on-accent: #000000;
+  --ok: #34d399; --ok-soft: rgba(16,185,129,.14); --bad: #fb7185; --bad-soft: rgba(244,63,94,.14);
+  --hint: #fcd34d; --hint-soft: rgba(245,158,11,.12);
+  --plot-bg: #000000; --plot-minor: #111113; --plot-major: #27272a; --plot-axis: #a1a1aa; --plot-label: #a1a1aa;
+  --shadow: 0 1px 2px rgba(0,0,0,.6), 0 10px 30px rgba(0,0,0,.6);
   color-scheme: dark;
 }

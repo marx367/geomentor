@@ -11,6 +11,7 @@ import { iniciarDialogoConfig } from './ui/dialogo-config.js';
 import { iniciarNavegacion, go, rerenderCurrent, renderMaterias } from './ui/navegacion.js';
 import { iniciarPuntosDebiles, updateDebilesCount } from './ui/puntos-debiles.js';
 import { iniciarEventos } from './ui/eventos.js';
+import { iniciarTema } from './ui/tema.js';
 import { iniciarPanelApuntes, renderApuntes } from './apuntes/panel-apuntes.js';
 import { iniciarDialogoEjes } from './apuntes/dialogo-ejes.js';
 import { iniciarDialogoPlan } from './apuntes/dialogo-plan.js';
@@ -32,6 +33,7 @@ iniciarDialogoPlan();
 iniciarExportarPDF();
 iniciarNavegacion();
 iniciarEventos();
+iniciarTema();
 
 // Cuando MathJax termina de cargar, se redibuja para mostrar las fórmulas con mejor calidad.
 window.addEventListener('math-ready', rerenderCurrent);
