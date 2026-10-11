@@ -2,7 +2,7 @@
 
 Tutor de matemática con IA: catálogo Materia › Eje › Subtema, cuatro pestañas por subtema (Teoría, Laboratorio, Ejercicios, Examen), apuntes del estudiante y capa multi-LLM. App web estática, sin backend.
 
-## Stack (en evaluación: se marca "definitivo" al cerrar la migración)
+## Stack (definitivo)
 
 - **Tecnología:** HTML + CSS + JavaScript vanilla con **módulos ES** (`import`/`export`). Sin build ni npm.
 - **Librerías por CDN:** KaTeX y MathJax (fórmulas), html2pdf (ficha PDF), pdf.js (lectura de apuntes PDF, se carga bajo demanda), fuente Lexend.
@@ -51,4 +51,4 @@ Detalle de cada archivo: `docs/modulos.md`. Regla de dependencias: `docs/arquite
 
 ## Estado
 
-Migración desde el prototipo de un solo archivo, en curso. Ver `ROADMAP.md`.
+Migración desde el prototipo terminada (2026-10-11). Abierto a nuevas implementaciones: ver Fase 2 en `ROADMAP.md`.

@@ -12,13 +12,13 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 
 ## Ahora
 
-- **Fase en curso:** Fase 1: Migración a módulos ES
-- **Siguiente prioridad:** Paso 11: Cierre (docs, push)
+- **Fase en curso:** Fase 2: Mejoras
+- **Siguiente prioridad:** elegir la primera mejora con Marcelo
 - **Bloqueos / dudas:** ninguno
 
 ## Fases
 
-### 🔄 Fase 1: Migración a módulos ES
+### ✅ Fase 1: Migración a módulos ES
 **Listo cuando:** los originales están borrados y la documentación está al día.
 - [x] Paso 1: Base del proyecto (docs, Git, gitleaks, primer commit, repo privado en GitHub)
 - [x] Paso 2: `index.html` y estilos
@@ -30,9 +30,9 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 - [x] Paso 8: Teoría y exportación
 - [x] Paso 9: Laboratorio
 - [x] Paso 10: Ejercicios con pizarra, examen y puntos débiles
-- [ ] Paso 11: Cierre (docs, push)
+- [x] Paso 11: Cierre (docs, push)
 
-### ⬜ Fase 2: Mejoras (a definir)
+### 🔄 Fase 2: Mejoras (a definir)
 **Listo cuando:** a definir con Marcelo.
 - [ ] A definir
 
@@ -57,6 +57,8 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 - 2026-10-11 · Paso 8: Teoría y exportación
 - 2026-10-11 · Paso 9: Laboratorio
 - 2026-10-11 · Paso 10: Ejercicios con pizarra, examen y puntos débiles
+- 2026-10-11 · Paso 11: Cierre (docs, push)
+- 2026-10-11 · ✅ Fase 1: Migración a módulos ES
 
 ## Cómo se mantiene
 

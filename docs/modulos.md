@@ -1,6 +1,6 @@
 # Módulos
 
-Qué hace cada archivo. Se completa a medida que avanza la migración (paso del roadmap entre corchetes).
+Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó.
 
 ## Raíz
 | Archivo | Qué hace |
