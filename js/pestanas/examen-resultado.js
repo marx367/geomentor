@@ -2,7 +2,7 @@
 // como puntos débiles.
 import { $ } from '../nucleo/dom.js';
 import { S, key, sess } from '../estado/estado.js';
-import { Store } from '../estado/almacen.js';
+import { guardarDebil } from '../estado/debiles.js';
 import { saveProgreso } from '../estado/progreso.js';
 import { mentor } from '../ui/mentor.js';
 import { updateDebilesCount } from '../ui/puntos-debiles.js';
@@ -23,14 +23,13 @@ export async function entregarExamen() {
 export async function guardarErrores() {
   const k = key(), s = sess(k), ex = s.exam;
   const puntos = ex.questions.filter((q, i) => ex.answers[i] !== q.correcta)
-    .map(q => `${q.enunciado.replace(/\s+/g, ' ')} → ${q.explicacion.replace(/\s+/g, ' ')}`.slice(0, 400));
+    .map(q => ({ texto: `${q.enunciado.replace(/\s+/g, ' ')} → ${q.explicacion.replace(/\s+/g, ' ')}`.slice(0, 400), tipo: q.tipo }));
   if (!puntos.length) return;
-  const item = await Store.addDebil({
+  await guardarDebil({
     key: k, materiaId: S.materia.id, ejeId: S.eje.id, subId: S.sub.id,
     materia: S.materia.nombre, eje: S.eje.nombre, subtema: S.sub.nombre,
-    fecha: new Date().toISOString(), origen: `Examen de práctica (${ex.score}/10)`, puntos
+    fecha: new Date().toISOString(), origen: 'examen', detalle: `${ex.score}/10`, puntos
   });
-  S.debiles.unshift(item);
   ex.savedErrors = true;
   updateDebilesCount();
   renderExamen();

@@ -45,7 +45,7 @@ export async function exportPDF() {
     ${c.ideas.length ? `<h2>Ideas clave</h2><ul>${c.ideas.map(i => `<li>${mdInline(i)}</li>`).join('')}</ul>` : ''}
     ${s.turns.length ? `<h2>Chequeo de comprensión (${s.comprension}%)</h2>
       ${s.entendido.length ? `<p><strong>Entendido:</strong></p><ul>${s.entendido.map(x => `<li>${mdInline(x)}</li>`).join('')}</ul>` : ''}
-      ${s.falta.length ? `<p><strong>Por reforzar:</strong></p><ul>${s.falta.map(x => `<li>${mdInline(x)}</li>`).join('')}</ul>` : ''}` : ''}
+      ${s.falta.length ? `<p><strong>Por reforzar:</strong></p><ul>${s.falta.map(x => `<li>${mdInline(x.texto)}</li>`).join('')}</ul>` : ''}` : ''}
     ${s.exercise ? `<h2>Ejercicio guiado</h2><div class="box md">${markdownToHTML(s.exercise.enunciado)}</div>${s.showSol ? `<p><strong>Solución</strong></p><div class="md">${markdownToHTML(s.exercise.solucion)}</div>` : ''}` : ''}
     ${s.exam?.submitted ? `<h2>Examen de práctica: ${s.exam.score}/10</h2>${s.exam.questions.map((q, i) => `
       <div class="box"><p><strong>${i + 1}.</strong> ${mdInline(q.enunciado)}</p>

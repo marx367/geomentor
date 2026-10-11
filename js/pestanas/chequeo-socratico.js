@@ -3,13 +3,14 @@
 import { $ } from '../nucleo/dom.js';
 import { clip } from '../nucleo/utilidades.js';
 import { getTag, toList } from '../nucleo/etiquetas-xml.js';
+import { leerPuntos } from '../estado/tipos-error.js';
 import { S, key, sess } from '../estado/estado.js';
 import { saveProgreso } from '../estado/progreso.js';
 import { ask } from '../ia/cliente-ia.js';
 import { aiError } from '../ia/errores-ia.js';
 import { Apuntes } from '../contexto/busqueda-apuntes.js';
 import { header, fitPrompt } from '../contexto/cabecera-prompt.js';
-import { FORMAT_RULES } from '../contexto/reglas-prompt.js';
+import { FORMAT_RULES, FORMATO_PUNTOS } from '../contexto/reglas-prompt.js';
 import { mentor } from '../ui/mentor.js';
 import { renderTeoria } from './teoria.js';
 
@@ -36,7 +37,7 @@ ${prev || '(ninguno)'}
 [LO QUE YA ENTENDÍA]
 ${s.entendido.map(x => '- ' + x).join('\n') || '(sin datos)'}
 [LO QUE LE FALTABA]
-${s.falta.map(x => '- ' + x).join('\n') || '(sin datos)'}
+${s.falta.map(x => '- ' + x.texto).join('\n') || '(sin datos)'}
 
 [PREGUNTA ACTUAL]
 ${s.currentQ}
@@ -48,7 +49,7 @@ TAREA: evalúa el razonamiento con criterio de profesor. Si está bien, confírm
 <feedback>Devolución de 60 a 180 palabras.</feedback>
 <comprension>Número entero de 0 a 100: comprensión global del subtema demostrada hasta ahora.</comprension>
 <entendido>Lista acumulada y actualizada de lo que YA demostró entender, cada ítem en una línea con "- " (máximo 8, frases cortas).</entendido>
-<falta>Lista acumulada y actualizada de lo que AÚN le falta, concreta y autocontenida, cada ítem con "- " (máximo 8). Quita lo que ya demostró entender.</falta>
+<falta>Lista acumulada y actualizada de lo que AÚN le falta (máximo 8). Quita lo que ya demostró entender. ${FORMATO_PUNTOS}</falta>
 <siguiente_pregunta>Nueva pregunta que ataque su punto débil principal, o que profundice si ya domina lo básico.</siguiente_pregunta>
 <tip>Una frase breve de ánimo o consejo de examen, sin LaTeX.</tip>
 
@@ -62,7 +63,7 @@ ${FORMAT_RULES}`);
     s.turns.push({ q: s.currentQ, a: answer, feedback, fuentes });
     s.comprension = Number.isFinite(comp) ? Math.max(0, Math.min(100, comp)) : s.comprension;
     s.entendido = toList(getTag(text, 'entendido')).slice(0, 8);
-    s.falta = toList(getTag(text, 'falta')).slice(0, 8);
+    s.falta = leerPuntos(getTag(text, 'falta')).slice(0, 8);
     s.currentQ = getTag(text, 'siguiente_pregunta') || s.currentQ;
     if (!noSe) s.draft = '';
     await saveProgreso(k, { comprension: s.comprension });

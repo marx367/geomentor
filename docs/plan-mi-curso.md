@@ -29,10 +29,12 @@ AYUDAS RÁPIDAS (ideas aprobadas)
 a. La hoja de cada tema suma "Mis errores" y "Errores más frecuentes", calculados localmente contando repeticiones en los puntos débiles que salen de la corrección de ejercicios y del repaso.
 b. La IA propone cada hoja y el estudiante la edita antes de exportar. Hoja por tema + cuadernillo con índice.
 
-PASO NUEVO, ANTES DEL PASO 4: PUNTOS DÉBILES CON TIPO
+PASO NUEVO, ANTES DEL PASO 4: PUNTOS DÉBILES CON TIPO (hecho: base de datos, sin pantalla)
 Lo necesitan la corrección de ejercicios (paso 5) y los "errores frecuentes" de las ayudas.
-- La corrección de ejercicios también guarda puntos débiles (hoy no lo hace).
-- Tipos de error: lista corta y fija, igual para todos los temas (signo, notación, condición sin verificar, cálculo, concepto, orientación). La IA elige uno por punto.
+- La corrección de ejercicios también guarda puntos débiles (antes no lo hacía).
+- Tipos de error: lista corta y fija, igual para todos los temas (signo, notación, condición sin verificar, cálculo, concepto, método). "Método" = no sabe por dónde empezar o qué método usar (no se llama "orientación" porque en Geometría Analítica es un contenido: la orientación de la parábola). La IA elige uno por punto.
 - Origen como código (chequeo, examen, ejercicio, repaso) en lugar de texto libre.
-- Migración: los puntos guardados hoy pasan al formato nuevo con tipo "sin clasificar"; no se pierde nada.
+- Migración: los puntos guardados hasta ahora pasan al formato nuevo con tipo "sin clasificar"; no se pierde nada.
 - "Superado" marca con fecha en lugar de borrar. El contador 📌 y la lista cuentan solo los no superados; el historial queda para calcular los frecuentes.
+- Hecho también: errores-frecuentes.js cuenta por tipo (superados incluidos) para "Errores más frecuentes". La corrección guarda directo y ya no suma a "Lo que te falta" de Teoría (si no, el resumen lo guardaba otra vez y cada error contaba doble).
+- Pendiente para la pantalla de ayudas rápidas: poder editar o descartar un punto mal generado por la IA (hoy solo se marca como superado y sigue sumando a la frecuencia).

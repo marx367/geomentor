@@ -1,7 +1,7 @@
 // Tarjetas de selección (materia, eje, subtema) y conteo de puntos débiles para sus pastillas.
 import { $$ } from '../nucleo/dom.js';
 import { escapeHTML } from '../nucleo/utilidades.js';
-import { S } from '../estado/estado.js';
+import { debilesActivos } from '../estado/debiles.js';
 
 export function pickCard({ icon, title, desc, badges = '', onPick }) {
   const b = document.createElement('button');
@@ -16,4 +16,5 @@ export function pickCard({ icon, title, desc, badges = '', onPick }) {
   });
   return b;
 }
-export function countDebiles(prefix) { return S.debiles.filter(d => (d.key || '').startsWith(prefix)).reduce((a, d) => a + (d.puntos?.length || 0), 0); }
+// Solo los pendientes: los superados quedan en el historial pero no suman a la pastilla.
+export function countDebiles(prefix) { return debilesActivos().filter(d => (d.key || '').startsWith(prefix)).reduce((a, d) => a + d.puntos.length, 0); }

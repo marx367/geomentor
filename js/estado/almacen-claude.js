@@ -36,8 +36,10 @@ function crearAlmacenClaude(db, uid) {
       const ref = await debilesRef().add(item);
       return { id: ref.id, ...item };
     },
-    async deleteDebil(id) {
-      await debilesRef().doc(id).delete();
+    async updateDebil(id, item) {
+      const { id: _id, ...datos } = item; // el id es el nombre del documento, no un campo
+      await debilesRef().doc(id).set(datos);
+      return true;
     }
   };
 }

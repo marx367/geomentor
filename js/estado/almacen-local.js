@@ -16,7 +16,13 @@ export const almacenLocal = {
     localSet('debiles', list);
     return withId;
   },
-  deleteDebil(id) {
-    localSet('debiles', localGet('debiles', []).filter(d => d.id !== id));
+  // Reemplaza un ítem por id (migración, superado). false si no existe o no se pudo guardar.
+  updateDebil(id, item) {
+    const list = localGet('debiles', []);
+    const i = list.findIndex(d => d.id === id);
+    if (i < 0) return false;
+    list[i] = { ...item, id };
+    return localSet('debiles', list);
   }
+  // Sin deleteDebil: un punto superado se marca (ver estado/debiles.js), no se borra, para no perder el historial.
 };

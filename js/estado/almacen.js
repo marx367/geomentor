@@ -20,5 +20,5 @@ export const Store = {
   setDoc(name, data) { return this.conRespaldo(r => r.setDoc(name, data), l => l.setDoc(name, data)); },
   listDebiles() { return this.conRespaldo(r => r.listDebiles(), l => l.listDebiles()); },
   addDebil(item) { return this.conRespaldo(r => r.addDebil(item), l => l.addDebil(item)); },
-  deleteDebil(id) { return this.conRespaldo(r => r.deleteDebil(id), l => l.deleteDebil(id)); }
+  updateDebil(id, item) { return this.conRespaldo(r => r.updateDebil(id, item), l => l.updateDebil(id, item)); }
 };

@@ -11,7 +11,7 @@ export function buildResumenTxt(s, meta) {
   L.push('');
   L.push('RESUMEN GENERAL', '-'.repeat(60), r.general, '');
   if (r.fuertes.length) L.push('LO QUE YA ENTENDISTE', '-'.repeat(60), ...r.fuertes.map(x => '  ✔ ' + x), '');
-  if (r.debiles.length) L.push('PUNTOS DÉBILES A REFORZAR', '-'.repeat(60), ...r.debiles.map(x => '  ✖ ' + x), '');
+  if (r.debiles.length) L.push('PUNTOS DÉBILES A REFORZAR', '-'.repeat(60), ...r.debiles.map(x => '  ✖ ' + x.texto), '');
   if (r.plan.length) L.push('PLAN DE REPASO', '-'.repeat(60), ...r.plan.map((x, i) => `  ${i + 1}. ${x}`), '');
   if (r.ejercicio) L.push('EJERCICIO SUGERIDO', '-'.repeat(60), r.ejercicio, '');
   L.push(line, 'ANEXO · REGISTRO DE LA SESIÓN (fórmulas en notación LaTeX)', line);

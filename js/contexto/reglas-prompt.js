@@ -1,5 +1,7 @@
 // Reglas fijas que se agregan a los prompts: formato de respuesta, sintaxis del laboratorio, reglas del examen,
-// citas de los apuntes y modo estricto. Si cambiás una etiqueta, ver docs/formato-prompts.md.
+// citas de los apuntes, modo estricto y formato de los puntos débiles. Si cambiás una etiqueta, ver docs/formato-prompts.md.
+import { TIPOS_ERROR } from '../estado/tipos-error.js';
+
 export const FORMAT_RULES = 'FORMATO: fórmulas en LaTeX con $...$ en línea y $$...$$ en bloque; Markdown simple (### títulos, **negrita**, listas con "- "). Sin tablas ni bloques de código. Responde SOLO con las etiquetas pedidas, sin texto fuera de ellas.';
 export const LAB_SYNTAX = `SINTAXIS DEL LABORATORIO GRÁFICO (una expresión por línea, texto plano, NUNCA LaTeX):
 - Parámetro con deslizador: k = 2
@@ -27,3 +29,9 @@ export const REGLAS_EXAMEN = {
   manuscrito: 'El examen es A CUADERNO ABIERTO, SOLO CON MATERIAL MANUSCRITO: prioriza la aplicación y saber dónde buscar. En la teoría señala qué conviene tener copiado a mano en el cuaderno (fórmulas, pasos, casos); en las preguntas evalúa aplicar y elegir el método más que recordar de memoria.',
   impreso: 'El examen es A CUADERNO ABIERTO Y SE PUEDE LLEVAR MATERIAL IMPRESO: prioriza la aplicación y saber dónde buscar. En la teoría señala qué conviene llevar en la hoja impresa (fórmulas, pasos, casos); en las preguntas evalúa aplicar y elegir el método más que recordar de memoria.'
 };
+
+// Puntos débiles con tipo de error (lista fija en estado/tipos-error.js). Se leen con leerPuntos().
+export const FORMATO_PUNTOS = `Cada punto va en su propia etiqueta, así:
+<punto><texto>Descripción concreta y autocontenida (que se entienda sin leer la sesión).</texto><tipo>id</tipo></punto>
+En <tipo> escribe SOLO uno de estos ids, el que mejor describa el error:
+${Object.entries(TIPOS_ERROR).map(([id, t]) => `- ${id}: ${t.desc}`).join('\n')}`;

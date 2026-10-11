@@ -45,3 +45,5 @@ hr.sep { border: 0; border-top: 1px solid var(--border); margin: 0; }
 /* Reglas del examen (Profesor y bibliografía) */
 .aviso-reglas { color: var(--bad); font-size: .82rem; margin: 0; }
 .aviso-reglas:empty { display: none; }
+/* Tipo de error de cada punto débil (lista 📌) */
+.weak-item .pill.tipo { font-size: .7rem; padding: .05rem .45rem; margin-left: .25rem; vertical-align: middle; }

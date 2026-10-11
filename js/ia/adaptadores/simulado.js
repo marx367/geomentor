@@ -30,6 +30,39 @@ y = x^2
 P = (1, 1)
 </grafico>`;
 
+// Puntos débiles con tipo (ver FORMATO_PUNTOS). "orientacion" no es un tipo válido: prueba la vuelta a 'sin-clasificar'.
+const PUNTOS = `<punto><texto>Cambia el signo al pasar un término de miembro (ejemplo)</texto><tipo>signo</tipo></punto>
+<punto><texto>Usa un método que no corresponde (ejemplo)</texto><tipo>Método</tipo></punto>
+<punto><texto>Punto con tipo inválido (ejemplo)</texto><tipo>orientacion</tipo></punto>`;
+const CHEQUEO = `<feedback>Devolución simulada del chequeo.</feedback>
+<comprension>60</comprension>
+<entendido>
+- Idea entendida de ejemplo
+</entendido>
+<falta>${PUNTOS}</falta>
+<siguiente_pregunta>Siguiente pregunta de ejemplo</siguiente_pregunta>
+<tip>Consejo de ejemplo</tip>`;
+const RESUMEN = `<resumen_general>Resumen simulado de la sesión.</resumen_general>
+<puntos_fuertes>
+- Punto fuerte de ejemplo
+</puntos_fuertes>
+<puntos_debiles>${PUNTOS}</puntos_debiles>
+<plan_de_repaso>
+- Paso de ejemplo
+</plan_de_repaso>
+<ejercicio_sugerido>Ejercicio de ejemplo</ejercicio_sugerido>`;
+const CORRECCION = `<correccion>### Lo que interpreté
+Corrección simulada.</correccion>
+<falta>${PUNTOS}</falta>`;
+// Examen: 5 preguntas con la correcta en A; la primera con tipo "calculo" y el resto inválido o vacío.
+const EXAMEN = [1, 2, 3, 4, 5].map(i => `<pregunta>
+<enunciado>Pregunta simulada ${i}</enunciado>
+<a>Correcta</a><b>Distractor</b><c>Distractor</c><d>Distractor</d>
+<correcta>A</correcta>
+<explicacion>Explicación simulada ${i}</explicacion>
+<tipo>${i === 1 ? 'calculo' : i === 2 ? 'cualquiera' : ''}</tipo>
+</pregunta>`).join('\n');
+
 // "＋ Tema de hoy": si la materia ya tiene ejes, elige el primero; si no, propone uno nuevo.
 function ubicacion(prompt) {
   const primerEje = prompt.match(/^- ([a-z0-9-]+): /m)?.[1] || '';
@@ -48,6 +81,10 @@ export async function llamarSimulado({ prompt, signal }) {
   if (/únicamente con la palabra OK/i.test(prompt)) return 'OK';
   if (prompt.includes('<teoria>')) return TEORIA;
   if (prompt.includes('<eje_existente>')) return ubicacion(prompt);
+  if (prompt.includes('<feedback>')) return CHEQUEO;
+  if (prompt.includes('<resumen_general>')) return RESUMEN;
+  if (prompt.includes('<correccion>')) return CORRECCION;
+  if (prompt.includes('<por_que_a>')) return EXAMEN;
   if (prompt.includes('<analisis>')) return `<analisis>
 - Análisis de ejemplo: justificar cada paso
 - Usar la notación de clase

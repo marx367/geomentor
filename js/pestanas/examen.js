@@ -3,6 +3,7 @@
 import { $ } from '../nucleo/dom.js';
 import { loadingHTML, errorBlock } from '../nucleo/utilidades.js';
 import { getTag, getTags } from '../nucleo/etiquetas-xml.js';
+import { normalizarTipo, TIPOS_ERROR } from '../estado/tipos-error.js';
 import { S, key, sess } from '../estado/estado.js';
 import { mdInline } from '../render/markdown.js';
 import { ask } from '../ia/cliente-ia.js';
@@ -28,6 +29,7 @@ Formato EXACTO, repetido 5 veces:
 <d>...</d>
 <correcta>LETRA</correcta>
 <explicacion>Por qué la correcta es correcta, con el cálculo clave (1 o 2 frases).</explicacion>
+<tipo>Tipo de error que revela fallar esta pregunta. SOLO uno de estos ids: ${Object.keys(TIPOS_ERROR).join(', ')}.</tipo>
 <por_que_a>Por qué A es correcta o incorrecta (1 frase).</por_que_a>
 <por_que_b>...</por_que_b>
 <por_que_c>...</por_que_c>
@@ -43,6 +45,7 @@ ${FORMAT_RULES}`);
       opciones: ['a', 'b', 'c', 'd'].map(l => getTag(block, l)),
       correcta: 'ABCD'.indexOf((getTag(block, 'correcta').trim().toUpperCase().match(/[ABCD]/) || [''])[0]),
       explicacion: getTag(block, 'explicacion'),
+      tipo: normalizarTipo(getTag(block, 'tipo')),
       porQue: ['a', 'b', 'c', 'd'].map(l => getTag(block, 'por_que_' + l))
     })).filter(q => q.enunciado && q.opciones.every(Boolean) && q.correcta >= 0);
     if (qs.length < 3) throw new Error('El examen llegó incompleto. Vuelve a generarlo.');
