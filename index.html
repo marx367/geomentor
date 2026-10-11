@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap">
 
 <link rel="icon" href="assets/iconos/favicon.svg" type="image/svg+xml">
+<!-- Tema guardado: se aplica antes de cargar los estilos para que no haya parpadeo -->
+<script src="js/tema-inicial.js"></script>
 <link rel="stylesheet" href="css/estilos.css">
 
 <!-- Librerías por CDN (quedan globales: MathJax, katex, html2pdf). pdf.js se carga bajo demanda. -->
@@ -22,6 +24,14 @@
 <script type="module" src="js/main.js"></script>
 </head>
 <body>
+
+<!-- Íconos del tema: se definen una vez y se reusan con <use href="#..."> -->
+<svg hidden>
+  <symbol id="ico-light" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+  <symbol id="ico-dim" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/><path d="M19 3v4M21 5h-4"/></symbol>
+  <symbol id="ico-dark" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></symbol>
+  <symbol id="ico-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"/></symbol>
+</svg>
 
 <header class="topbar">
   <div class="brand">
@@ -36,12 +46,27 @@
     <button class="btn ghost" id="btn-pdf" title="Exportar ficha en PDF">📄 <span class="lbl">Exportar PDF</span></button>
     <button class="btn ghost" id="btn-reset" title="Reiniciar sesión">🔄 <span class="lbl">Reiniciar</span></button>
   </nav>
-  <!-- Botones de ícono: configuración (IA, apuntes y estilo) -->
+  <!-- Botones de ícono: configuración (IA, apuntes y estilo) y tema -->
   <div class="top-icons">
     <button class="icon-btn" id="btn-apuntes" aria-label="Configuración" title="Configuración: IA, apuntes y estilo">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
       <span class="dot" id="apuntes-dot" hidden></span>
     </button>
+    <div class="tema-wrap">
+      <!-- El CSS muestra solo el ícono del tema elegido (ver .tema-btn en cabecera.css) -->
+      <button class="icon-btn tema-btn" id="btn-tema" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-tema">
+        <svg class="i-light" aria-hidden="true"><use href="#ico-light"/></svg>
+        <svg class="i-dim" aria-hidden="true"><use href="#ico-dim"/></svg>
+        <svg class="i-dark" aria-hidden="true"><use href="#ico-dark"/></svg>
+        <svg class="i-auto" aria-hidden="true"><use href="#ico-auto"/></svg>
+      </button>
+      <div class="menu-tema" id="menu-tema" role="menu" aria-label="Tema" hidden>
+        <button role="menuitemradio" aria-checked="false" tabindex="-1" data-tema="light"><svg aria-hidden="true"><use href="#ico-light"/></svg>Light</button>
+        <button role="menuitemradio" aria-checked="false" tabindex="-1" data-tema="dim"><svg aria-hidden="true"><use href="#ico-dim"/></svg>Dim</button>
+        <button role="menuitemradio" aria-checked="false" tabindex="-1" data-tema="dark"><svg aria-hidden="true"><use href="#ico-dark"/></svg>Dark</button>
+        <button role="menuitemradio" aria-checked="false" tabindex="-1" data-tema="auto"><svg aria-hidden="true"><use href="#ico-auto"/></svg>Auto (System)</button>
+      </div>
+    </div>
   </div>
 </header>
 

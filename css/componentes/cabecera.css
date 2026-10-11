@@ -22,6 +22,23 @@
 .icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .icon-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .icon-btn .dot { position: absolute; top: 5px; right: 5px; }
+
+/* Botón de tema: muestra solo el ícono del tema elegido (sin JS, así no cambia al cargar) */
+.tema-btn svg { display: none; }
+:root:not([data-theme]) .tema-btn .i-auto, :root[data-theme="light"] .tema-btn .i-light,
+:root[data-theme="dim"] .tema-btn .i-dim, :root[data-theme="dark"] .tema-btn .i-dark { display: block; }
+
+/* Menú desplegable del tema */
+.tema-wrap { position: relative; }
+.menu-tema { position: absolute; right: 0; top: calc(100% + .4rem); z-index: 30; min-width: 190px; padding: .35rem;
+  display: flex; flex-direction: column; gap: .1rem;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow); }
+.menu-tema button { display: flex; align-items: center; gap: .7rem; width: 100%; padding: .55rem .7rem;
+  border: 0; border-radius: 8px; background: none; color: var(--text); font: inherit; font-size: .92rem; text-align: left; cursor: pointer; }
+.menu-tema button:hover, .menu-tema button:focus-visible { background: var(--surface-2); outline: none; }
+.menu-tema button:focus-visible { box-shadow: inset 0 0 0 2px var(--accent); }
+.menu-tema button[aria-checked="true"] { color: var(--accent); font-weight: 600; }
+.menu-tema svg { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .top-actions .btn { min-height: 40px; min-width: 40px; padding: .4rem .5rem; gap: .3rem; }
 .top-actions .lbl { display: none; }
 .count { background: var(--accent); color: var(--on-accent); border-radius: 999px; font-size: .72rem; padding: 0 .45rem; font-weight: 700; }
