@@ -1,6 +1,6 @@
 # ROADMAP — GeoMentor
 
-> Última actualización: 2026-10-10 · Stack y estructura: ver `CLAUDE.md`
+> Última actualización: 2026-10-11 · Stack y estructura: ver `CLAUDE.md`
 
 ## Resumen
 
@@ -13,23 +13,23 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 ## Ahora
 
 - **Fase en curso:** Fase 1: Migración a módulos ES
-- **Siguiente prioridad:** Paso 2: `index.html` y todo el CSS
+- **Siguiente prioridad:** Paso 11: Cierre (docs, push)
 - **Bloqueos / dudas:** ninguno
 
 ## Fases
 
 ### 🔄 Fase 1: Migración a módulos ES
 **Listo cuando:** los originales están borrados y la documentación está al día.
-- [ ] Paso 1: Base del proyecto (docs, Git, gitleaks, primer commit, repo privado en GitHub)
-- [ ] Paso 2: `index.html` y estilos
-- [ ] Paso 3: Núcleo, datos y render
-- [ ] Paso 4: Estado y almacenamiento
-- [ ] Paso 5: Capa de IA
-- [ ] Paso 6: Contexto y apuntes
-- [ ] Paso 7: Interfaz y arranque
-- [ ] Paso 8: Teoría y exportación
-- [ ] Paso 9: Laboratorio
-- [ ] Paso 10: Ejercicios con pizarra, examen y puntos débiles
+- [x] Paso 1: Base del proyecto (docs, Git, gitleaks, primer commit, repo privado en GitHub)
+- [x] Paso 2: `index.html` y estilos
+- [x] Paso 3: Núcleo, datos y render
+- [x] Paso 4: Estado y almacenamiento
+- [x] Paso 5: Capa de IA
+- [x] Paso 6: Contexto y apuntes
+- [x] Paso 7: Interfaz y arranque
+- [x] Paso 8: Teoría y exportación
+- [x] Paso 9: Laboratorio
+- [x] Paso 10: Ejercicios con pizarra, examen y puntos débiles
 - [ ] Paso 11: Cierre (docs, push)
 
 ### ⬜ Fase 2: Mejoras (a definir)
@@ -46,6 +46,17 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 ## Completados
 
 (Al terminar una tarea, pasarla acá con la fecha.)
+
+- 2026-10-10 · Paso 1: Base del proyecto (docs, Git, gitleaks, primer commit, repo privado en GitHub)
+- 2026-10-10 · Paso 2: `index.html` y estilos
+- 2026-10-10 · Paso 3: Núcleo, datos y render
+- 2026-10-10 · Paso 4: Estado y almacenamiento
+- 2026-10-10 · Paso 5: Capa de IA
+- 2026-10-10 · Paso 6: Contexto y apuntes
+- 2026-10-11 · Paso 7: Interfaz y arranque
+- 2026-10-11 · Paso 8: Teoría y exportación
+- 2026-10-11 · Paso 9: Laboratorio
+- 2026-10-11 · Paso 10: Ejercicios con pizarra, examen y puntos débiles
 
 ## Cómo se mantiene
 
