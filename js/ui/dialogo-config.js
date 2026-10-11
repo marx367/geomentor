@@ -1,4 +1,5 @@
 // Diálogo ⚙️ Config: abre el panel de IA y el de apuntes, y guarda todo junto con "Guardar configuración".
+// El estilo del profesor y el modo estricto están en "🎓 Profesor y bibliografía" (profesor/dialogo-profesor.js).
 import { $ } from '../nucleo/dom.js';
 import { S } from '../estado/estado.js';
 import { Store } from '../estado/almacen.js';
@@ -13,8 +14,6 @@ export function openConfig() { descartarBorradorIA(); renderApuntes(); renderIAC
 
 export async function saveApuntes() {
   commitIA();
-  S.config.estilo = $('#estilo-text').value;
-  S.config.estricto = $('#estricto').checked;
   let total = JSON.stringify(S.config).length;
   const ok = total < 240000 ? await Store.setDoc('config', S.config) : false;
   renderApuntes();

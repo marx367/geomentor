@@ -86,7 +86,7 @@ export function armarPlan(m, ejes, secciones, nombres, dias, completar) {
 
 **Generado:** ${stamp()}
 **Fuentes consolidadas:** ${nombres.join(' · ')}
-**Criterios de notación y corrección:** estilo del profesor cargado en Config.
+**Criterios de notación y corrección:** estilo del profesor cargado en 🎓 Profesor y bibliografía.
 
 **Cómo leer este plan.** El contenido proviene de las fuentes listadas.${completar ? ' Lo que no figuraba en ellas aparece dentro de bloques «complemento», con qué se agrega, por qué y para qué.' : ''}
 

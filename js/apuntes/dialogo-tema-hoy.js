@@ -1,10 +1,11 @@
-// Diálogo "＋ Tema de hoy": formulario (fecha, título, apuntes, materia y eje) → la IA propone eje y subtema
+// Diálogo "＋ Tema de hoy": formulario (fecha, título, apuntes, capítulos de libros, materia y eje) → la IA propone eje y subtema
 // → el estudiante edita y confirma. Al confirmar, guarda los apuntes y el tema en Mi curso.
-import { $ } from '../nucleo/dom.js';
+import { $, $$ } from '../nucleo/dom.js';
 import { escapeHTML, loadingHTML, spinnerHTML, limpiarTexto, esFechaValida, today } from '../nucleo/utilidades.js';
 import { S } from '../estado/estado.js';
 import { Store } from '../estado/almacen.js';
 import { buscarMateria, buscarEje, crearMateria, crearEje, agregarSubtema, guardarCurso } from '../estado/curso.js';
+import { capitulo } from '../estado/profesor.js';
 import { aiError } from '../ia/errores-ia.js';
 import { mentor } from '../ui/mentor.js';
 import { go, setAccent } from '../ui/navegacion.js';
@@ -16,11 +17,24 @@ const NUEVA = '__nueva', NUEVO = '__nuevo', IA_ELIGE = '__ia';
 // Estado del diálogo. paso: 'form' → 'busy' → 'propuesta'.
 const T = {};
 function reiniciar(materiaId = '', ejeId = IA_ELIGE) {
-  Object.assign(T, { paso: 'form', err: '', leyendo: '', fecha: today(), titulo: '', archivos: [], materiaSel: materiaId || (S.curso.materias[0]?.id ?? NUEVA), materiaNueva: '', ejeSel: ejeId, ejeNuevo: '', propuesta: null });
+  Object.assign(T, { paso: 'form', err: '', leyendo: '', fecha: today(), titulo: '', archivos: [], fuentes: [], materiaSel: materiaId || (S.curso.materias[0]?.id ?? NUEVA), materiaNueva: '', ejeSel: ejeId, ejeNuevo: '', propuesta: null });
 }
 
 const opcion = (v, label, sel) => `<option value="${escapeHTML(v)}" ${v === sel ? 'selected' : ''}>${escapeHTML(label)}</option>`;
 const materiaElegida = () => T.materiaSel === NUEVA ? null : buscarMateria(T.materiaSel);
+// Capítulos elegidos, guardados como "libroId|capId". Se descartan los que ya no existen en la biblioteca.
+const fuentesElegidas = () => T.fuentes.map(v => v.split('|')).filter(([l, c]) => capitulo(l, c)).map(([libroId, capId]) => ({ libroId, capId }));
+
+function htmlFuentes() {
+  const libros = S.biblioteca.libros.filter(l => l.capitulos.length);
+  if (!libros.length) return '';
+  return `<fieldset class="pregunta" id="th-fuentes"><legend>¿De qué libro y capítulo salió? <span class="muted small">(opcional)</span></legend>
+    ${libros.flatMap(l => l.capitulos.map(c => {
+      const v = `${l.id}|${c.id}`;
+      return `<label class="opcion"><input type="checkbox" class="th-fuente" value="${escapeHTML(v)}" ${T.fuentes.includes(v) ? 'checked' : ''}> ${escapeHTML(l.titulo)} · ${escapeHTML(c.titulo)}</label>`;
+    })).join('')}
+  </fieldset>`;
+}
 
 function renderFormulario() {
   const m = materiaElegida();
@@ -33,6 +47,7 @@ function renderFormulario() {
       ${T.leyendo ? `<p class="loading small">${spinnerHTML} Leyendo ${escapeHTML(T.leyendo)}…</p>` : ''}
       <div class="file-list">${T.archivos.map((a, i) => `<div class="file-item"><span>📄 ${escapeHTML(a.nombre)} <span class="muted">· ${Math.max(1, Math.round(a.texto.length / 1000))} mil caracteres</span></span><button type="button" class="btn ghost sm" data-tact="quitar-archivo" data-i="${i}" aria-label="Quitar ${escapeHTML(a.nombre)}">✕</button></div>`).join('')}</div>
     </div>
+    ${htmlFuentes()}
     <label class="field">Materia<select id="th-materia">${S.curso.materias.map(x => opcion(x.id, x.nombre, T.materiaSel)).join('')}${opcion(NUEVA, '＋ Nueva materia…', T.materiaSel)}</select></label>
     ${T.materiaSel === NUEVA ? `<label class="field">Nombre de la materia nueva<input id="th-materia-nueva" maxlength="80" value="${escapeHTML(T.materiaNueva)}" placeholder="Ej.: Análisis Matemático I" autocomplete="off"></label>` : ''}
     <label class="field">Eje<select id="th-eje">${opcion(IA_ELIGE, '✨ Que lo proponga la IA', T.ejeSel)}${(m?.ejes || []).map(e => opcion(e.id, e.nombre, T.ejeSel)).join('')}${opcion(NUEVO, '＋ Nuevo eje…', T.ejeSel)}</select></label>
@@ -59,6 +74,7 @@ function renderPropuesta() {
       <label class="field">Subtema<input id="tp-sub-nombre" maxlength="120" value="${escapeHTML(p.subtema.nombre)}"></label>
       <label class="field">Qué se estudia<input id="tp-sub-desc" maxlength="300" value="${escapeHTML(p.subtema.desc)}" placeholder="Una frase (opcional)"></label>
       <div class="gen-files">📄 ${T.archivos.length ? T.archivos.map(a => escapeHTML(a.nombre)).join(', ') : 'sin apuntes'}</div>
+      ${fuentesElegidas().length ? `<div class="gen-files">📖 ${fuentesElegidas().map(f => { const x = capitulo(f.libroId, f.capId); return `${escapeHTML(x.libro.titulo)} · ${escapeHTML(x.cap.titulo)}`; }).join(', ')}</div>` : ''}
     </div>
     <div class="btn-row">
       <button type="button" class="btn primary" data-tact="confirmar">✔ Confirmar</button>
@@ -80,6 +96,7 @@ function leerFormulario() {
     T.fecha = v('th-fecha') ?? T.fecha; T.titulo = v('th-titulo') ?? T.titulo;
     T.materiaSel = v('th-materia') ?? T.materiaSel; T.materiaNueva = v('th-materia-nueva') ?? T.materiaNueva;
     T.ejeSel = v('th-eje') ?? T.ejeSel; T.ejeNuevo = v('th-eje-nuevo') ?? T.ejeNuevo;
+    if ($('#th-fuentes')) T.fuentes = $$('.th-fuente:checked').map(x => x.value);
   }
   if (T.paso === 'propuesta') {
     const p = T.propuesta, sel = v('tp-eje');
@@ -146,7 +163,7 @@ async function confirmar() {
     S.config.apuntes[n] = a.texto;
     return n;
   });
-  const sb = agregarSubtema(e, { nombre: nombreSub, desc: p.subtema.desc, fecha: T.fecha, archivos: nombres });
+  const sb = agregarSubtema(e, { nombre: nombreSub, desc: p.subtema.desc, fecha: T.fecha, archivos: nombres, fuentes: fuentesElegidas() });
   // Cada apunte queda asignado a este subtema: así no se mezcla con los temas de otras clases.
   for (const n of nombres) (S.config.asignacion ||= {})[n] = `${m.id}/${e.id}/${sb.id}`;
   const okConfig = JSON.stringify(S.config).length < 240000 ? await Store.setDoc('config', S.config) : false;

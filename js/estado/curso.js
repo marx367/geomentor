@@ -20,7 +20,9 @@ function normalizarSubtema(sb) {
   return {
     id: String(sb.id || slug(sb.nombre)), nombre: limpiarTexto(sb.nombre) || 'Tema sin nombre', desc: limpiarTexto(sb.desc, 300),
     fecha: esFechaValida(sb.fecha) ? sb.fecha : today(),
-    archivos: lista(sb.archivos).map(String), fuentes: lista(sb.fuentes)
+    archivos: lista(sb.archivos).map(String),
+    // Capítulos de la biblioteca de donde salió el tema (ver profesor.js).
+    fuentes: lista(sb.fuentes).filter(f => typeof f?.libroId === 'string' && typeof f?.capId === 'string').map(f => ({ libroId: f.libroId, capId: f.capId }))
   };
 }
 function normalizarEje(e) {

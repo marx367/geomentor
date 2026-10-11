@@ -15,7 +15,7 @@ ui/                          → navegación, migas, mentor, diálogos, eventos 
   │   (usa pestanas/registro.js, nunca las pestañas directamente)
 pestanas/  pizarra/          → teoría, laboratorio, ejercicios, examen
   │
-apuntes/  exportacion/  laboratorio/lienzo/
+apuntes/  profesor/  exportacion/  laboratorio/lienzo/
   │
 contexto/                    → arma los prompts (reglas + apuntes relevantes + débiles)
   │
@@ -36,7 +36,7 @@ nucleo/                      → utilidades sin dependencias
    - `registrarAccion('verificar', fn)`: botones `data-action="verificar"` (los dispara `ui/eventos.js`). Los botones `data-lab="x"` llegan como acción `lab:x`.
    - `alSuceder('entrar-subtema', fn)`: avisos que dispara la navegación (`entrar-subtema`, `cambio-acento`, `reiniciar`).
 
-   Así la navegación no importa las pestañas y se evita el ciclo navegación ↔ pestañas. Las pestañas sí pueden usar la "carcasa" de la interfaz (`ui/navegacion.js`, `ui/mentor.js`), igual que los diálogos de `apuntes/`. Para sumar una pestaña, alcanza con importarla en `main.js`.
+   Así la navegación no importa las pestañas y se evita el ciclo navegación ↔ pestañas. Las pestañas sí pueden usar la "carcasa" de la interfaz (`ui/navegacion.js`, `ui/mentor.js`), igual que los diálogos de `apuntes/` y `profesor/`. Para sumar una pestaña, alcanza con importarla en `main.js`.
 3. **Un solo punto de salida a la IA:** `ia/cliente-ia.js` → `ask()`. Las pestañas nunca llaman a un proveedor directo.
 4. **Un solo punto de guardado:** `estado/almacen.js`. Elige localStorage o la base de claude.ai sin que el resto lo sepa.
    Excepción: el tema (`geomentor-tema`) va directo a localStorage, porque `tema-inicial.js` tiene que leerlo sincrónico, antes de pintar, y `almacen.js` es asíncrono.

@@ -48,5 +48,9 @@ export async function llamarSimulado({ prompt, signal }) {
   if (/únicamente con la palabra OK/i.test(prompt)) return 'OK';
   if (prompt.includes('<teoria>')) return TEORIA;
   if (prompt.includes('<eje_existente>')) return ubicacion(prompt);
+  if (prompt.includes('<analisis>')) return `<analisis>
+- Análisis de ejemplo: justificar cada paso
+- Usar la notación de clase
+</analisis>`;
   return RESPUESTA;
 }

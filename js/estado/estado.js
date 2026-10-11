@@ -1,10 +1,12 @@
 // Estado en memoria de la app: vista actual, selección (materia/eje/subtema), Mi curso (ver curso.js),
-// configuración, progreso y una sesión de trabajo por subtema. No se guarda solo: ver almacen.js.
+// profesor y biblioteca (ver profesor.js), configuración, progreso y una sesión de trabajo por subtema. No se guarda solo: ver almacen.js.
 export const S = {
   view: 'materias', tab: 'teoria',
   materia: null, eje: null, sub: null,
   curso: { materias: [] },
-  config: { apuntes: {}, estilo: '', asignacion: {}, estricto: false, planes: {} },
+  profesor: { estilo: '', respuestas: {}, analisis: '', estricto: false },
+  biblioteca: { libros: [] },
+  config: { apuntes: {}, asignacion: {}, planes: {} },
   progreso: { temas: {} },
   debiles: [],
   cache: {}, sessions: {}

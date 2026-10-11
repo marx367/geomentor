@@ -22,7 +22,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `componentes/formularios.css` | Campos, botón de archivo, clave, interruptor |
 | `componentes/contenido.css` | Contenido de la IA: Markdown, fórmulas, carga, errores, fuentes, complementos |
 | `componentes/mentor.css` | Mentor flotante |
-| `componentes/dialogos.css` | Diálogos de configuración, Tema de hoy, plan y débiles |
+| `componentes/dialogos.css` | Diálogos de configuración, Tema de hoy, Profesor y bibliografía, plan y débiles |
 | `componentes/ficha-pdf.css` | Ficha PDF (siempre en claro) |
 | `componentes/pizarra.css` | Pizarra de Ejercicios [10] |
 | `vistas/mentoria.css` | Contenedor y pestañas del subtema |
@@ -39,11 +39,13 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `nucleo/utilidades.js` | `newId`, `escapeHTML`, formateos, `today` (fecha local), `limpiarTexto` y `esFechaValida` para validar lo que escribe el estudiante [3] |
 | `nucleo/etiquetas-xml.js` | `getTag`, `getTags`, `toList`: leen la respuesta de la IA [3] |
 | `datos/colores-materias.js` | Colores de acento e íconos que toman las materias nuevas, en orden [MC1] |
+| `datos/cuestionario-profesor.js` | Preguntas de opción múltiple sobre el profesor [MC3] |
 | `datos/sinonimos.js` | Sinónimos matemáticos para buscar en apuntes [3] |
 | `render/matematica.js` | Fórmulas LaTeX con KaTeX/MathJax [3] |
 | `render/markdown.js` | Markdown simple → HTML, sin librerías [3] |
 | `estado/estado.js` | Estado en memoria: vista, materia, Mi curso, sesión por subtema [4] |
 | `estado/curso.js` | Mi curso: materias, ejes y subtemas con fecha en el documento `curso`; validación, ids únicos, crear y buscar [MC1] |
+| `estado/profesor.js` | Estilo del profesor (texto, cuestionario, análisis), modo estricto y biblioteca de libros por capítulo, en los documentos `profesor` y `biblioteca`; `textoEstilo()` para los prompts [MC3] |
 | `estado/almacen.js` | Fachada de guardado: elige backend [4] |
 | `estado/almacen-local.js` | Backend localStorage [4] |
 | `estado/almacen-claude.js` | Backend base de datos de claude.ai (opcional) [4] |
@@ -62,9 +64,9 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `apuntes/lector-pdf.js` | Carga pdf.js bajo demanda y extrae el texto página por página [6] |
 | `apuntes/estructura-ejes.js` | Lógica: apuntes de la materia, índices por partes y propuesta de ejes por la IA (la usa el plan consolidado) [6] |
 | `apuntes/ubicar-tema.js` | Lógica de "＋ Tema de hoy": la IA propone eje (existente o nuevo) y subtema; sin IA, propuesta con el título [MC2] |
-| `apuntes/dialogo-tema-hoy.js` | Diálogo "＋ Tema de hoy": fecha, título, apuntes, materia y eje → propuesta editable → guarda en Mi curso [MC2] |
+| `apuntes/dialogo-tema-hoy.js` | Diálogo "＋ Tema de hoy": fecha, título, apuntes, capítulos de libros, materia y eje → propuesta editable → guarda en Mi curso [MC2] |
 | `apuntes/plan-estudios.js` | Lógica: prompt de cada sección, limpieza, cronograma y armado del plan .md [6] |
-| `apuntes/panel-apuntes.js` | Lista de apuntes en Config, asignación a temas, carga de archivos y guardado [7] |
+| `apuntes/panel-apuntes.js` | Lista de apuntes en Config, asignación a temas y carga de archivos [7] |
 | `apuntes/dialogo-plan.js` | Diálogo "Consolidar apuntes en un plan", con progreso y cancelación [7] |
 | `ui/navegacion.js` | Vistas de Mi curso (materias, con inicio vacío; ejes; subtemas por fecha), acento por materia, entrar a un subtema, pestañas, reiniciar [7] |
 | `ui/migas.js` | Migas de pan [7] |
@@ -72,9 +74,12 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `ui/mentor.js` | Mentor flotante y tips por pestaña [7] |
 | `ui/dialogos.js` | Botón ✕ de todos los diálogos [7] |
 | `ui/dialogo-config.js` | Diálogo ⚙️ Config (botón engranaje): abre IA + apuntes y guarda todo [7] |
+| `profesor/dialogo-profesor.js` | Diálogo "🎓 Profesor y bibliografía": estilo (archivo, texto, cuestionario, análisis), modo estricto; guarda solo [MC3] |
+| `profesor/analisis-estilo.js` | Pide a la IA el análisis del estilo con el texto y las respuestas del cuestionario [MC3] |
+| `profesor/panel-biblioteca.js` | Biblioteca: agregar y quitar libros y capítulos (archivo o texto pegado) [MC3] |
 | `ui/tema.js` | Menú de tema (Light, Dim, Dark, Auto): guarda en localStorage y dispara el evento `cambio-tema` [F2] |
 | `ui/puntos-debiles.js` | Contador, diálogo 📌, repasar, marcar superado, exportar .txt [7] |
-| `ui/eventos.js` | Listeners delegados del documento (data-go, data-abrir, pestañas, data-lab, data-action, campos) [7] |
+| `ui/eventos.js` | Listeners delegados del documento (data-go, data-abrir: Tema de hoy y Profesor, pestañas, data-lab, data-action, campos) [7] |
 | `exportacion/descargas.js` | `saveFile`: descarga con claude.ai o con enlace temporal [7] |
 | `pestanas/registro.js` | Conecta navegación y pestañas: `registrarPestana`, `registrarAccion`, avisos `alSuceder`/`avisar` (`entrar-subtema`, `cambio-acento`, `reiniciar`) [7] |
 | `pestanas/pestana-teoria.js` | Pestaña 1 · cableado: registro, acciones y pedido de teoría al entrar a un subtema [8] |

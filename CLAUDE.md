@@ -33,7 +33,8 @@ js/contexto/        → armado de prompts con apuntes y reglas
 js/laboratorio/     → parser de expresiones (sin eval) y lienzo
 js/pizarra/         → pizarra a mano alzada para Ejercicios
 js/pestanas/        → teoría, laboratorio, ejercicios, examen
-js/apuntes/         → lectores de archivos, ejes generados, plan de estudios
+js/apuntes/         → lectores de archivos, Tema de hoy, plan de estudios
+js/profesor/        → estilo del profesor, cuestionario y biblioteca
 js/exportacion/     → descargas, resumen .txt, ficha PDF
 js/ui/              → navegación, migas, mentor, diálogos, eventos, tema
 docs/               → arquitectura y guías

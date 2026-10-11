@@ -89,7 +89,7 @@ export function renderPlanDlg() {
     <p class="muted small">Une tus ${files.length} ${files.length === 1 ? 'archivo' : 'archivos'} de apuntes de ${escapeHTML(m.nombre)} en un solo plan: elimina duplicados y ruido, sigue la notación del estilo del profesor, pasa los decimales a valores exactos y agrega un cronograma. Hace una consulta por subtema.</p>
     ${previo ? '<p class="small" style="color:var(--hint)">Ya hay un plan de esta materia: el nuevo lo reemplaza.</p>' : ''}
     ${omitidos.length ? `<p class="muted small">Se omite${omitidos.length > 1 ? 'n' : ''} ${omitidos.map(escapeHTML).join(', ')} porque ya ${omitidos.length > 1 ? 'son planes consolidados' : 'es un plan consolidado'}.</p>` : ''}
-    ${!S.config.estilo ? '<p class="small" style="color:var(--hint)">No cargaste el estilo del profesor en ⚙️ Config: el plan usará criterios generales.</p>' : ''}
+    ${!S.profesor.estilo && !S.profesor.analisis ? '<p class="small" style="color:var(--hint)">No cargaste el estilo del profesor en 🎓 Profesor y bibliografía: el plan usará criterios generales.</p>' : ''}
     <label class="field">Días hasta el examen<input type="number" id="plan-dias" min="3" max="90" value="${Plan.dias}" style="max-width:140px"></label>
     <label class="toggle"><input type="checkbox" id="plan-completar" ${Plan.completar ? 'checked' : ''}><span>Completar temas típicos que falten en los apuntes, marcados como complemento (qué, por qué y para qué).</span></label>
     <div class="btn-row"><button class="btn primary" data-pact="crear" ${files.length && aiReady() ? '' : 'disabled'}>🧩 Crear plan</button></div>`;

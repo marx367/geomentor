@@ -6,9 +6,10 @@ import { ejecutarAccion } from '../pestanas/registro.js';
 import { mentor, tipFor } from './mentor.js';
 import { go, showTab } from './navegacion.js';
 import { abrirTemaHoy } from '../apuntes/dialogo-tema-hoy.js';
+import { abrirProfesor } from '../profesor/dialogo-profesor.js';
 
 // Diálogos que se abren desde varios botones (data-abrir="...").
-const DIALOGOS = { 'tema-hoy': abrirTemaHoy };
+const DIALOGOS = { 'tema-hoy': abrirTemaHoy, profesor: abrirProfesor };
 
 export function iniciarEventos() {
   document.addEventListener('click', ev => {

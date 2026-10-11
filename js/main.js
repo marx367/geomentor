@@ -4,6 +4,7 @@ import { $ } from './nucleo/dom.js';
 import { S } from './estado/estado.js';
 import { Store } from './estado/almacen.js';
 import { cargarCurso, guardarCurso } from './estado/curso.js';
+import { cargarProfesor, cargarBiblioteca, guardarProfesor } from './estado/profesor.js';
 import { initCapabilities } from './ia/config-ia.js';
 import { applyIA } from './ia/panel-ia.js';
 import { iniciarMentor, mentor } from './ui/mentor.js';
@@ -16,6 +17,7 @@ import { iniciarTema } from './ui/tema.js';
 import { iniciarPanelApuntes, renderApuntes } from './apuntes/panel-apuntes.js';
 import { iniciarDialogoPlan } from './apuntes/dialogo-plan.js';
 import { iniciarDialogoTemaHoy } from './apuntes/dialogo-tema-hoy.js';
+import { iniciarDialogoProfesor } from './profesor/dialogo-profesor.js';
 import { iniciarExportarPDF } from './exportacion/exportar-pdf.js';
 
 // Pestañas: cada una se anota sola en el registro al importarse.
@@ -31,6 +33,7 @@ iniciarPanelApuntes();
 iniciarPuntosDebiles();
 iniciarDialogoPlan();
 iniciarDialogoTemaHoy();
+iniciarDialogoProfesor();
 iniciarExportarPDF();
 iniciarNavegacion();
 iniciarEventos();
@@ -45,10 +48,15 @@ window.addEventListener('load', () => { if (!window.__mjReady) rerenderCurrent()
   $('#mentor-bubble').hidden = false;
   initCapabilities().then(() => { applyIA(); rerenderCurrent(); });
   await Store.init();
-  const [config, estado, debiles, curso] = await Promise.all([
-    Store.getDoc('config', null), Store.getDoc('estado', null), Store.listDebiles(), Store.getDoc('curso', null)
+  const [config, estado, debiles, curso, profesor, biblioteca] = await Promise.all([
+    Store.getDoc('config', null), Store.getDoc('estado', null), Store.listDebiles(), Store.getDoc('curso', null),
+    Store.getDoc('profesor', null), Store.getDoc('biblioteca', null)
   ]);
-  if (config) S.config = { apuntes: config.apuntes || {}, estilo: config.estilo || '', asignacion: config.asignacion || {}, estricto: !!config.estricto, planes: config.planes || {} };
+  if (config) S.config = { apuntes: config.apuntes || {}, asignacion: config.asignacion || {}, planes: config.planes || {} };
+  // El estilo y el modo estricto antes vivían en Config: la primera vez se pasan al documento 'profesor'.
+  cargarProfesor(profesor, config);
+  cargarBiblioteca(biblioteca);
+  if (!profesor && (config?.estilo || config?.estricto)) await Promise.all([guardarProfesor(), Store.setDoc('config', S.config)]);
   if (estado?.progreso) S.progreso = { temas: estado.progreso.temas || {} };
   cargarCurso(curso);
   // Primera vez con Mi curso: el progreso del catálogo fijo ya no corresponde a ningún tema, así que se borra.
