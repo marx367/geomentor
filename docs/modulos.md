@@ -50,7 +50,7 @@ Qué hace cada archivo. Se completa a medida que avanza la migración (paso del 
 | `ia/config-ia.js` | Proveedor activo, claves, modelos (`IA`), capacidades de claude.ai (`AI`), `aiReady()` e `initCapabilities()` (no toca la pantalla) [5] |
 | `ia/errores-ia.js` | Códigos de error → mensajes en español (`aiError`, `coded`) [5] |
 | `ia/cliente-http.js` | POST JSON que traduce fallas HTTP a códigos; imagen → base64 [5] |
-| `ia/adaptadores/*.js` | Un formato de API por archivo (Gemini, OpenAI-compatible, Anthropic, Claude integrado) [5] |
+| `ia/adaptadores/*.js` | Un formato de API por archivo (Gemini, OpenAI-compatible, Anthropic, Claude integrado, simulado para pruebas) [5] |
 | `ia/cliente-ia.js` | `ask()`: único punto de salida a la IA [5] |
 | `ia/panel-ia.js` | Aviso de IA sin configurar (`applyIA`), panel de configuración con borrador y "Probar conexión" [5] |
 | `contexto/reglas-prompt.js` | Reglas de formato, citas, modo estricto y sintaxis del laboratorio [6] |
@@ -99,6 +99,13 @@ Qué hace cada archivo. Se completa a medida que avanza la migración (paso del 
 | `laboratorio/lienzo/lienzo.js` | `iniciarLienzo()` y la API `Lab` que usan las pestañas [9] |
 | `pestanas/laboratorio.js` | Pestaña 2 · presets y "Explicar lo que veo" [9] |
 | `pestanas/pestana-laboratorio.js` | Pestaña 2 · cableado: registro, acciones `lab:*` y avisos [9] |
-| `pestanas/ejercicios.js` · `foto-resolucion.js` · `correccion.js` | Pestaña 3 [10] |
-| `pizarra/*.js` | Pizarra a mano alzada (lápiz, línea, limpiar) que se exporta como imagen [10] |
-| `pestanas/examen.js` | Pestaña 4 [10] |
+| `pestanas/ejercicios.js` | Pestaña 3 · pide el ejercicio y dibuja la pantalla (pistas, solución, resolución con texto, foto o pizarra) [10] |
+| `pestanas/foto-resolucion.js` | Pestaña 3 · foto del desarrollo: achica a 1600 px y pasa a JPEG [10] |
+| `pestanas/correccion.js` | Pestaña 3 · corrección por IA con texto e imagen [10] |
+| `pestanas/pestana-ejercicios.js` | Pestaña 3 · cableado: registro, botones y acciones de la pizarra [10] |
+| `pizarra/pizarra.js` | Monta, limpia y exporta la pizarra (estado en la sesión: abierta, herramienta, dibujo) [10] |
+| `pizarra/herramientas.js` | Lápiz y línea recta con vista previa (mouse, lápiz y táctil) [10] |
+| `pizarra/cuadricula-pizarra.js` | Fondo cuadriculado con ejes, en colores del tema [10] |
+| `pestanas/examen.js` | Pestaña 4 · pide las 5 preguntas y dibuja examen y resultado [10] |
+| `pestanas/examen-resultado.js` | Pestaña 4 · entrega (nota, mejor resultado) y guardar errores como débiles [10] |
+| `pestanas/pestana-examen.js` | Pestaña 4 · cableado: registro y botones [10] |

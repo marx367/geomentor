@@ -17,4 +17,5 @@ desktop.ini
 
 # Archivos temporales
 *.log
+logs/
 *.tmp

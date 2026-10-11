@@ -1,0 +1,20 @@
+# Lo lee el hook ~/.claude/hooks/bloquear-secretos.ps1 (Claude Code solo no lo usa).
+# El hook bloquea solo lo que está bajo "# Secretos"; el resto es documentación.
+
+# Secretos
+.env
+.env.local
+.env.production
+secrets/
+*.pem
+*.key
+credentials.json
+
+# Sistema
+.git/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

@@ -19,6 +19,8 @@ import { iniciarExportarPDF } from './exportacion/exportar-pdf.js';
 // Pestañas: cada una se anota sola en el registro al importarse.
 import './pestanas/pestana-teoria.js';
 import './pestanas/pestana-laboratorio.js';
+import './pestanas/pestana-ejercicios.js';
+import './pestanas/pestana-examen.js';
 
 iniciarMentor();
 iniciarDialogos();
