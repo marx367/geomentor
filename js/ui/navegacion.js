@@ -1,5 +1,5 @@
 // Navegación entre vistas (materias → ejes → subtemas → mentoría) de Mi curso, color de acento por materia,
-// pestañas del subtema y botón "Reiniciar". Las pestañas se manejan por el registro.
+// pestañas del subtema y reinicio de la sesión (el botón está en ⚙️ Config). Las pestañas se manejan por el registro.
 import { $, $$ } from '../nucleo/dom.js';
 import { S } from '../estado/estado.js';
 import { subtemasPorFecha, contarSubtemas } from '../estado/curso.js';
@@ -105,12 +105,14 @@ export function rerenderCurrent() {
   redibujarPestana(S.tab);
 }
 
-export function iniciarNavegacion() {
-  $('#btn-reset').addEventListener('click', () => {
-    if (!confirm('¿Reiniciar la sesión? Se borra el avance de esta sesión (chequeos, ejercicios y exámenes). Tus apuntes y puntos débiles guardados se conservan.')) return;
-    S.cache = {}; S.sessions = {}; S.materia = S.eje = S.sub = null;
-    avisar('reiniciar');
-    go('materias');
-    mentor('Sesión reiniciada. Elige una materia para empezar de nuevo.');
-  });
+// Borra el avance en memoria (teoría pedida, chequeos, ejercicios y exámenes) y vuelve al inicio.
+// Lo guardado (apuntes, Mi curso, profesor, biblioteca, puntos débiles) no se toca.
+// Devuelve true si el estudiante confirmó.
+export function reiniciarSesion() {
+  if (!confirm('¿Reiniciar la sesión? Se borra el avance de esta sesión (chequeos, ejercicios y exámenes). Tus apuntes, Mi curso, el profesor y la biblioteca, y los puntos débiles se conservan.')) return false;
+  S.cache = {}; S.sessions = {}; S.materia = S.eje = S.sub = null;
+  avisar('reiniciar'); // el laboratorio se vacía
+  go('materias');
+  mentor('Sesión reiniciada. Elige una materia para empezar de nuevo.');
+  return true;
 }

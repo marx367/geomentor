@@ -10,7 +10,7 @@ import { applyIA } from './ia/panel-ia.js';
 import { iniciarMentor, mentor } from './ui/mentor.js';
 import { iniciarDialogos } from './ui/dialogos.js';
 import { iniciarDialogoConfig } from './ui/dialogo-config.js';
-import { iniciarNavegacion, go, rerenderCurrent, renderMaterias } from './ui/navegacion.js';
+import { go, rerenderCurrent, renderMaterias } from './ui/navegacion.js';
 import { iniciarPuntosDebiles, updateDebilesCount } from './ui/puntos-debiles.js';
 import { iniciarEventos } from './ui/eventos.js';
 import { iniciarTema } from './ui/tema.js';
@@ -35,7 +35,6 @@ iniciarDialogoPlan();
 iniciarDialogoTemaHoy();
 iniciarDialogoProfesor();
 iniciarExportarPDF();
-iniciarNavegacion();
 iniciarEventos();
 iniciarTema();
 

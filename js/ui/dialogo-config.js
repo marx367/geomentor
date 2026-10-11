@@ -1,4 +1,5 @@
 // Diálogo ⚙️ Config: abre el panel de IA y el de apuntes, y guarda todo junto con "Guardar configuración".
+// Al final, la zona "Datos y reinicio" con el botón para reiniciar la sesión.
 // El estilo del profesor y el modo estricto están en "🎓 Profesor y bibliografía" (profesor/dialogo-profesor.js).
 import { $ } from '../nucleo/dom.js';
 import { S } from '../estado/estado.js';
@@ -7,8 +8,9 @@ import { PROVIDERS } from '../ia/proveedores.js';
 import { IA, aiReady, modelOf } from '../ia/config-ia.js';
 import { renderIAConfig, commitIA, testIA, descartarBorradorIA, cambiarProveedorBorrador } from '../ia/panel-ia.js';
 import { renderApuntes } from '../apuntes/panel-apuntes.js';
+import { registrarAccion } from '../pestanas/registro.js';
 import { mentor } from './mentor.js';
-import { rerenderCurrent } from './navegacion.js';
+import { rerenderCurrent, reiniciarSesion } from './navegacion.js';
 
 export function openConfig() { descartarBorradorIA(); renderApuntes(); renderIAConfig(); $('#dlg-apuntes').showModal(); }
 
@@ -29,4 +31,6 @@ export function iniciarDialogoConfig() {
   $('#ia-key-eye').addEventListener('click', () => { const k = $('#ia-key'); k.type = k.type === 'password' ? 'text' : 'password'; });
   $('#dlg-apuntes').addEventListener('close', descartarBorradorIA);
   $('#apuntes-save').addEventListener('click', saveApuntes);
+  // El clic llega por el data-action delegado de eventos.js. Al cerrar se descarta lo no guardado de la IA.
+  registrarAccion('reiniciar-sesion', () => { if (reiniciarSesion()) $('#dlg-apuntes').close(); });
 }

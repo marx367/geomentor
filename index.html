@@ -44,7 +44,6 @@
   <nav class="top-actions" aria-label="Acciones">
     <button class="btn ghost" id="btn-debiles" title="Puntos débiles guardados">📌 <span class="lbl">Puntos débiles</span> <span class="count" id="debiles-count" hidden>0</span></button>
     <button class="btn ghost" id="btn-pdf" title="Exportar ficha en PDF">📄 <span class="lbl">Exportar PDF</span></button>
-    <button class="btn ghost" id="btn-reset" title="Reiniciar sesión">🔄 <span class="lbl">Reiniciar</span></button>
   </nav>
   <!-- Botones de ícono: configuración (IA y apuntes) y tema -->
   <div class="top-icons">
@@ -220,6 +219,12 @@
     <p class="muted small">El estilo del profesor, los libros y el modo estricto están en «🎓 Profesor y bibliografía».</p>
     <p class="muted small" id="storage-note"></p>
     <div class="btn-row"><button class="btn primary" id="apuntes-save">Guardar configuración</button></div>
+    <hr class="sep">
+    <section class="zona-reinicio">
+      <h4>🗂️ Datos y reinicio</h4>
+      <p class="muted small">Reiniciar borra el avance de esta sesión (chequeos, ejercicios y exámenes). Se conservan tus apuntes, Mi curso, el profesor y la biblioteca, y los puntos débiles.</p>
+      <div class="btn-row"><button class="btn" data-action="reiniciar-sesion">🔄 Reiniciar sesión</button></div>
+    </section>
   </div>
 </dialog>
 

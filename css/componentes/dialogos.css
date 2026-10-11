@@ -37,3 +37,7 @@ hr.sep { border: 0; border-top: 1px solid var(--border); margin: 0; }
 .nuevo-cap[open] { display: flex; flex-direction: column; gap: .45rem; }
 .nuevo-libro { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
 .nuevo-libro input { flex: 1 1 180px; min-width: 0; }
+
+/* Zona final de ⚙️ Config: datos y reinicio */
+.zona-reinicio { display: flex; flex-direction: column; gap: .5rem; }
+.zona-reinicio h4 { font-size: 1rem; }
