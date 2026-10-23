@@ -23,6 +23,10 @@ export const almacenLocal = {
     if (i < 0) return false;
     list[i] = { ...item, id };
     return localSet('debiles', list);
+  },
+  // Borra los documentos pedidos y la lista de débiles. No toca 'gm_ia' (clave de la IA) ni el tema.
+  borrarTodo(nombres) {
+    try { for (const n of [...nombres, 'debiles']) localStorage.removeItem('gm_' + n); return true; } catch (e) { return false; }
   }
   // Sin deleteDebil: un punto superado se marca (ver estado/debiles.js), no se borra, para no perder el historial.
 };

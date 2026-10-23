@@ -50,7 +50,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `estado/errores-frecuentes.js` | Función pura: cuenta los tipos de error de un subtema (o de todos), superados incluidos → `[{ tipo, veces, ultimaFecha }]` [MC-D] |
 | `estado/reglas-examen.js` | Reglas del examen en `S.config.reglasExamen` (material permitido y fecha): `normalizarReglas`, `materialPermitido()`, `esDefinida()`, `diasHastaExamen()`, `guardarReglas()` [MC-R] |
 | `estado/profesor.js` | Estilo del profesor (texto, cuestionario, análisis), modo estricto y biblioteca de libros por capítulo, en los documentos `profesor` y `biblioteca`; `textoEstilo()` para los prompts [MC3] |
-| `estado/almacen.js` | Fachada de guardado: elige backend; puntos débiles con `addDebil` y `updateDebil` (no se borran) [4] [MC-D] |
+| `estado/almacen.js` | Fachada de guardado: elige backend; puntos débiles con `addDebil` y `updateDebil` (no se borran uno por uno); `borrarTodo()` limpia todo el estudiante en los dos backends (lista `DOCUMENTOS`) [4] [MC-D] |
 | `estado/almacen-local.js` | Backend localStorage (`updateDebil` reemplaza por id) [4] |
 | `estado/almacen-claude.js` | Backend base de datos de claude.ai (opcional; `updateDebil` reescribe el documento) [4] |
 | `ia/proveedores.js` | Lista de proveedores, modelos sugeridos y URLs [5] |
@@ -77,7 +77,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `ui/tarjetas.js` | Tarjetas de selección y conteo de puntos débiles pendientes [7] |
 | `ui/mentor.js` | Mentor flotante y tips por pestaña; `mentor(msg, { texto, abrir })` suma un botón que abre un diálogo (`data-abrir`) [7] [MC-R] |
 | `ui/dialogos.js` | Botón ✕ de todos los diálogos [7] |
-| `ui/dialogo-config.js` | Diálogo ⚙️ Config (botón engranaje): abre IA + apuntes y guarda todo; zona final "Datos y reinicio" (acción `reiniciar-sesion`) [7] |
+| `ui/dialogo-config.js` | Diálogo ⚙️ Config (botón engranaje): abre IA + apuntes y guarda todo; zona final "Datos y reinicio" (acciones `reiniciar-sesion` y `borrar-todo`, con doble confirmación y recarga) [7] |
 | `profesor/dialogo-profesor.js` | Diálogo "🎓 Profesor y bibliografía": estilo (archivo, texto, cuestionario, análisis), modo estricto; incluye la sección de reglas del examen; guarda solo [MC3] |
 | `profesor/analisis-estilo.js` | Pide a la IA el análisis del estilo con el texto y las respuestas del cuestionario [MC3] |
 | `profesor/panel-reglas.js` | Sección "📋 Reglas del examen": material permitido y fecha (valida que no sea pasada); guarda sola [MC-R] |
