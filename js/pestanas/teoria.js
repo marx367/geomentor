@@ -5,6 +5,7 @@ import { escapeHTML, spinnerHTML, loadingHTML, errorBlock } from '../nucleo/util
 import { S, key, sess } from '../estado/estado.js';
 import { markdownToHTML, mdInline } from '../render/markdown.js';
 import { fuentesHTML } from '../contexto/fuentes.js';
+import { etiquetaTipo } from '../estado/tipos-error.js';
 
 export function renderTeoria() {
   const el = $('#tab-teoria');
@@ -24,7 +25,7 @@ export function renderTeoria() {
   const chips = s.turns.length ? `
     <div class="chips-block">
       <div><h4>✔ Lo que ya entendiste</h4><div class="chips">${s.entendido.length ? s.entendido.map(x => `<span class="chip ok">${mdInline(x)}</span>`).join('') : '<span class="muted small">Aún nada firme.</span>'}</div></div>
-      <div><h4>✖ Lo que te falta</h4><div class="chips">${s.falta.length ? s.falta.map(x => `<span class="chip bad">${mdInline(x)}</span>`).join('') : '<span class="muted small">Nada pendiente detectado.</span>'}</div></div>
+      <div><h4>✖ Lo que te falta</h4><div class="chips">${s.falta.length ? s.falta.map(x => `<span class="chip bad" title="${escapeHTML(etiquetaTipo(x.tipo))}">${mdInline(x.texto)}</span>`).join('') : '<span class="muted small">Nada pendiente detectado.</span>'}</div></div>
     </div>` : '';
 
   el.innerHTML = `
@@ -65,7 +66,7 @@ export function summaryCard(s) {
     <h3>🧾 Resumen de la sesión</h3>
     <p>${escapeHTML(r.general)}</p>${fuentesHTML(r.fuentes)}
     ${r.fuertes.length ? `<h4>✔ Puntos fuertes</h4><ul>${li(r.fuertes)}</ul>` : ''}
-    ${r.debiles.length ? `<h4>✖ Puntos débiles</h4><ul>${li(r.debiles)}</ul>` : ''}
+    ${r.debiles.length ? `<h4>✖ Puntos débiles</h4><ul>${li(r.debiles.map(p => p.texto))}</ul>` : ''}
     ${r.plan.length ? `<h4>🗺️ Plan de repaso</h4><ol>${li(r.plan)}</ol>` : ''}
     ${r.saved ? `<p class="saved-note">📌 Guardé ${r.debiles.length} puntos débiles. El mentor los reforzará la próxima vez que estudies este subtema.</p>` : ''}
     <div class="btn-row" style="margin-top:.75rem"><button class="btn sm" data-action="descargar-resumen">⬇️ Descargar .txt</button></div>

@@ -15,7 +15,7 @@ ui/                          → navegación, migas, mentor, diálogos, eventos 
   │   (usa pestanas/registro.js, nunca las pestañas directamente)
 pestanas/  pizarra/          → teoría, laboratorio, ejercicios, examen
   │
-apuntes/  exportacion/  laboratorio/lienzo/
+apuntes/  profesor/  exportacion/  laboratorio/lienzo/
   │
 contexto/                    → arma los prompts (reglas + apuntes relevantes + débiles)
   │
@@ -23,7 +23,7 @@ ia/  render/                 → hablar con la IA · mostrar Markdown y fórmula
   │
 estado/                      → estado en memoria y almacenamiento
   │
-datos/  laboratorio/parser/  → catálogo fijo · parser puro (sin DOM)
+datos/  laboratorio/parser/  → datos fijos (colores, sinónimos) · parser puro (sin DOM)
   │
 nucleo/                      → utilidades sin dependencias
 ```
@@ -36,12 +36,12 @@ nucleo/                      → utilidades sin dependencias
    - `registrarAccion('verificar', fn)`: botones `data-action="verificar"` (los dispara `ui/eventos.js`). Los botones `data-lab="x"` llegan como acción `lab:x`.
    - `alSuceder('entrar-subtema', fn)`: avisos que dispara la navegación (`entrar-subtema`, `cambio-acento`, `reiniciar`).
 
-   Así la navegación no importa las pestañas y se evita el ciclo navegación ↔ pestañas. Las pestañas sí pueden usar la "carcasa" de la interfaz (`ui/navegacion.js`, `ui/mentor.js`), igual que los diálogos de `apuntes/`. Para sumar una pestaña, alcanza con importarla en `main.js`.
+   Así la navegación no importa las pestañas y se evita el ciclo navegación ↔ pestañas. Las pestañas sí pueden usar la "carcasa" de la interfaz (`ui/navegacion.js`, `ui/mentor.js`), igual que los diálogos de `apuntes/` y `profesor/`. Para sumar una pestaña, alcanza con importarla en `main.js`.
 3. **Un solo punto de salida a la IA:** `ia/cliente-ia.js` → `ask()`. Las pestañas nunca llaman a un proveedor directo.
 4. **Un solo punto de guardado:** `estado/almacen.js`. Elige localStorage o la base de claude.ai sin que el resto lo sepa.
    Excepción: el tema (`geomentor-tema`) va directo a localStorage, porque `tema-inicial.js` tiene que leerlo sincrónico, antes de pintar, y `almacen.js` es asíncrono.
 5. **El parser no toca el DOM.** Recibe texto y devuelve valores o errores. Así se puede probar solo.
-6. **Eventos delegados.** `ui/eventos.js` escucha `click`, `input` y `change` en `document` y deriva según `data-action`. No hay `onclick` en el HTML.
+6. **Eventos delegados.** `ui/eventos.js` escucha `click`, `input` y `change` en `document` y deriva según `data-action` (y `data-abrir` para diálogos que se abren desde varios botones, como "＋ Tema de hoy"). No hay `onclick` en el HTML.
 7. **Avisos con eventos de `window`** cuando una capa baja tiene que reaccionar a algo de una alta: `math-ready` (MathJax cargó) y `cambio-tema` (lo dispara `ui/tema.js`; lo escucha el lienzo para redibujarse con los colores nuevos). Así la capa baja escucha sin importar a la alta.
 
 ## Temas

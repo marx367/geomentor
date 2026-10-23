@@ -1,4 +1,4 @@
-/* Diálogos: configuración, apuntes, ejes generados y puntos débiles */
+/* Diálogos: configuración, apuntes, Tema de hoy (propuesta editable), Profesor y bibliografía, plan y puntos débiles */
 dialog { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); padding: 0; width: min(640px, calc(100vw - 1.5rem)); max-height: calc(100dvh - 2rem); box-shadow: var(--shadow); }
 dialog::backdrop { background: rgba(2,6,23,.55); }
 .dlg-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .9rem 1rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); }
@@ -17,5 +17,42 @@ dialog::backdrop { background: rgba(2,6,23,.55); }
 .gen-row { display: flex; gap: .4rem; align-items: center; }
 .gen-row input { flex: 1; min-width: 0; min-height: 38px; padding: .35rem .6rem; }
 .gen-row .emoji { width: 56px; flex: 0 0 56px; text-align: center; }
-.gen-subs { display: flex; flex-direction: column; gap: .35rem; padding-left: 1rem; border-left: 2px solid var(--border); }
+.gen-eje > input { font-size: .88rem; min-height: 38px; padding: .35rem .6rem; }
 .gen-files { font-size: .76rem; color: var(--muted); padding-left: .2rem; }
+
+/* Profesor y bibliografía */
+hr.sep { border: 0; border-top: 1px solid var(--border); margin: 0; }
+.pf-seccion { display: flex; flex-direction: column; gap: .6rem; }
+.pf-seccion h4 { font-size: 1rem; }
+.cuestionario summary, .nuevo-cap summary { cursor: pointer; font-size: .9rem; font-weight: 500; }
+/* Pregunta de opción múltiple (cuestionario y capítulos en Tema de hoy) */
+.pregunta { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .5rem .75rem .65rem; margin: .5rem 0 0; display: flex; flex-direction: column; gap: .3rem; }
+.pregunta legend { font-size: .88rem; font-weight: 600; padding: 0 .3rem; }
+.opcion { display: flex; gap: .5rem; align-items: flex-start; font-size: .86rem; cursor: pointer; }
+.opcion input { accent-color: var(--accent); margin-top: .2rem; flex-shrink: 0; }
+.analisis { background: var(--surface-2); border-radius: var(--radius-sm); padding: .6rem .8rem; display: flex; flex-direction: column; gap: .4rem; align-items: flex-start; }
+.libro { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .6rem .75rem; display: flex; flex-direction: column; gap: .45rem; margin-bottom: .5rem; }
+.libro-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+.libro .file-item { background: var(--surface); }
+.nuevo-cap[open] { display: flex; flex-direction: column; gap: .45rem; }
+.nuevo-libro { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+.nuevo-libro input { flex: 1 1 180px; min-width: 0; }
+
+/* Zona final de ⚙️ Config: datos y reinicio */
+.zona-reinicio { display: flex; flex-direction: column; gap: .5rem; }
+.zona-reinicio h4 { font-size: 1rem; }
+/* Botón que borra datos guardados: rojo para que no se confunda con "Reiniciar sesión" */
+.btn.peligro { color: var(--bad); border-color: var(--bad); }
+.btn.peligro:hover { background: var(--bad-soft); }
+
+/* Reglas del examen (Profesor y bibliografía) */
+.aviso-reglas { color: var(--bad); font-size: .82rem; margin: 0; }
+.aviso-reglas:empty { display: none; }
+/* Tipo de error de cada punto débil (lista 📌) */
+.weak-item .pill.tipo { font-size: .7rem; padding: .05rem .45rem; margin-left: .25rem; vertical-align: middle; }
+/* Editar y descartar cada punto: los botones bajan de línea si no entran (375 px) */
+.weak-item li { margin-bottom: .4rem; }
+.weak-item .punto-acciones { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .3rem; }
+.weak-item .editar-punto { display: flex; flex-direction: column; gap: .5rem; }
+.weak-item .editar-punto label { display: flex; flex-direction: column; gap: .2rem; font-size: .82rem; }
+.weak-item .editar-punto textarea, .weak-item .editar-punto select { width: 100%; font: inherit; }

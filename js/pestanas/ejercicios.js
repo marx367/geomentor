@@ -65,7 +65,7 @@ export function renderEjercicios() {
   el.innerHTML = `
   <div class="stack">
     <section class="panel-card">
-      <div class="card-head"><h2>📌 Ejercicio guiado tipo examen</h2><div class="btn-row">${nivelSel}<button class="btn sm" data-action="nuevo-ej">↻ Nuevo ejercicio</button></div></div>
+      <div class="card-head"><h2>📌 Ejercicio guiado tipo examen</h2><div class="btn-row">${nivelSel}<button class="btn sm" data-action="nuevo-ej">↻ Nuevo ejercicio</button><button class="btn sm" data-action="pdf-ejercicio">📄 Exportar</button></div></div>
       <div class="md">${markdownToHTML(ex.enunciado)}</div>${fuentesHTML(ex.fuentes)}
       <div class="btn-row" style="margin:.9rem 0">
         <button class="btn" data-action="pista" ${s.hints >= ex.pistas.length ? 'disabled' : ''}>💡 Pedir pista (${s.hints}/${ex.pistas.length})</button>

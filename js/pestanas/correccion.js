@@ -1,14 +1,17 @@
 // Pestaña 3 · corrección por IA de la resolución (texto y/o imagen: foto o pizarra), con el criterio del profesor.
-// Lo que le faltó al estudiante se suma a "Lo que te falta" de la pestaña Teoría.
+// Lo que le faltó al estudiante se guarda como puntos débiles con tipo (origen 'ejercicio').
 import { $ } from '../nucleo/dom.js';
-import { getTag, toList } from '../nucleo/etiquetas-xml.js';
+import { getTag } from '../nucleo/etiquetas-xml.js';
+import { leerPuntos } from '../estado/tipos-error.js';
+import { guardarDebil } from '../estado/debiles.js';
 import { S, key, sess } from '../estado/estado.js';
 import { ask } from '../ia/cliente-ia.js';
 import { aiError } from '../ia/errores-ia.js';
 import { Apuntes } from '../contexto/busqueda-apuntes.js';
 import { header, fitPrompt } from '../contexto/cabecera-prompt.js';
-import { FORMAT_RULES } from '../contexto/reglas-prompt.js';
+import { FORMAT_RULES, FORMATO_PUNTOS } from '../contexto/reglas-prompt.js';
 import { mentor } from '../ui/mentor.js';
+import { updateDebilesCount } from '../ui/puntos-debiles.js';
 import { renderEjercicios } from './ejercicios.js';
 
 export async function corregir() {
@@ -16,6 +19,9 @@ export async function corregir() {
   const ta = $('#resolucion');
   if (ta) s.resolucion = ta.value;
   if (!s.resolucion.trim() && !s.photo) { mentor('Escribe tu desarrollo o sube una foto para que pueda corregirlo.'); return; }
+  // Se toma ahora: mientras la IA corrige, el estudiante puede cambiar de tema.
+  const tema = { key: k, materiaId: S.materia.id, ejeId: S.eje.id, subId: S.sub.id, materia: S.materia.nombre, eje: S.eje.nombre, subtema: S.sub.nombre };
+  const nivel = s.nivel;
   s.busy.correccion = true; s.err.correccion = '';
   renderEjercicios();
   const prompt = fitPrompt(b => `${header(b)}
@@ -38,7 +44,7 @@ Si cumple con lo que se exige (gráfico, justificación, verificación).
 ### Calificación conceptual
 Sobresaliente / Aprobado / Requiere corrección, con una frase que lo justifique.
 </correccion>
-<falta>Puntos débiles concretos que revela esta resolución, uno por línea con "- " (puede quedar vacío).</falta>
+<falta>Puntos débiles concretos que revela esta resolución (puede quedar vacío). ${FORMATO_PUNTOS}</falta>
 
 ${FORMAT_RULES}`);
   try {
@@ -46,9 +52,14 @@ ${FORMAT_RULES}`);
     const text = await ask(prompt, { fresh: true, images: s.photo ? [s.photo.blob] : null });
     s.correction = getTag(text, 'correccion') || text;
     s.correctionFuentes = fuentes;
-    const falta = toList(getTag(text, 'falta'));
-    if (falta.length) s.falta = [...new Set([...s.falta, ...falta])].slice(0, 10);
-    if (key() === k) mentor(falta.length ? 'Sumé lo que te faltó en este ejercicio a tu lista de la pestaña Teoría. Exporta el resumen para guardarlo.' : '¡Buen trabajo! Prueba ahora con un ejercicio de nivel más alto.');
+    // Lo que faltó se guarda directo como punto débil (origen 'ejercicio'). Ya no se suma a "Lo que te falta"
+    // de Teoría: el resumen de la sesión lo volvería a guardar y cada error contaría dos veces.
+    const puntos = leerPuntos(getTag(text, 'falta')).slice(0, 8);
+    if (puntos.length) {
+      await guardarDebil({ ...tema, fecha: new Date().toISOString(), origen: 'ejercicio', detalle: nivel, puntos });
+      updateDebilesCount();
+    }
+    if (key() === k) mentor(puntos.length ? `Guardé ${puntos.length} ${puntos.length === 1 ? 'punto débil' : 'puntos débiles'} de este ejercicio (📌). Los voy a reforzar en tus próximas sesiones.` : '¡Buen trabajo! Prueba ahora con un ejercicio de nivel más alto.');
   } catch (e) {
     s.err.correccion = e.code ? aiError(e) : e.message;
   } finally {

@@ -4,6 +4,10 @@
 import { almacenLocal } from './almacen-local.js';
 import { conectarClaude } from './almacen-claude.js';
 
+// Documentos con datos del estudiante (los puntos débiles los borra cada backend a su modo).
+// Si se suma un documento nuevo con Store.setDoc, agregarlo acá para que "Borrar todos los datos" lo incluya.
+const DOCUMENTOS = ['config', 'estado', 'curso', 'profesor', 'biblioteca', 'debiles-respaldo', 'hojas'];
+
 export const Store = {
   mode: 'local', remoto: null,
   async init() {
@@ -20,5 +24,14 @@ export const Store = {
   setDoc(name, data) { return this.conRespaldo(r => r.setDoc(name, data), l => l.setDoc(name, data)); },
   listDebiles() { return this.conRespaldo(r => r.listDebiles(), l => l.listDebiles()); },
   addDebil(item) { return this.conRespaldo(r => r.addDebil(item), l => l.addDebil(item)); },
-  deleteDebil(id) { return this.conRespaldo(r => r.deleteDebil(id), l => l.deleteDebil(id)); }
+  updateDebil(id, item) { return this.conRespaldo(r => r.updateDebil(id, item), l => l.updateDebil(id, item)); },
+  // Borra todo lo del estudiante. A diferencia del resto, limpia los dos lugares: si quedara algo en el
+  // respaldo local, volvería a aparecer el día que falle la base. true solo si se borró todo.
+  async borrarTodo() {
+    let ok = almacenLocal.borrarTodo(DOCUMENTOS);
+    if (this.mode === 'db') {
+      try { await this.remoto.borrarTodo(DOCUMENTOS); } catch (e) { ok = false; }
+    }
+    return ok;
+  }
 };

@@ -2,12 +2,14 @@
 // y se descarga el .txt.
 import { slug, today, clip } from '../nucleo/utilidades.js';
 import { getTag, toList } from '../nucleo/etiquetas-xml.js';
+import { leerPuntos } from '../estado/tipos-error.js';
 import { S, key, sess } from '../estado/estado.js';
-import { Store } from '../estado/almacen.js';
+import { guardarDebil } from '../estado/debiles.js';
 import { ask } from '../ia/cliente-ia.js';
 import { aiError } from '../ia/errores-ia.js';
 import { Apuntes } from '../contexto/busqueda-apuntes.js';
 import { header, fitPrompt } from '../contexto/cabecera-prompt.js';
+import { FORMATO_PUNTOS } from '../contexto/reglas-prompt.js';
 import { saveFile } from '../exportacion/descargas.js';
 import { buildResumenTxt } from '../exportacion/resumen-txt.js';
 import { mentor } from '../ui/mentor.js';
@@ -31,11 +33,11 @@ ${clip(transcript, 14000)}
 [ÚLTIMA EVALUACIÓN]
 Comprensión: ${s.comprension}%
 Entendido: ${s.entendido.join('; ') || '-'}
-Falta: ${s.falta.join('; ') || '-'}
+Falta: ${s.falta.map(p => p.texto).join('; ') || '-'}
 
 <resumen_general>3 a 5 frases sobre qué entendió y cómo razonó.</resumen_general>
 <puntos_fuertes>Una línea por punto, empezando con "- ".</puntos_fuertes>
-<puntos_debiles>Una línea por punto débil, empezando con "- ". Cada punto debe ser concreto y autocontenido (que se entienda sin leer la sesión). Máximo 8.</puntos_debiles>
+<puntos_debiles>Máximo 8 puntos débiles. ${FORMATO_PUNTOS}</puntos_debiles>
 <plan_de_repaso>De 3 a 5 pasos concretos, uno por línea con "- ".</plan_de_repaso>
 <ejercicio_sugerido>Un ejercicio corto para practicar el punto débil principal (sin solución).</ejercicio_sugerido>
 Responde SOLO con las etiquetas pedidas.`);
@@ -47,19 +49,18 @@ Responde SOLO con las etiquetas pedidas.`);
     s.summary = {
       general,
       fuertes: toList(getTag(text, 'puntos_fuertes')),
-      debiles: toList(getTag(text, 'puntos_debiles')).slice(0, 8),
+      debiles: leerPuntos(getTag(text, 'puntos_debiles')).slice(0, 8),
       plan: toList(getTag(text, 'plan_de_repaso')),
       ejercicio: getTag(text, 'ejercicio_sugerido'),
       comprension: s.comprension, fecha: new Date().toISOString(), meta, saved: false, fuentes
     };
     if (s.summary.debiles.length) {
-      const item = await Store.addDebil({
+      await guardarDebil({
         key: k, materiaId, ejeId, subId,
         materia: meta.materia, eje: meta.eje, subtema: meta.subtema,
-        fecha: s.summary.fecha, origen: 'Chequeo de comprensión',
+        fecha: s.summary.fecha, origen: 'chequeo',
         comprension: s.comprension, resumen: general, puntos: s.summary.debiles
       });
-      S.debiles.unshift(item);
       s.summary.saved = true;
       updateDebilesCount();
     }

@@ -7,11 +7,12 @@ La IA responde **solo con etiquetas XML** (`<nombre>…</nombre>`). `js/nucleo/e
 | Uso | Etiquetas |
 |---|---|
 | Teoría | `teoria`, `ideas_clave`, `pregunta`, `tips`, `grafico` |
-| Chequeo socrático | `feedback`, `comprension` (0-100), `entendido`, `falta`, `siguiente_pregunta`, `tip` |
-| Resumen | `resumen_general`, `puntos_fuertes`, `puntos_debiles`, `plan_de_repaso`, `ejercicio_sugerido` |
+| Chequeo socrático | `feedback`, `comprension` (0-100), `entendido`, `falta` (con `punto`), `siguiente_pregunta`, `tip` |
+| Resumen | `resumen_general`, `puntos_fuertes`, `puntos_debiles` (con `punto`), `plan_de_repaso`, `ejercicio_sugerido` |
 | Ejercicio | `enunciado`, `pista` (varias), `solucion`, `grafico` |
-| Corrección | `correccion`, `falta` |
-| Examen | `pregunta` (varias) → dentro: `enunciado`, opciones, `correcta`, `explicacion`, `por_que_…` |
+| Corrección | `correccion`, `falta` (con `punto`) |
+| Examen | `pregunta` (varias) → dentro: `enunciado`, opciones, `correcta`, `explicacion`, `tipo`, `por_que_…` |
+| Hoja de errores | `recordar`, `encarar` (máximo 12 líneas cada una; no se recortan; si falta, queda vacía) |
 | Ejes desde apuntes | `eje` (varios) → `nombre`, `icono`, `desc`, `subtema` (varios) → `nombre`, `desc`, `archivos` |
 
 `grafico` contiene expresiones en la sintaxis del laboratorio (texto plano, una por línea, nunca LaTeX).
@@ -34,3 +35,13 @@ Están en `js/contexto/reglas-prompt.js`:
 ## Si cambiás un prompt
 
 Si agregás o renombrás una etiqueta, actualizá a la vez el prompt, el código que la lee y esta tabla.
+
+## Puntos débiles con tipo
+
+Los puntos débiles (chequeo, resumen y corrección) llegan uno por etiqueta:
+
+```
+<punto><texto>Descripción concreta y autocontenida</texto><tipo>calculo</tipo></punto>
+```
+
+`tipo` es un id de la lista fija de `js/estado/tipos-error.js` (`signo`, `notacion`, `condicion`, `calculo`, `concepto`, `metodo`). En el examen, cada `pregunta` trae su `tipo`. Si el tipo no está en la lista, queda `sin-clasificar`; si la IA no usa `<punto>`, se toma una línea por punto, sin clasificar (`leerPuntos`). El texto del formato está en `FORMATO_PUNTOS` (`js/contexto/reglas-prompt.js`).

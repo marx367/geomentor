@@ -36,8 +36,18 @@ function crearAlmacenClaude(db, uid) {
       const ref = await debilesRef().add(item);
       return { id: ref.id, ...item };
     },
-    async deleteDebil(id) {
-      await debilesRef().doc(id).delete();
+    async updateDebil(id, item) {
+      const { id: _id, ...datos } = item; // el id es el nombre del documento, no un campo
+      await debilesRef().doc(id).set(datos);
+      return true;
+    },
+    // Borra los documentos pedidos y cada punto débil. Uno por vez: borrar un documento no borra
+    // lo que cuelga de su ruta, por eso los débiles se recorren aparte.
+    async borrarTodo(nombres) {
+      const snap = await debilesRef().get();
+      for (const d of snap.docs) await debilesRef().doc(d.id).delete();
+      for (const n of nombres) await db.doc(`${base}/${n}`).delete();
+      return true;
     }
   };
 }

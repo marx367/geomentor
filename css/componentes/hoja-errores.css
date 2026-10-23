@@ -1,0 +1,21 @@
+/* Hoja de errores: diálogo (editor + vista previa) y versión compacta para el PDF de una página. */
+.hoja-barra { justify-content: flex-end; margin-bottom: .6rem; }
+.hoja-aviso { font-size: .88rem; margin: 0 0 .4rem; }
+.hoja-editor { display: grid; gap: .8rem; margin: .6rem 0; }
+.hoja-editor textarea { width: 100%; font-family: ui-monospace, monospace; font-size: .85rem; resize: vertical; }
+.hoja-cuenta { font-size: .78rem; color: var(--muted); margin: -.5rem 0 0; } /* contador debajo de cada sección */
+.hoja-cuenta.larga { color: var(--bad); }
+.hoja-vista { border: 1px solid var(--border); border-radius: var(--radius); padding: .6rem .8rem; overflow-x: auto; }
+.hoja h2 { font-size: 1rem; margin: .8rem 0 .3rem; }
+.hoja h2:first-child { margin-top: 0; }
+.hoja ul { margin: 0; padding-left: 1.2rem; }
+.hoja .mis-errores .superado { opacity: .75; }
+
+/* PDF: letra y márgenes más chicos para que un subtema típico entre en una A4. */
+.pdf-doc .hoja { font-size: 9.5pt; line-height: 1.4; }
+.pdf-doc .hoja h1 { font-size: 14pt; }
+.pdf-doc .hoja h2 { font-size: 11pt; margin: 8px 0 3px; }
+.pdf-doc .hoja h3, .pdf-doc .hoja h4 { font-size: 10pt; margin: 4px 0 2px; }
+.pdf-doc .hoja p, .pdf-doc .hoja li { margin: 1px 0; }
+.pdf-doc .hoja .math-block { margin: 2px 0; padding: 2px 6px; }
+.pdf-doc .hoja .pill { border: 1px solid #94a3b8; border-radius: 999px; padding: 0 5px; font-size: 8pt; }

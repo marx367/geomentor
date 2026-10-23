@@ -1,10 +1,15 @@
 // Eventos delegados en todo el documento: un solo listener por tipo atiende los botones que se dibujan
-// después (data-go, pestañas, data-lab, data-action) y los campos de las pestañas.
+// después (data-go, data-abrir, pestañas, data-lab, data-action) y los campos de las pestañas.
 // Lo propio de cada pestaña se resuelve por el registro (ejecutarAccion), así este archivo no las importa.
 import { S, sess } from '../estado/estado.js';
 import { ejecutarAccion } from '../pestanas/registro.js';
 import { mentor, tipFor } from './mentor.js';
 import { go, showTab } from './navegacion.js';
+import { abrirTemaHoy } from '../apuntes/dialogo-tema-hoy.js';
+import { abrirProfesor } from '../profesor/dialogo-profesor.js';
+
+// Diálogos que se abren desde varios botones (data-abrir="...").
+const DIALOGOS = { 'tema-hoy': abrirTemaHoy, profesor: abrirProfesor };
 
 export function iniciarEventos() {
   document.addEventListener('click', ev => {
@@ -17,6 +22,8 @@ export function iniciarEventos() {
       go(v);
       return;
     }
+    const abrir = ev.target.closest('[data-abrir]');
+    if (abrir) { DIALOGOS[abrir.dataset.abrir]?.(); return; }
     const tab = ev.target.closest('.tab');
     if (tab) { showTab(tab.dataset.tab); mentor(tipFor(tab.dataset.tab)); return; }
 

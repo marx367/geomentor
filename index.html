@@ -43,12 +43,10 @@
   </div>
   <nav class="top-actions" aria-label="Acciones">
     <button class="btn ghost" id="btn-debiles" title="Puntos débiles guardados">📌 <span class="lbl">Puntos débiles</span> <span class="count" id="debiles-count" hidden>0</span></button>
-    <button class="btn ghost" id="btn-pdf" title="Exportar ficha en PDF">📄 <span class="lbl">Exportar PDF</span></button>
-    <button class="btn ghost" id="btn-reset" title="Reiniciar sesión">🔄 <span class="lbl">Reiniciar</span></button>
   </nav>
-  <!-- Botones de ícono: configuración (IA, apuntes y estilo) y tema -->
+  <!-- Botones de ícono: configuración (IA y apuntes) y tema -->
   <div class="top-icons">
-    <button class="icon-btn" id="btn-apuntes" aria-label="Configuración" title="Configuración: IA, apuntes y estilo">
+    <button class="icon-btn" id="btn-apuntes" aria-label="Configuración" title="Configuración: IA y apuntes">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
       <span class="dot" id="apuntes-dot" hidden></span>
     </button>
@@ -78,8 +76,12 @@
   <section id="view-materias" class="view">
     <div class="view-head">
       <div>
-        <h1>Elige la materia</h1>
-        <p class="lead">Cada materia se organiza en ejes y subtemas. Dentro de cada subtema estudias la teoría, experimentas en el laboratorio gráfico, practicas ejercicios y rindes un examen.</p>
+        <h1>Mi curso</h1>
+        <p class="lead">Lo que se da en clase, ordenado en materias, ejes y subtemas. Dentro de cada subtema estudias la teoría, experimentas en el laboratorio gráfico, practicas ejercicios y rindes un examen.</p>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" data-abrir="tema-hoy">＋ Tema de hoy</button>
+        <button class="btn" data-abrir="profesor">🎓 Profesor y bibliografía</button>
       </div>
     </div>
     <div class="card-grid three" id="grid-materias"></div>
@@ -92,8 +94,9 @@
         <p class="lead" id="ejes-lead"></p>
       </div>
       <div class="btn-row">
+        <button class="btn primary" data-abrir="tema-hoy">＋ Tema de hoy</button>
+        <button class="btn" data-abrir="profesor">🎓 Profesor y bibliografía</button>
         <button class="btn" id="btn-plan" title="Une todos tus apuntes en un plan de estudios limpio, con cronograma">🧩 Consolidar apuntes en un plan</button>
-        <button class="btn primary" id="btn-gen-ejes" title="Crea ejes y subtemas a partir de los apuntes cargados en Config">✨ Generar ejes desde mis apuntes</button>
         <button class="btn" data-go="materias">← Volver a materias</button>
       </div>
     </div>
@@ -106,13 +109,13 @@
         <h1 id="subtemas-title"></h1>
         <p class="lead">Selecciona el tema específico que corresponde a tu cuaderno de clase.</p>
       </div>
-      <button class="btn" data-go="ejes">← Volver a ejes</button>
+      <div class="btn-row">
+        <button class="btn primary" data-abrir="tema-hoy">＋ Tema de hoy</button>
+        <button class="btn" data-abrir="profesor">🎓 Profesor y bibliografía</button>
+        <button class="btn" data-go="ejes">← Volver a ejes</button>
+      </div>
     </div>
     <div class="card-grid three" id="grid-subtemas"></div>
-    <form class="custom-sub" id="custom-sub-form">
-      <input id="custom-sub-input" placeholder="¿No está tu tema? Escríbelo (ej. Rotación de ejes)" autocomplete="off">
-      <button class="btn" type="submit">Estudiar este tema</button>
-    </form>
   </section>
 
   <section id="view-mentoria" class="view" hidden>
@@ -181,7 +184,8 @@
 
 <div class="mentor" id="mentor">
   <div class="mentor-bubble" id="mentor-bubble" role="status" aria-live="polite">
-    <span id="mentor-text">¡Hola! Soy tu mentor de matemática. Elige una materia para empezar tu repaso guiado.</span>
+    <span id="mentor-text">¡Hola! Soy tu mentor de matemática. Carga la clase de hoy con «＋ Tema de hoy» o elige una materia de tu curso.</span>
+    <button class="btn sm primary" id="mentor-accion" type="button" hidden></button>
     <button class="close" id="mentor-close" aria-label="Ocultar mensaje">✕</button>
   </div>
   <button class="mentor-btn" id="mentor-btn" aria-label="Mostrar consejo del mentor">💡</button>
@@ -212,22 +216,61 @@
       </div>
       <div class="file-list" id="apuntes-list"></div>
     </div>
-    <div>
-      <p class="muted small">Estilo y criterios del profesor (cómo evalúa, qué exige, notación preferida).</p>
-      <div class="btn-row" style="margin:.6rem 0">
-        <label class="btn file-btn">👩‍🏫 Cargar archivo de estilo<input type="file" id="in-estilo" accept=".txt,.md,text/plain,text/markdown"></label>
-      </div>
-      <textarea id="estilo-text" rows="5" placeholder="O escríbelo aquí: exige gráfico en cada ejercicio, penaliza no verificar condiciones…"></textarea>
-    </div>
-    <label class="toggle"><input type="checkbox" id="estricto"><span><strong>Modo estricto de apuntes.</strong> Las explicaciones se basan solo en tus apuntes. Cuando falte algo, el tutor lo agrega en un recuadro aparte que indica qué agrega, por qué y para qué.</span></label>
+    <p class="muted small">El estilo del profesor, los libros y el modo estricto están en «🎓 Profesor y bibliografía».</p>
     <p class="muted small" id="storage-note"></p>
     <div class="btn-row"><button class="btn primary" id="apuntes-save">Guardar configuración</button></div>
+    <hr class="sep">
+    <section class="zona-reinicio">
+      <h4>🗂️ Datos y reinicio</h4>
+      <p class="muted small">Reiniciar borra el avance de esta sesión (chequeos, ejercicios y exámenes). Se conservan tus apuntes, Mi curso, el profesor y la biblioteca, y los puntos débiles.</p>
+      <div class="btn-row"><button class="btn" data-action="reiniciar-sesion">🔄 Reiniciar sesión</button></div>
+      <p class="muted small">Borrar todos los datos deja la app como nueva: elimina Mi curso, tus apuntes, el profesor y la biblioteca, el progreso y los puntos débiles. No se puede deshacer. Se conservan la configuración de la IA y el tema.</p>
+      <div class="btn-row"><button class="btn peligro" data-action="borrar-todo">🗑️ Borrar todos los datos</button></div>
+    </section>
   </div>
 </dialog>
 
-<dialog id="dlg-ejes">
-  <div class="dlg-head"><h3>✨ Ejes desde tus apuntes</h3><button class="btn ghost sm" data-close>✕</button></div>
-  <div class="dlg-body" id="ejes-gen-body"></div>
+<dialog id="dlg-tema-hoy">
+  <div class="dlg-head"><h3>＋ Tema de hoy</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body" id="tema-hoy-body"></div>
+</dialog>
+
+<dialog id="dlg-profesor">
+  <div class="dlg-head"><h3>🎓 Profesor y bibliografía</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body">
+    <section class="pf-seccion">
+      <h4>📋 Reglas del examen</h4>
+      <p class="muted small">Qué material se puede usar en el examen final. El mentor adapta la teoría, las pistas y las preguntas.</p>
+      <fieldset class="pregunta">
+        <legend>Material permitido</legend>
+        <div id="pf-material"></div>
+      </fieldset>
+      <label class="field">Fecha del examen (opcional)<input type="date" id="pf-fecha-examen"></label>
+      <p class="aviso-reglas" id="pf-reglas-aviso" role="alert"></p>
+    </section>
+    <hr class="sep">
+    <section class="pf-seccion">
+      <h4>👩‍🏫 Estilo del profesor</h4>
+      <p class="muted small">Cómo evalúa, qué exige y qué notación usa. El mentor lo sigue al explicar, corregir y armar exámenes.</p>
+      <div class="btn-row"><label class="btn file-btn sm">📁 Cargar archivo (.txt, .md o .pdf)<input type="file" id="pf-estilo-archivo" accept=".txt,.md,.pdf,text/plain,text/markdown,application/pdf"></label></div>
+      <textarea id="pf-estilo" rows="5" maxlength="20000" aria-label="Estilo del profesor" placeholder="O escríbelo aquí: exige gráfico en cada ejercicio, penaliza no verificar condiciones…"></textarea>
+      <details class="cuestionario">
+        <summary>📝 Cuestionario sobre el profesor (opción múltiple)</summary>
+        <div id="pf-cuestionario"></div>
+      </details>
+      <div class="btn-row"><button type="button" class="btn sm" id="pf-analizar">🤖 Analizar con IA</button></div>
+      <div id="pf-analisis"></div>
+    </section>
+    <hr class="sep">
+    <section class="pf-seccion">
+      <h4>📚 Biblioteca</h4>
+      <p class="muted small">Libros de la materia, por capítulo (.txt, .md, .pdf con texto, o texto pegado). En «＋ Tema de hoy» eliges de qué capítulo salió cada clase.</p>
+      <div id="pf-biblioteca"></div>
+    </section>
+    <hr class="sep">
+    <label class="toggle"><input type="checkbox" id="pf-estricto"><span><strong>Modo estricto de apuntes.</strong> Las explicaciones se basan solo en tus apuntes. Cuando falte algo, el tutor lo agrega en un recuadro aparte que indica qué agrega, por qué y para qué.</span></label>
+    <p class="muted small">Los cambios se guardan solos. <span id="pf-guardado" role="status"></span></p>
+  </div>
 </dialog>
 
 <dialog id="dlg-plan">
@@ -238,6 +281,11 @@
 <dialog id="dlg-debiles">
   <div class="dlg-head"><h3>📌 Tus puntos débiles guardados</h3><button class="btn ghost sm" data-close>✕</button></div>
   <div class="dlg-body" id="debiles-body"></div>
+</dialog>
+
+<dialog id="dlg-hoja">
+  <div class="dlg-head"><h3>📝 Hoja de errores</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body" id="hoja-body"></div>
 </dialog>
 
 </body>
