@@ -1,11 +1,11 @@
 # Módulos
 
-Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2; [MCn] = paso n de `docs/plan-mi-curso.md`; [MC-R] = Reglas del examen y [MC-D] = Puntos débiles con tipo, del mismo plan).
+Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2; [MCn] = paso n de `docs/plan-mi-curso.md`; [MC-R] = Reglas del examen, [MC-D] = Puntos débiles con tipo y [MC-H] = Hoja de errores, del mismo plan).
 
 ## Raíz
 | Archivo | Qué hace |
 |---|---|
-| `index.html` | Estructura: cabecera (📌, ⚙️ y tema), vistas, diálogos (Profesor con Reglas del examen), mentor con botón de acción. Carga CSS y `js/main.js` [2] |
+| `index.html` | Estructura: cabecera (📌, ⚙️ y tema), vistas, diálogos (Profesor con Reglas del examen, Hoja de errores), mentor con botón de acción. Carga CSS y `js/main.js` [2] |
 | `iniciar-servidor.ps1` | Levanta un servidor local en el puerto 8080 [1] |
 
 ## css/ [2]
@@ -23,6 +23,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `componentes/contenido.css` | Contenido de la IA: Markdown, fórmulas, carga, errores, fuentes, complementos |
 | `componentes/mentor.css` | Mentor flotante y su botón de acción |
 | `componentes/dialogos.css` | Diálogos de configuración (con la zona "Datos y reinicio"), Tema de hoy, Profesor y bibliografía, plan y débiles (pastilla del tipo de error) |
+| `componentes/hoja-errores.css` | Diálogo de la hoja de errores (editor y vista previa) y su versión compacta para el PDF de una página [MC-H] |
 | `componentes/ficha-pdf.css` | PDF de la ficha y del ejercicio (siempre en claro, con la foto o pizarra) |
 | `componentes/pizarra.css` | Pizarra de Ejercicios [10] |
 | `vistas/mentoria.css` | Contenedor y pestañas del subtema |
@@ -34,7 +35,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 |---|---|
 | `config-mathjax.js` | Configuración de MathJax. Script clásico que se carga antes que MathJax; avisa con el evento `math-ready` [2] |
 | `tema-inicial.js` | Script clásico en `<head>`, antes de los estilos: aplica el tema guardado (`data-theme`) para que no haya parpadeo [F2] |
-| `main.js` | Punto de entrada: inicializa almacén, IA, lienzo, eventos y la primera vista [7] |
+| `main.js` | Punto de entrada: inicializa almacén, IA, lienzo, eventos y la primera vista; carga las hojas de errores [7] [MC-H] |
 | `nucleo/dom.js` | `$` y `$$` (selectores) [3] |
 | `nucleo/utilidades.js` | `newId`, `escapeHTML`, formateos, `today` (fecha local), `limpiarTexto` y `esFechaValida` para validar lo que escribe el estudiante [3] |
 | `nucleo/etiquetas-xml.js` | `getTag`, `getTags`, `toList`: leen la respuesta de la IA [3] |
@@ -48,9 +49,11 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `estado/tipos-error.js` | Lista fija de tipos de error (`signo`, `notacion`, `condicion`, `calculo`, `concepto`, `metodo`), `normalizarTipo()` (lo desconocido → `sin-clasificar`), `etiquetaTipo()` y `leerPuntos()` para leer `<punto>` de la IA [MC-D] |
 | `estado/debiles.js` | Puntos débiles: formato `{ origen, detalle, puntos: [{ texto, tipo, descartado }], superado }`, migración del formato viejo con respaldo único (`debiles-respaldo`), `guardarDebil()`, `puntosVigentes()` (sin descartados: usarla para contar o mostrar), `debilesActivos()`, `marcarSuperado()`, `editarPunto()`, `descartarPunto()` (marca la fecha, no borra) y `etiquetaOrigen()` [MC-D] |
 | `estado/errores-frecuentes.js` | Función pura: cuenta los tipos de error de un subtema (o de todos), superados incluidos y descartados no → `[{ tipo, veces, ultimaFecha }]` [MC-D] |
+| `estado/mis-errores.js` | Función pura: puntos de un subtema para la hoja, sin descartados, primero pendientes y después superados → `[{ texto, tipo, superado }]` [MC-H] |
+| `estado/hojas.js` | Hojas de errores editadas (secciones 1 y 2) por subtema en el documento `hojas`: `cargarHojas`, `hojaDe`, `guardarHoja` (guarda antes de cambiar la memoria) [MC-H] |
 | `estado/reglas-examen.js` | Reglas del examen en `S.config.reglasExamen` (material permitido y fecha): `normalizarReglas`, `materialPermitido()`, `esDefinida()`, `diasHastaExamen()`, `guardarReglas()` [MC-R] |
 | `estado/profesor.js` | Estilo del profesor (texto, cuestionario, análisis), modo estricto y biblioteca de libros por capítulo, en los documentos `profesor` y `biblioteca`; `textoEstilo()` para los prompts [MC3] |
-| `estado/almacen.js` | Fachada de guardado: elige backend; puntos débiles con `addDebil` y `updateDebil` (no se borran uno por uno); `borrarTodo()` limpia todo el estudiante en los dos backends (lista `DOCUMENTOS`) [4] [MC-D] |
+| `estado/almacen.js` | Fachada de guardado: elige backend; puntos débiles con `addDebil` y `updateDebil` (no se borran uno por uno); `borrarTodo()` limpia todo el estudiante en los dos backends (lista `DOCUMENTOS`, con `hojas`) [4] [MC-D] [MC-H] |
 | `estado/almacen-local.js` | Backend localStorage (`updateDebil` reemplaza por id) [4] |
 | `estado/almacen-claude.js` | Backend base de datos de claude.ai (opcional; `updateDebil` reescribe el documento) [4] |
 | `ia/proveedores.js` | Lista de proveedores, modelos sugeridos y URLs [5] |
@@ -94,7 +97,9 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `pestanas/resumen-sesion.js` | Pestaña 1 · resumen por IA, guarda puntos débiles con tipo (origen `chequeo`) y descarga el .txt [8] |
 | `estado/progreso.js` | `saveProgreso`: comprensión y mejor examen por subtema [8] |
 | `exportacion/resumen-txt.js` | Arma el texto del resumen .txt [8] |
-| `exportacion/exportar-pdf.js` | PDF con html2pdf: `generarPDF()` común, ficha del subtema (acción `pdf`, en Examen y ficha) y ejercicio con resolución y solución (acción `pdf-ejercicio`, en Ejercicios) [8] |
+| `exportacion/exportar-pdf.js` | PDF con html2pdf: `generarPDF()` y `rutaHTML()` comunes, ficha del subtema (acción `pdf`, en Examen y ficha) y ejercicio con resolución y solución (acción `pdf-ejercicio`, en Ejercicios) [8] |
+| `exportacion/hoja-errores.js` | Lógica de la hoja de errores: una consulta a la IA (`recordar`, `encarar`, sin recortar), `medirSeccion()` (líneas y caracteres contra `LIMITE`), "Mis errores" y "Errores más frecuentes" locales, `hojaHTML()` [MC-H] |
+| `exportacion/dialogo-hoja.js` | Diálogo "📝 Hoja de errores" (acción `hoja-errores`): edición con vista previa y contador que avisa si una sección no entra en una página, guardado al cambiar y al cerrar, aviso y PDF según el material permitido [MC-H] |
 | `laboratorio/parser/funciones.js` | Funciones (sen, ln…), palabras especiales y constantes [9] |
 | `laboratorio/parser/tokenizador.js` | Texto → tokens; normaliza ², π, ·, √ [9] |
 | `laboratorio/parser/parser.js` | Tokens → árbol, sin eval; `varsOf` [9] |
@@ -119,6 +124,6 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `pizarra/pizarra.js` | Monta, limpia y exporta la pizarra (estado en la sesión: abierta, herramienta, dibujo) [10] |
 | `pizarra/herramientas.js` | Lápiz y línea recta con vista previa (mouse, lápiz y táctil) [10] |
 | `pizarra/cuadricula-pizarra.js` | Fondo cuadriculado con ejes, en colores del tema [10] |
-| `pestanas/examen.js` | Pestaña 4 · pide las 5 preguntas (cada una con su tipo de error) y dibuja examen y resultado [10] |
+| `pestanas/examen.js` | Pestaña 4 · pide las 5 preguntas (cada una con su tipo de error) y dibuja examen y resultado; botón 📝 Hoja de errores arriba y junto a la ficha PDF [10] [MC-H] |
 | `pestanas/examen-resultado.js` | Pestaña 4 · entrega (nota, mejor resultado) y guardar errores como débiles con el tipo de cada pregunta (origen `examen`) [10] |
 | `pestanas/pestana-examen.js` | Pestaña 4 · cableado: registro y botones [10] |

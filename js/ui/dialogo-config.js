@@ -27,7 +27,7 @@ export async function saveApuntes() {
 // Borra todo lo guardado del estudiante y recarga la página: al arrancar de nuevo, la app lee
 // el almacén vacío y queda como recién instalada. Pide confirmar dos veces porque no se puede deshacer.
 async function borrarTodosLosDatos() {
-  if (!confirm('¿Borrar todos los datos? Se eliminan Mi curso, tus apuntes, el profesor y la biblioteca, el progreso y los puntos débiles. No se puede deshacer.')) return;
+  if (!confirm('¿Borrar todos los datos? Se eliminan Mi curso, tus apuntes, el profesor y la biblioteca, el progreso, los puntos débiles y las hojas de errores. No se puede deshacer.')) return;
   const palabra = prompt('Para confirmar, escribe BORRAR:');
   if (palabra?.trim().toUpperCase() !== 'BORRAR') { mentor('No se borró nada.'); return; }
   if (!(await Store.borrarTodo())) {

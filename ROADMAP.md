@@ -51,6 +51,7 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 - Librerías locales para funcionar sin internet
 - Backend para claves de IA compartidas
 - Chat real con el mentor (conversación libre)
+- Capas: `exportacion/` (exportar-pdf.js, dialogo-hoja.js, descargas.js) importa `ui/mentor.js` y `pestanas/registro.js`; decidir si se documenta como excepción en `docs/arquitectura.md` o se mueven los diálogos
 
 ## Completados
 

@@ -51,7 +51,13 @@ Detalle de cada archivo: `docs/modulos.md`. Regla de dependencias: `docs/arquite
 - Sin `onclick` en el HTML: los eventos van delegados en `js/ui/eventos.js`.
 - Las capas bajas nunca importan a las altas (ver `docs/arquitectura.md`).
 - Nunca claves en el código.
+- Los PDF (html2pdf) no llevan ancho fijo: el contenido usa el ancho de la página (~698 px en A4) y las palabras largas pasan de línea; `generarPDF` pasa `scrollX: 0` y `scrollY: 0` a html2canvas porque, si no, el scroll de la página corre el PDF.
 
 ## Estado
 
 Migración desde el prototipo terminada (2026-10-11). Abierto a nuevas implementaciones: ver Fase 2 en `ROADMAP.md`.
+
+## Ramas y commits
+- Nunca trabajes en main ni en mi-curso. Si la rama actual es una de esas, pará y pedime crear
+  una rama feat/<nombre> o fix/<nombre> antes de tocar código.
+- Commit y push solo cuando yo lo pida, después de mostrarme qué archivos entran y el mensaje.

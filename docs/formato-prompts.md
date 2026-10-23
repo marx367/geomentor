@@ -12,6 +12,7 @@ La IA responde **solo con etiquetas XML** (`<nombre>…</nombre>`). `js/nucleo/e
 | Ejercicio | `enunciado`, `pista` (varias), `solucion`, `grafico` |
 | Corrección | `correccion`, `falta` (con `punto`) |
 | Examen | `pregunta` (varias) → dentro: `enunciado`, opciones, `correcta`, `explicacion`, `tipo`, `por_que_…` |
+| Hoja de errores | `recordar`, `encarar` (máximo 12 líneas cada una; no se recortan; si falta, queda vacía) |
 | Ejes desde apuntes | `eje` (varios) → `nombre`, `icono`, `desc`, `subtema` (varios) → `nombre`, `desc`, `archivos` |
 
 `grafico` contiene expresiones en la sintaxis del laboratorio (texto plano, una por línea, nunca LaTeX).

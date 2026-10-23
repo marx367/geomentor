@@ -10,7 +10,7 @@ import { mentor } from '../ui/mentor.js';
 import { saveFile } from './descargas.js';
 
 // Ruta del subtema actual, para el encabezado de cada PDF.
-const rutaHTML = () => `<p>${escapeHTML(S.materia.nombre)} › ${escapeHTML(S.eje.nombre)} › <strong>${escapeHTML(S.sub.nombre)}</strong> · ${stamp()}</p>`;
+export const rutaHTML = () => `<p>${escapeHTML(S.materia.nombre)} › ${escapeHTML(S.eje.nombre)} › <strong>${escapeHTML(S.sub.nombre)}</strong> · ${stamp()}</p>`;
 
 // Convierte el HTML en un PDF (estilos de ficha-pdf.css, siempre en claro) y lo descarga.
 export async function generarPDF(html, archivo, okMsg) {
@@ -23,7 +23,8 @@ export async function generarPDF(html, archivo, okMsg) {
   try {
     const blob = await html2pdf().set({
       margin: 0.5, image: { type: 'jpeg', quality: 0.95 },
-      html2canvas: { scale: 2, backgroundColor: '#ffffff' },
+      // scrollX/Y en 0: html2pdf no lo corrige y html2canvas restaría el scroll de la página (hoja corrida y cortada)
+      html2canvas: { scale: 2, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0 },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
       pagebreak: { mode: ['css', 'legacy'], avoid: ['.box', 'li', '.math-block', 'img'] }
     }).from(doc).outputPdf('blob');
