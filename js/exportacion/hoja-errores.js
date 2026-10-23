@@ -11,6 +11,8 @@ import { IA, aiReady } from '../ia/config-ia.js';
 import { ask } from '../ia/cliente-ia.js';
 import { header, fitPrompt } from '../contexto/cabecera-prompt.js';
 import { FORMAT_RULES } from '../contexto/reglas-prompt.js';
+import { Apuntes } from '../contexto/busqueda-apuntes.js';
+import { fuentesHTML } from '../contexto/fuentes.js';
 import { markdownToHTML, mdInline } from '../render/markdown.js';
 
 // Tope de cada sección 1 y 2 para que la hoja entre en una página. No se recorta nada solo (cortar LaTeX
@@ -29,16 +31,19 @@ export function medirSeccion(texto) {
 }
 
 // Una sola llamada. Etiqueta faltante o vacía → sección vacía (se completa a mano).
+// Sin citas por línea (en una hoja de una página ocupan lugar): los apuntes usados se muestran una vez arriba.
 export async function proponerHoja() {
   const prompt = fitPrompt(b => `${header(b)}
 
 TAREA: arma las dos primeras secciones de una hoja de UNA página que el estudiante va a llevar al examen de este subtema. La hoja ya incluye aparte la lista de sus errores: no la repitas, pero haz que estas secciones ayuden a no cometerlos.
 <recordar>Entre 6 y 10 líneas (máximo 12) que empiecen con "- ": fórmulas en LaTeX, notación que se exige y condiciones de validez clave. Una idea por línea, sin explicaciones largas.</recordar>
 <encarar>Los 2 a 4 tipos de ejercicio típicos del subtema. Para cada uno, una línea con el tipo en **negrita** y después sus pasos cortos numerados ("1. ", "2. "…). Máximo 12 líneas en total.</encarar>
+Para esta tarea ignora la regla de CITAS: no pongas «(según …)» ni ninguna otra cita en las líneas; los apuntes usados se muestran aparte.
 
 ${FORMAT_RULES}`);
+  const fuentes = Apuntes.last;
   const text = await ask(prompt);
-  return { recordar: getTag(text, 'recordar'), encarar: getTag(text, 'encarar') };
+  return { recordar: getTag(text, 'recordar'), encarar: getTag(text, 'encarar'), fuentes };
 }
 
 const vacia = '<p class="muted">(Vacía: complétala a mano.)</p>';
@@ -61,9 +66,10 @@ function frecuentesHTML(k) {
   return `<h2>Errores más frecuentes</h2>${lista.length ? `<ul>${lista.map(t => `<li>${escapeHTML(t)}</li>`).join('')}</ul>` : '<p class="muted">(Todavía no hay errores con tipo en este subtema.)</p>'}`;
 }
 
-// Las cuatro secciones, en orden. Sirve para la vista previa y para el PDF.
-export function hojaHTML({ recordar, encarar }, k) {
-  return `${seccionMd('Qué tengo que recordar', recordar)}
+// Las cuatro secciones, en orden, con los apuntes usados arriba. Sirve para la vista previa y para el PDF.
+export function hojaHTML({ recordar, encarar, fuentes }, k) {
+  return `${fuentesHTML(fuentes)}
+    ${seccionMd('Qué tengo que recordar', recordar)}
     ${seccionMd('Cómo encarar cada tipo de ejercicio', encarar)}
     ${misErroresHTML(k)}
     ${frecuentesHTML(k)}`;

@@ -18,12 +18,16 @@ o copiar a mano en el cuaderno (si solo se permite manuscrito).
   (contexto/cabecera-prompt.js y reglas-prompt.js: apuntes, estilo del profesor, reglas del examen,
   modo estricto). Respuesta en etiquetas XML, leída con nucleo/etiquetas-xml.js.
 - Control con reglas después de la IA: si falta una etiqueta o viene vacía, esa sección queda vacía
-  para completarla a mano, sin romper nada.
+  para completarla a mano, sin romper nada (ronda 5). Debajo aparece un aviso y un botón "Pedir de nuevo
+  a la IA" que el estudiante aprieta si quiere: una consulta más, que solo cambia las secciones que
+  faltaban. Nada de reintentos automáticos: una consulta por pedido.
 - Largo (decisión de la ronda 4): NO se recorta nada automáticamente. Cortar LaTeX por líneas es frágil
   (por ejemplo, `\\[2pt]` dentro de `cases` parecía un bloque abierto) y borraba contenido sin avisar.
   En su lugar, el prompt pide máximo 12 líneas por sección y el diálogo muestra debajo de cada textarea
   un contador de líneas y caracteres que avisa, sin bloquear, al pasar de 12 líneas o 1200 caracteres:
   "Muy larga para una página: recortala vos".
+- Citas: el prompt pide no citar «(según …)» por línea (ocupan lugar en una hoja de una página); los apuntes
+  usados se guardan con la hoja y se muestran una sola vez arriba, con fuentesHTML (vista previa y PDF).
 - Sin IA disponible (o con el proveedor simulado): la hoja se arma igual, con las secciones 3 y 4
   y las 1 y 2 vacías y editables.
 
@@ -36,6 +40,9 @@ abre la hoja.
 La versión editada de las secciones 1 y 2 se guarda por subtema y persiste al recargar (documento
 `hojas`, incluido en DOCUMENTOS de estado/almacen.js para que "Borrar todos los datos" lo borre).
 Mismo tope de tamaño que los otros documentos.
+Tope de 2000 caracteres por sección (ronda 5), para que el documento no se llene: si una sección lo pasa,
+no se guarda, el texto queda como borrador del subtema y el diálogo avisa "Esta sección pasa de 2000
+caracteres: recortala para guardarla". Nunca se recorta en silencio (por eso el textarea no tiene maxlength).
 
 ## Material permitido (estado/reglas-examen.js)
 - impreso → botón "Exportar PDF" con generarPDF() de exportacion/exportar-pdf.js.
@@ -60,6 +67,8 @@ Cuadernillo con índice de todos los temas, editar las secciones 3 y 4, reorgani
 - [ ] "Borrar todos los datos" también borra las hojas guardadas
 - [ ] Cada valor de material (impreso, manuscrito, ninguno, sin definir) muestra lo que dice la ficha
 - [ ] Ninguna sección se recorta sola; el contador avisa al pasar 12 líneas o 1200 caracteres, sin bloquear
+- [ ] Pegar más de 2000 caracteres en una sección: entra entero, aparece el aviso y no se guarda hasta recortarla
+- [ ] Si la IA no trae una sección: queda vacía, con aviso y "Pedir de nuevo a la IA" (una consulta por clic)
 - [ ] Con material impreso, el PDF sale en 1 página A4 para un subtema típico y las fórmulas se ven bien
 - [ ] Todo texto que viene de la IA o de los apuntes pasa por escapeHTML, mdInline o markdownToHTML
 - [ ] Se usa solo con teclado (Tab, Enter, Escape cierra sin perder lo editado) y se ve bien a 375 px
