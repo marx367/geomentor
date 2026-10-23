@@ -58,12 +58,16 @@ ${FORMAT_RULES}`);
   }
 }
 
+// Hoja de errores del subtema (exportacion/dialogo-hoja.js): arriba de la pestaña siempre, y también junto a la ficha PDF.
+const BOTON_HOJA = '<button class="btn" data-action="hoja-errores">📝 Hoja de errores</button>';
+const BARRA_HOJA = `<div class="btn-row hoja-barra">${BOTON_HOJA}</div>`;
+
 export function renderExamen() {
   const el = $('#tab-examen');
   const s = sess();
   if (!s) return;
-  if (s.busy.examen) { el.innerHTML = loadingHTML('Armando tu examen de práctica…'); return; }
-  if (!s.exam) { el.innerHTML = errorBlock(s.err.examen || 'Genera un examen de práctica de 5 preguntas.', 'nuevo-exam', s.err.examen ? 'Reintentar' : 'Generar examen'); return; }
+  if (s.busy.examen) { el.innerHTML = BARRA_HOJA + loadingHTML('Armando tu examen de práctica…'); return; }
+  if (!s.exam) { el.innerHTML = BARRA_HOJA + errorBlock(s.err.examen || 'Genera un examen de práctica de 5 preguntas.', 'nuevo-exam', s.err.examen ? 'Reintentar' : 'Generar examen'); return; }
   const ex = s.exam;
   const L = 'ABCD';
   const answered = ex.answers.filter(a => a !== null).length;
@@ -106,8 +110,9 @@ export function renderExamen() {
         <button class="btn" data-action="nuevo-exam">Nuevo examen</button>
         ${wrong ? `<button class="btn" data-action="guardar-errores" ${ex.savedErrors ? 'disabled' : ''}>${ex.savedErrors ? '✔ Errores guardados' : '📌 Guardar mis errores como puntos débiles'}</button>` : ''}
         <button class="btn" data-action="pdf">📄 Exportar ficha PDF</button>
+        ${BOTON_HOJA}
       </div>`
     : `<div class="btn-row"><button class="btn primary" data-action="entregar" ${answered < n ? 'disabled' : ''}>Entregar examen (${answered}/${n})</button></div>`;
 
-  el.innerHTML = `<div class="stack">${fuentesHTML(ex.fuentes)}${result}${questions}<div class="exam-foot">${foot}</div></div>`;
+  el.innerHTML = `<div class="stack">${BARRA_HOJA}${fuentesHTML(ex.fuentes)}${result}${questions}<div class="exam-foot">${foot}</div></div>`;
 }

@@ -10,7 +10,7 @@ import { mentor } from '../ui/mentor.js';
 import { saveFile } from './descargas.js';
 
 // Ruta del subtema actual, para el encabezado de cada PDF.
-const rutaHTML = () => `<p>${escapeHTML(S.materia.nombre)} › ${escapeHTML(S.eje.nombre)} › <strong>${escapeHTML(S.sub.nombre)}</strong> · ${stamp()}</p>`;
+export const rutaHTML = () => `<p>${escapeHTML(S.materia.nombre)} › ${escapeHTML(S.eje.nombre)} › <strong>${escapeHTML(S.sub.nombre)}</strong> · ${stamp()}</p>`;
 
 // Convierte el HTML en un PDF (estilos de ficha-pdf.css, siempre en claro) y lo descarga.
 export async function generarPDF(html, archivo, okMsg) {

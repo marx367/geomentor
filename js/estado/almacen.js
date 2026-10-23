@@ -6,7 +6,7 @@ import { conectarClaude } from './almacen-claude.js';
 
 // Documentos con datos del estudiante (los puntos débiles los borra cada backend a su modo).
 // Si se suma un documento nuevo con Store.setDoc, agregarlo acá para que "Borrar todos los datos" lo incluya.
-const DOCUMENTOS = ['config', 'estado', 'curso', 'profesor', 'biblioteca', 'debiles-respaldo'];
+const DOCUMENTOS = ['config', 'estado', 'curso', 'profesor', 'biblioteca', 'debiles-respaldo', 'hojas'];
 
 export const Store = {
   mode: 'local', remoto: null,

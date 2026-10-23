@@ -7,6 +7,7 @@ import { cargarCurso } from './estado/curso.js';
 import { cargarProfesor, cargarBiblioteca, guardarProfesor } from './estado/profesor.js';
 import { normalizarReglas, esDefinida } from './estado/reglas-examen.js';
 import { migrarDebiles, debilesActivos, puntosVigentes } from './estado/debiles.js';
+import { cargarHojas } from './estado/hojas.js';
 import { initCapabilities } from './ia/config-ia.js';
 import { applyIA } from './ia/panel-ia.js';
 import { iniciarMentor, mentor } from './ui/mentor.js';
@@ -21,6 +22,7 @@ import { iniciarDialogoPlan } from './apuntes/dialogo-plan.js';
 import { iniciarDialogoTemaHoy } from './apuntes/dialogo-tema-hoy.js';
 import { iniciarDialogoProfesor } from './profesor/dialogo-profesor.js';
 import { iniciarExportarPDF } from './exportacion/exportar-pdf.js';
+import { iniciarHojaErrores } from './exportacion/dialogo-hoja.js';
 
 // Pestañas: cada una se anota sola en el registro al importarse.
 import './pestanas/pestana-teoria.js';
@@ -37,6 +39,7 @@ iniciarDialogoPlan();
 iniciarDialogoTemaHoy();
 iniciarDialogoProfesor();
 iniciarExportarPDF();
+iniciarHojaErrores();
 iniciarEventos();
 iniciarTema();
 
@@ -59,15 +62,16 @@ function yaPreguntoReglas() {
   $('#mentor-bubble').hidden = false;
   initCapabilities().then(() => { applyIA(); rerenderCurrent(); });
   await Store.init();
-  const [config, estado, debiles, curso, profesor, biblioteca] = await Promise.all([
+  const [config, estado, debiles, curso, profesor, biblioteca, hojas] = await Promise.all([
     Store.getDoc('config', null), Store.getDoc('estado', null), Store.listDebiles(), Store.getDoc('curso', null),
-    Store.getDoc('profesor', null), Store.getDoc('biblioteca', null)
+    Store.getDoc('profesor', null), Store.getDoc('biblioteca', null), Store.getDoc('hojas', null)
   ]);
   // Se arma campo por campo: lo que no figure acá no se vuelve a guardar.
   if (config) S.config = { apuntes: config.apuntes || {}, asignacion: config.asignacion || {}, planes: config.planes || {}, reglasExamen: normalizarReglas(config.reglasExamen) };
   // El estilo y el modo estricto antes vivían en Config: la primera vez se pasan al documento 'profesor'.
   cargarProfesor(profesor, config);
   cargarBiblioteca(biblioteca);
+  cargarHojas(hojas);
   if (!profesor && (config?.estilo || config?.estricto)) await Promise.all([guardarProfesor(), Store.setDoc('config', S.config)]);
   if (estado?.progreso) S.progreso = { temas: estado.progreso.temas || {} };
   // Al arrancar no se escribe Mi curso: si la lectura fallara (red, dato dañado), un guardado acá pisaría
