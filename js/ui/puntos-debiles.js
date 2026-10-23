@@ -60,15 +60,33 @@ function abrirEditor(li, d, i) {
   li.querySelector('textarea').focus();
 }
 
+const botonesEditar = () => [...$('#debiles-body').querySelectorAll('[data-dact="editar"]')];
+const clave = b => `${b.dataset.id}|${b.dataset.i}`;
+
 // Después de editar o descartar: contador, lista y las pastillas de las tarjetas que están detrás del diálogo.
-// Devuelve el foco al botón Editar del punto (si sigue en la lista) para no perder el lugar con el teclado.
+// Devuelve el foco al botón Editar del punto para no perder el lugar con el teclado. Si el punto ya no está
+// (descartado), va al Editar del siguiente punto vigente; si no hay, al del anterior; con la lista vacía, al ✕.
 function refrescar(id, i) {
+  const antes = botonesEditar().map(clave);
+  const pos = antes.indexOf(`${id}|${i}`);
   updateDebilesCount(); renderDebiles();
   if (S.view === 'materias') renderMaterias();
   if (S.view === 'ejes') renderEjes();
   if (S.view === 'subtemas') renderSubtemas();
-  const b = [...$('#debiles-body').querySelectorAll('[data-dact="editar"]')].find(x => x.dataset.id === id && x.dataset.i === String(i));
-  b?.focus();
+  const ahora = new Map(botonesEditar().map(b => [clave(b), b]));
+  const destino = ahora.has(`${id}|${i}`) ? `${id}|${i}`
+    : pos < 0 ? undefined
+    : antes.slice(pos + 1).find(k => ahora.has(k)) ?? antes.slice(0, pos).reverse().find(k => ahora.has(k));
+  (ahora.get(destino) || (!ahora.size && $('#dlg-debiles [data-close]')))?.focus();
+}
+
+// Formularios de edición con algo distinto de lo guardado (texto o tipo).
+function editoresConCambios() {
+  return [...$('#debiles-body').querySelectorAll('.editar-punto')].filter(f => {
+    const b = f.querySelector('[data-dact="guardar-punto"]');
+    const p = debilesActivos().find(x => x.id === b.dataset.id)?.puntos[Number(b.dataset.i)];
+    return p && (f.querySelector('textarea').value !== p.texto || f.querySelector('select').value !== p.tipo);
+  });
 }
 // Busca en Mi curso el subtema de un punto débil. Si se borró (o era del catálogo viejo), devuelve null.
 export function findSub(d) {
@@ -89,6 +107,14 @@ export function exportAllDebiles() {
 
 export function iniciarPuntosDebiles() {
   $('#btn-debiles').addEventListener('click', () => { renderDebiles(); $('#dlg-debiles').showModal(); });
+  // Escape dispara 'cancel' en el <dialog>. Con una edición a medio hacer, cancela solo la edición y el diálogo queda abierto.
+  $('#dlg-debiles').addEventListener('cancel', ev => {
+    const [f] = editoresConCambios();
+    if (!f) return;
+    ev.preventDefault();
+    const b = f.querySelector('[data-dact="cancelar-punto"]');
+    refrescar(b.dataset.id, Number(b.dataset.i));
+  });
   $('#debiles-body').addEventListener('click', async ev => {
     const b = ev.target.closest('[data-dact]');
     if (!b) return;
