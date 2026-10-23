@@ -37,4 +37,4 @@ Lo necesitan la corrección de ejercicios (paso 5) y los "errores frecuentes" de
 - Migración: los puntos guardados hasta ahora pasan al formato nuevo con tipo "sin clasificar"; no se pierde nada.
 - "Superado" marca con fecha en lugar de borrar. El contador 📌 y la lista cuentan solo los no superados; el historial queda para calcular los frecuentes.
 - Hecho también: errores-frecuentes.js cuenta por tipo (superados incluidos) para "Errores más frecuentes". La corrección guarda directo y ya no suma a "Lo que te falta" de Teoría (si no, el resumen lo guardaba otra vez y cada error contaba doble).
-- Pendiente para la pantalla de ayudas rápidas: poder editar o descartar un punto mal generado por la IA (hoy solo se marca como superado y sigue sumando a la frecuencia).
+- ✅ Hecho (2026-10-23): editar texto y tipo o descartar un punto mal generado por la IA (ficha: `docs/fichas/editar-descartar-debiles.md`). Los descartados no cuentan en nada.

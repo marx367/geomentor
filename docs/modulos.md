@@ -46,8 +46,8 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `estado/estado.js` | Estado en memoria: vista, materia, Mi curso, sesión por subtema [4] |
 | `estado/curso.js` | Mi curso: materias, ejes y subtemas con fecha en el documento `curso`; validación, ids únicos, crear y buscar [MC1] |
 | `estado/tipos-error.js` | Lista fija de tipos de error (`signo`, `notacion`, `condicion`, `calculo`, `concepto`, `metodo`), `normalizarTipo()` (lo desconocido → `sin-clasificar`), `etiquetaTipo()` y `leerPuntos()` para leer `<punto>` de la IA [MC-D] |
-| `estado/debiles.js` | Puntos débiles: formato `{ origen, detalle, puntos: [{ texto, tipo }], superado }`, migración del formato viejo con respaldo único (`debiles-respaldo`), `guardarDebil()`, `debilesActivos()`, `marcarSuperado()` y `etiquetaOrigen()` [MC-D] |
-| `estado/errores-frecuentes.js` | Función pura: cuenta los tipos de error de un subtema (o de todos), superados incluidos → `[{ tipo, veces, ultimaFecha }]` [MC-D] |
+| `estado/debiles.js` | Puntos débiles: formato `{ origen, detalle, puntos: [{ texto, tipo, descartado }], superado }`, migración del formato viejo con respaldo único (`debiles-respaldo`), `guardarDebil()`, `puntosVigentes()` (sin descartados: usarla para contar o mostrar), `debilesActivos()`, `marcarSuperado()`, `editarPunto()`, `descartarPunto()` (marca la fecha, no borra) y `etiquetaOrigen()` [MC-D] |
+| `estado/errores-frecuentes.js` | Función pura: cuenta los tipos de error de un subtema (o de todos), superados incluidos y descartados no → `[{ tipo, veces, ultimaFecha }]` [MC-D] |
 | `estado/reglas-examen.js` | Reglas del examen en `S.config.reglasExamen` (material permitido y fecha): `normalizarReglas`, `materialPermitido()`, `esDefinida()`, `diasHastaExamen()`, `guardarReglas()` [MC-R] |
 | `estado/profesor.js` | Estilo del profesor (texto, cuestionario, análisis), modo estricto y biblioteca de libros por capítulo, en los documentos `profesor` y `biblioteca`; `textoEstilo()` para los prompts [MC3] |
 | `estado/almacen.js` | Fachada de guardado: elige backend; puntos débiles con `addDebil` y `updateDebil` (no se borran uno por uno); `borrarTodo()` limpia todo el estudiante en los dos backends (lista `DOCUMENTOS`) [4] [MC-D] |
@@ -83,7 +83,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `profesor/panel-reglas.js` | Sección "📋 Reglas del examen": material permitido y fecha (valida que no sea pasada); guarda sola [MC-R] |
 | `profesor/panel-biblioteca.js` | Biblioteca: agregar y quitar libros y capítulos (archivo o texto pegado) [MC3] |
 | `ui/tema.js` | Menú de tema (Light, Dim, Dark, Auto): guarda en localStorage y dispara el evento `cambio-tema` [F2] |
-| `ui/puntos-debiles.js` | Contador, diálogo 📌 (con el tipo de cada punto), repasar, marcar superado (guarda la fecha, no borra), exportar .txt; solo los pendientes [7] [MC-D] |
+| `ui/puntos-debiles.js` | Contador, diálogo 📌 (con el tipo de cada punto), repasar, marcar superado (guarda la fecha, no borra), editar texto y tipo o descartar cada punto, exportar .txt; solo los pendientes y vigentes [7] [MC-D] |
 | `ui/eventos.js` | Listeners delegados del documento (data-go, data-abrir: Tema de hoy y Profesor, pestañas, data-lab, data-action, campos) [7] |
 | `exportacion/descargas.js` | `saveFile`: descarga con claude.ai o con enlace temporal [7] |
 | `pestanas/registro.js` | Conecta navegación y pestañas: `registrarPestana`, `registrarAccion`, avisos `alSuceder`/`avisar` (`entrar-subtema`, `cambio-acento`, `reiniciar`) [7] |

@@ -37,7 +37,9 @@ js/apuntes/         → lectores de archivos, Tema de hoy, plan de estudios
 js/profesor/        → estilo del profesor, cuestionario y biblioteca
 js/exportacion/     → descargas, resumen .txt, ficha PDF
 js/ui/              → navegación, migas, mentor, diálogos, eventos, tema
-docs/               → arquitectura y guías
+docs/               → arquitectura y guías; docs/fichas/ con la ficha de cada función nueva
+scripts/            → verificar.ps1 (sintaxis, gitleaks, TODO/FIXME)
+.claude/agents/     → árbitro: revisa los cambios contra el listón de la ficha
 ```
 
 Detalle de cada archivo: `docs/modulos.md`. Regla de dependencias: `docs/arquitectura.md`.

@@ -6,12 +6,12 @@ import { textoEstilo } from '../estado/profesor.js';
 import { apuntesRelevantes } from './busqueda-apuntes.js';
 import { materialPermitido, diasHastaExamen } from '../estado/reglas-examen.js';
 import { etiquetaTipo, SIN_CLASIFICAR } from '../estado/tipos-error.js';
-import { debilesActivos } from '../estado/debiles.js';
+import { debilesActivos, puntosVigentes } from '../estado/debiles.js';
 import { CITE_RULES, STRICT_RULES, REGLAS_EXAMEN } from './reglas-prompt.js';
 
 export function debilesDelTema() {
   const k = key();
-  return debilesActivos().filter(d => d.key === k).flatMap(d => d.puntos.map(p => p.tipo === SIN_CLASIFICAR ? p.texto : `${p.texto} [${etiquetaTipo(p.tipo)}]`)).slice(0, 12);
+  return debilesActivos().filter(d => d.key === k).flatMap(d => puntosVigentes(d).map(p => p.tipo === SIN_CLASIFICAR ? p.texto : `${p.texto} [${etiquetaTipo(p.tipo)}]`)).slice(0, 12);
 }
 // Bloque de reglas del examen. Sin regla definida, no agrega nada.
 function bloqueReglas() {

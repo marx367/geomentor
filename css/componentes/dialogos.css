@@ -50,3 +50,9 @@ hr.sep { border: 0; border-top: 1px solid var(--border); margin: 0; }
 .aviso-reglas:empty { display: none; }
 /* Tipo de error de cada punto débil (lista 📌) */
 .weak-item .pill.tipo { font-size: .7rem; padding: .05rem .45rem; margin-left: .25rem; vertical-align: middle; }
+/* Editar y descartar cada punto: los botones bajan de línea si no entran (375 px) */
+.weak-item li { margin-bottom: .4rem; }
+.weak-item .punto-acciones { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .3rem; }
+.weak-item .editar-punto { display: flex; flex-direction: column; gap: .5rem; }
+.weak-item .editar-punto label { display: flex; flex-direction: column; gap: .2rem; font-size: .82rem; }
+.weak-item .editar-punto textarea, .weak-item .editar-punto select { width: 100%; font: inherit; }

@@ -6,7 +6,7 @@ import { Store } from './estado/almacen.js';
 import { cargarCurso } from './estado/curso.js';
 import { cargarProfesor, cargarBiblioteca, guardarProfesor } from './estado/profesor.js';
 import { normalizarReglas, esDefinida } from './estado/reglas-examen.js';
-import { migrarDebiles, debilesActivos } from './estado/debiles.js';
+import { migrarDebiles, debilesActivos, puntosVigentes } from './estado/debiles.js';
 import { initCapabilities } from './ia/config-ia.js';
 import { applyIA } from './ia/panel-ia.js';
 import { iniciarMentor, mentor } from './ui/mentor.js';
@@ -79,7 +79,7 @@ function yaPreguntoReglas() {
   updateDebilesCount();
   renderApuntes();
   if (S.view === 'materias') renderMaterias();
-  const n = debilesActivos().reduce((a, d) => a + d.puntos.length, 0);
+  const n = debilesActivos().reduce((a, d) => a + puntosVigentes(d).length, 0);
   if (!esDefinida() && !yaPreguntoReglas()) mentor('¡Hola! Antes de seguir: ¿cómo es tu examen final? ¿Se puede usar material? Con eso adapto la teoría, las pistas y las preguntas.', { texto: '📋 Reglas del examen', abrir: 'profesor' });
   else if (n) mentor(`¡Hola de nuevo! Tienes ${n} puntos débiles guardados. Ábrelos con 📌 para repasarlos o elige una materia.`);
   else if (!S.curso.materias.length) mentor('¡Hola! Empieza cargando la clase de hoy con «＋ Tema de hoy».');
