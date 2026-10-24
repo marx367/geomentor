@@ -8,3 +8,6 @@ export const COLORES_MATERIAS = [
   { acc: ['#a3361f', '#f49a84'], icono: '📉' }, // ladrillo
   { acc: ['#4d5a1e', '#b9cc6b'], icono: '🔢' }  // oliva
 ];
+// Paleta anterior al rediseño (solo el color claro). Las materias guardadas con uno de estos colores
+// pasan al color nuevo de la misma posición al cargar (ver normalizarMateria en estado/curso.js).
+export const COLORES_ANTERIORES = ['#0e7490', '#6d28d9', '#b45309', '#047857', '#be123c'];
