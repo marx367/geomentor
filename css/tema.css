@@ -1,48 +1,88 @@
-/* Tema: variables de color, radios, sombras y tipografía.
-   Light = :root · Dim = azul marino (también Auto con sistema oscuro) · Dark = negro OLED.
-   data-theme lo pone js/tema-inicial.js; sin atributo = Auto. */
+/* Tema «pizarra y papel milimetrado»: color de marca y derivados, escalas fijas, capas y sombras.
+   Light = hoja de cuaderno · Dim = pizarra verde (también Auto con sistema oscuro) · Dark = negro OLED.
+   data-theme lo pone js/tema-inicial.js; sin atributo = Auto.
+   --accent cambia con cada materia (js/ui/navegacion.js); --marca es fija y viste la app. */
 :root {
-  --accent-l: #0e7490; --accent-d: #22d3ee;
-  --bg: #f3f6fb; --surface: #ffffff; --surface-2: #eef3f9; --surface-3: #e2e9f3;
-  --border: #d5deea; --text: #0e1a2b; --muted: #56657c;
+  /* Marca: verde pizarra y sus derivados (50 = casi papel, 900 = casi tinta) */
+  --marca-50: #eef6f3; --marca-100: #d5eae2; --marca-200: #abd5c6; --marca-300: #7bbda7; --marca-400: #4a9e85;
+  --marca-500: #2d8268; --marca-600: #1f6b57; --marca-700: #195545; --marca-800: #134236; --marca-900: #0d2e26;
+  --tiza-verde: #6fd3b4; --tiza-amarilla: #e9c46a;
+  --marca: var(--marca-600);
+  /* Tono de las sombras: el verde de marca muy oscuro, así no son grises */
+  --sombra-rgb: 13, 46, 38;
+
+  --accent-l: var(--marca-600); --accent-d: var(--tiza-verde);
+  --bg: #f5f8f6; --surface: #ffffff; --surface-2: #eef3f0; --surface-3: #e1eae5;
+  --border: #d3dfd9; --text: #12211d; --muted: #4c5f58;
   --accent: var(--accent-l); --on-accent: #ffffff;
-  --ok: #047857; --ok-soft: #d1fae5; --bad: #be123c; --bad-soft: #ffe4e6;
-  --hint: #92400e; --hint-soft: #fef3c7;
-  --plot-bg: #ffffff; --plot-minor: #eef2f7; --plot-major: #d3dbe7; --plot-axis: #334155; --plot-label: #56657c;
-  --shadow: 0 1px 2px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.08);
-  --radius: 14px; --radius-sm: 10px;
-  --font: 'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ok: #17734a; --ok-soft: #dcf2e6; --bad: #b4232f; --bad-soft: #fbe3e5;
+  --hint: #7f5300; --hint-soft: #fbf1d6;
+  --plot-bg: #fcfdfc; --plot-minor: #edf3f0; --plot-major: #d2ded8; --plot-axis: #2c3d37; --plot-label: #4c5f58;
+
+  /* Fondo: cuadrícula milimetrada y ruido (ver base.css) */
+  --cuadricula: rgba(31, 107, 87, .07); --ruido-color: 0; --ruido-opacidad: .05;
+
+  /* Capas: base (fondo), elevada (tarjetas, paneles) y flotante (diálogos, menús, mentor) */
+  --capa-base: var(--bg); --capa-elevada: var(--surface); --capa-flotante: var(--surface);
+  --sombra-elevada: 0 1px 1px rgba(var(--sombra-rgb), .05), 0 4px 10px -4px rgba(var(--sombra-rgb), .08), 0 14px 28px -12px rgba(var(--sombra-rgb), .10);
+  --sombra-flotante: 0 2px 4px rgba(var(--sombra-rgb), .05), 0 12px 24px -8px rgba(var(--sombra-rgb), .10), 0 32px 64px -24px rgba(var(--sombra-rgb), .12);
+  --shadow: var(--sombra-elevada); /* nombre viejo, lo usan otros archivos */
+
+  /* Radios: chicos para controles, medianos para tarjetas, grandes para lo que flota */
+  --radius-sm: 10px; --radius: 14px; --radius-lg: 20px;
+
+  /* Espaciado: escala fija en múltiplos de 4 px. Todo margen o relleno sale de acá. */
+  --e-1: .25rem; --e-2: .5rem; --e-3: .75rem; --e-4: 1rem; --e-5: 1.5rem; --e-6: 2rem; --e-7: 3rem; --e-8: 4rem; --e-9: 6rem;
+
+  /* Tipografía: títulos y texto; escala con razón 1,25 */
+  --font-titulos: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --font-texto: 'Atkinson Hyperlegible Next', 'Segoe UI', system-ui, sans-serif;
+  --font: var(--font-texto);
+  --t-xs: .8rem; --t-sm: .875rem; --t-base: 1rem; --t-md: 1.25rem; --t-lg: 1.563rem; --t-xl: 1.953rem; --t-2xl: 2.441rem;
+
+  /* Movimiento: resorte (se pasa un poco y vuelve) y salida suave */
+  --resorte: cubic-bezier(.34, 1.56, .64, 1);
+  --suave: cubic-bezier(.22, 1, .36, 1);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --bg: #0f172a; --surface: #1a2436; --surface-2: #141e30; --surface-3: #22304a;
-    --border: #2c3a52; --text: #eef2f8; --muted: #94a3b8;
-    --accent: var(--accent-d); --on-accent: #06121f;
-    --ok: #34d399; --ok-soft: rgba(16,185,129,.14); --bad: #fb7185; --bad-soft: rgba(244,63,94,.14);
-    --hint: #fcd34d; --hint-soft: rgba(245,158,11,.12);
-    --plot-bg: #0b1322; --plot-minor: #131d30; --plot-major: #22304a; --plot-axis: #94a3b8; --plot-label: #94a3b8;
-    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.25);
+    --marca: var(--tiza-verde); --sombra-rgb: 0, 0, 0;
+    --bg: #0f1c19; --surface: #162722; --surface-2: #12211d; --surface-3: #1f342d;
+    --border: #2a4239; --text: #e9f2ee; --muted: #9db3aa;
+    --accent: var(--accent-d); --on-accent: #06140f;
+    --ok: #5fd39a; --ok-soft: rgba(95,211,154,.13); --bad: #ff8a8f; --bad-soft: rgba(255,138,143,.13);
+    --hint: var(--tiza-amarilla); --hint-soft: rgba(233,196,106,.12);
+    --plot-bg: #0c1714; --plot-minor: #13231e; --plot-major: #22382f; --plot-axis: #9db3aa; --plot-label: #9db3aa;
+    --cuadricula: rgba(111, 211, 180, .05); --ruido-color: 1; --ruido-opacidad: .035;
+    --sombra-elevada: inset 0 1px 0 rgba(255,255,255,.04), 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.5);
+    --sombra-flotante: inset 0 1px 0 rgba(255,255,255,.06), 0 4px 8px rgba(0,0,0,.3), 0 32px 64px -24px rgba(0,0,0,.6);
     color-scheme: dark;
   }
 }
 :root[data-theme="dim"] {
-  --bg: #0f172a; --surface: #1a2436; --surface-2: #141e30; --surface-3: #22304a;
-  --border: #2c3a52; --text: #eef2f8; --muted: #94a3b8;
-  --accent: var(--accent-d); --on-accent: #06121f;
-  --ok: #34d399; --ok-soft: rgba(16,185,129,.14); --bad: #fb7185; --bad-soft: rgba(244,63,94,.14);
-  --hint: #fcd34d; --hint-soft: rgba(245,158,11,.12);
-  --plot-bg: #0b1322; --plot-minor: #131d30; --plot-major: #22304a; --plot-axis: #94a3b8; --plot-label: #94a3b8;
-  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.25);
+  --marca: var(--tiza-verde); --sombra-rgb: 0, 0, 0;
+  --bg: #0f1c19; --surface: #162722; --surface-2: #12211d; --surface-3: #1f342d;
+  --border: #2a4239; --text: #e9f2ee; --muted: #9db3aa;
+  --accent: var(--accent-d); --on-accent: #06140f;
+  --ok: #5fd39a; --ok-soft: rgba(95,211,154,.13); --bad: #ff8a8f; --bad-soft: rgba(255,138,143,.13);
+  --hint: var(--tiza-amarilla); --hint-soft: rgba(233,196,106,.12);
+  --plot-bg: #0c1714; --plot-minor: #13231e; --plot-major: #22382f; --plot-axis: #9db3aa; --plot-label: #9db3aa;
+  --cuadricula: rgba(111, 211, 180, .05); --ruido-color: 1; --ruido-opacidad: .035;
+  --sombra-elevada: inset 0 1px 0 rgba(255,255,255,.04), 0 1px 2px rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.5);
+  --sombra-flotante: inset 0 1px 0 rgba(255,255,255,.06), 0 4px 8px rgba(0,0,0,.3), 0 32px 64px -24px rgba(0,0,0,.6);
   color-scheme: dark;
 }
 :root[data-theme="dark"] {
-  --bg: #000000; --surface: #0b0b0d; --surface-2: #060607; --surface-3: #18181b;
-  --border: #27272a; --text: #f4f4f5; --muted: #a1a1aa;
+  --marca: var(--tiza-verde); --sombra-rgb: 0, 0, 0;
+  --bg: #000000; --surface: #0b100e; --surface-2: #060908; --surface-3: #161e1b;
+  --border: #25312c; --text: #f1f5f3; --muted: #a3b1ab;
   --accent: var(--accent-d); --on-accent: #000000;
-  --ok: #34d399; --ok-soft: rgba(16,185,129,.14); --bad: #fb7185; --bad-soft: rgba(244,63,94,.14);
-  --hint: #fcd34d; --hint-soft: rgba(245,158,11,.12);
-  --plot-bg: #000000; --plot-minor: #111113; --plot-major: #27272a; --plot-axis: #a1a1aa; --plot-label: #a1a1aa;
-  --shadow: 0 1px 2px rgba(0,0,0,.6), 0 10px 30px rgba(0,0,0,.6);
+  --ok: #5fd39a; --ok-soft: rgba(95,211,154,.13); --bad: #ff8a8f; --bad-soft: rgba(255,138,143,.13);
+  --hint: var(--tiza-amarilla); --hint-soft: rgba(233,196,106,.12);
+  --plot-bg: #000000; --plot-minor: #0e1412; --plot-major: #25312c; --plot-axis: #a3b1ab; --plot-label: #a3b1ab;
+  --cuadricula: rgba(111, 211, 180, .04); --ruido-color: 1; --ruido-opacidad: .03;
+  --sombra-elevada: inset 0 1px 0 rgba(255,255,255,.05), 0 0 0 1px rgba(111,211,180,.04);
+  --sombra-flotante: inset 0 1px 0 rgba(255,255,255,.07), 0 0 0 1px rgba(111,211,180,.06), 0 24px 48px -16px rgba(0,0,0,.9);
   color-scheme: dark;
 }

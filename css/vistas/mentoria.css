@@ -1,19 +1,25 @@
 /* Vista de mentoría: contenedor, pestañas y tarjetas de panel */
-.mentoria-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1rem; }
-.mentoria-head h1 { font-size: 1.25rem; color: var(--accent); }
-.shell { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-.tabs { display: flex; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+.mentoria-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--e-3); margin-bottom: var(--e-5); }
+.mentoria-head h1 { font-size: var(--t-lg); font-weight: 700; order: -1; flex: 1 1 18rem; }
+/* El subtema es una hoja apoyada sobre el fondo: capa elevada */
+.shell { background: var(--capa-elevada); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--sombra-elevada); overflow: hidden; }
+.tabs { display: flex; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); background: var(--surface-2); padding: 0 var(--e-2); }
 .tabs::-webkit-scrollbar { display: none; }
+/* Indicador de la pestaña activa: barra en ::after que crece desde el centro (solo transform) */
 .tab {
-  flex: 0 0 auto; background: none; border: 0; border-bottom: 3px solid transparent; cursor: pointer;
-  padding: .85rem 1rem; color: var(--muted); font-weight: 500; white-space: nowrap; min-height: 48px;
+  position: relative; flex: 0 0 auto; background: none; border: 0; cursor: pointer;
+  padding: var(--e-3) var(--e-4); color: var(--muted); font-weight: 600; white-space: nowrap; min-height: 52px;
 }
+.tab::after { content: ""; position: absolute; left: var(--e-3); right: var(--e-3); bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--accent); transform: scaleX(0); transition: transform .35s var(--resorte); }
 .tab:hover { color: var(--text); }
-.tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); background: var(--surface); }
-.tab-panel { padding: 1rem; }
-.stack { display: flex; flex-direction: column; gap: 1rem; }
+.tab:active { color: var(--accent); }
+.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; border-radius: var(--radius-sm); }
+.tab[aria-selected="true"] { color: var(--text); }
+.tab[aria-selected="true"]::after { transform: scaleX(1); }
+.tab-panel { padding: var(--e-4); }
+.stack { display: flex; flex-direction: column; gap: var(--e-4); }
 
-.panel-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }
-.panel-card h2 { font-size: 1.15rem; }
-.panel-card h3 { font-size: 1.02rem; }
-.card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .75rem; }
+.panel-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--e-4); }
+.panel-card h2 { font-size: var(--t-md); }
+.panel-card h3 { font-size: var(--t-base); }
+.card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--e-2); margin-bottom: var(--e-3); }

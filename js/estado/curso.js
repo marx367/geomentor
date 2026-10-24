@@ -2,7 +2,7 @@
 // Se guarda en el documento 'curso' del almacén. La clave de cada subtema sigue siendo
 // materia/eje/subtema (ver key() en estado.js), así progreso y puntos débiles funcionan igual.
 import { slug, limpiarTexto, esFechaValida, today } from '../nucleo/utilidades.js';
-import { COLORES_MATERIAS } from '../datos/colores-materias.js';
+import { COLORES_MATERIAS, COLORES_ANTERIORES } from '../datos/colores-materias.js';
 import { S } from './estado.js';
 import { Store } from './almacen.js';
 
@@ -30,11 +30,17 @@ function normalizarSubtema(sb) {
 function normalizarEje(e) {
   return { id: String(e.id || slug(e.nombre)), nombre: limpiarTexto(e.nombre, 80) || 'Eje sin nombre', icono: icono(e.icono, '📚'), desc: limpiarTexto(e.desc, 300), creado: e.creado || today(), subtemas: lista(e.subtemas).map(normalizarSubtema) };
 }
+// Color guardado de la materia. Si es de la paleta anterior al rediseño, se cambia por el nuevo de la misma posición.
+function colorMateria(acc, porDefecto) {
+  if (lista(acc).length !== 2) return porDefecto;
+  const viejo = COLORES_ANTERIORES.indexOf(String(acc[0]).toLowerCase());
+  return viejo >= 0 ? COLORES_MATERIAS[viejo].acc : acc;
+}
 function normalizarMateria(m, i) {
   const color = COLORES_MATERIAS[i % COLORES_MATERIAS.length];
   return {
     id: String(m.id || slug(m.nombre)), nombre: limpiarTexto(m.nombre, 80) || 'Materia sin nombre', icono: icono(m.icono, color.icono), desc: limpiarTexto(m.desc, 300),
-    acc: lista(m.acc).length === 2 ? m.acc : color.acc, creada: m.creada || today(), ejes: lista(m.ejes).map(normalizarEje)
+    acc: colorMateria(m.acc, color.acc), creada: m.creada || today(), ejes: lista(m.ejes).map(normalizarEje)
   };
 }
 export function cargarCurso(doc) {
