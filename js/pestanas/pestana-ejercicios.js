@@ -9,10 +9,12 @@ import { registrarPestana, registrarAccion } from './registro.js';
 import { generarEjercicio, renderEjercicios } from './ejercicios.js';
 import { loadPhoto } from './foto-resolucion.js';
 import { corregir } from './correccion.js';
+import './ejercicios-propios/acciones-propias.js'; // ejercicios de los apuntes y libros, y del profesor
 
-// Al abrir la pestaña: si todavía no hay ejercicio (ni uno en curso ni un error), se pide uno.
+// Al abrir la pestaña ya no se pide un ejercicio solo: primero se elige de dónde sale
+// (del tutor, de los apuntes y libros o del profesor). Ver ejercicios-propios/vista-origen.js.
 registrarPestana('ejercicios', {
-  mostrar() { const s = sess(); if (!s.exercise && !s.busy.ejercicio && !s.err.ejercicio) generarEjercicio(false); else renderEjercicios(); },
+  mostrar: renderEjercicios,
   redibujar: renderEjercicios
 });
 

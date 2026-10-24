@@ -1,6 +1,6 @@
 # Módulos
 
-Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2; [MCn] = paso n de `docs/plan-mi-curso.md`; [MC-R] = Reglas del examen, [MC-D] = Puntos débiles con tipo y [MC-H] = Hoja de errores, del mismo plan).
+Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2; [MCn] = paso n de `docs/plan-mi-curso.md`; [MC-R] = Reglas del examen, [MC-D] = Puntos débiles con tipo y [MC-H] = Hoja de errores y [MC-B] = Bibliografía en el tutor y ejercicios propios, del mismo plan).
 
 ## Raíz
 | Archivo | Qué hace |
@@ -66,7 +66,8 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `contexto/reglas-prompt.js` | Reglas de formato, citas, modo estricto, sintaxis del laboratorio, una línea por regla del examen (`REGLAS_EXAMEN`) y formato de puntos débiles con tipo (`FORMATO_PUNTOS`) [6] [MC-R] [MC-D] |
 | `contexto/busqueda-apuntes.js` | Palabras clave, trozos y apuntes relevantes [6] |
 | `contexto/cabecera-prompt.js` | Arma la cabecera (con el bloque de reglas del examen y los días que faltan, si hay regla, y los puntos débiles pendientes con su tipo) y ajusta el prompt al presupuesto [6] [MC-R] [MC-D] |
-| `contexto/fuentes.js` | Etiquetas de transparencia de fuente [6] |
+| `contexto/fuentes.js` | Etiquetas de transparencia de fuente: apuntes usados y bibliografía consultada [6] [MC-B] |
+| `contexto/bibliografia-tema.js` | Capítulos de la biblioteca asociados al subtema: elige los párrafos relevantes para el prompt y anota cuáles se usaron (`Biblio.last`) [MC-B] |
 | `apuntes/lector-archivos.js` | Lee .txt, .md y .pdf; avisa si un PDF es escaneado (código `escaneado`) [6] |
 | `apuntes/lector-pdf.js` | Carga pdf.js bajo demanda y extrae el texto página por página [6] |
 | `apuntes/estructura-ejes.js` | Lógica: apuntes de la materia, índices por partes y propuesta de ejes por la IA (la usa el plan consolidado) [6] |
@@ -85,6 +86,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `profesor/analisis-estilo.js` | Pide a la IA el análisis del estilo con el texto y las respuestas del cuestionario [MC3] |
 | `profesor/panel-reglas.js` | Sección "📋 Reglas del examen": material permitido y fecha (valida que no sea pasada); guarda sola [MC-R] |
 | `profesor/panel-biblioteca.js` | Biblioteca: agregar y quitar libros y capítulos (archivo o texto pegado) [MC3] |
+| `profesor/dialogo-biblio-tema.js` | Diálogo "📖 Bibliografía del tema" (vista del subtema): asocia capítulos al subtema abierto y guarda Mi curso [MC-B] |
 | `ui/tema.js` | Menú de tema (Light, Dim, Dark, Auto): guarda en localStorage y dispara el evento `cambio-tema` [F2] |
 | `ui/puntos-debiles.js` | Contador, diálogo 📌 (con el tipo de cada punto), repasar, marcar superado (guarda la fecha, no borra), editar texto y tipo o descartar cada punto, exportar .txt; solo los pendientes y vigentes [7] [MC-D] |
 | `ui/eventos.js` | Listeners delegados del documento (data-go, data-abrir: Tema de hoy y Profesor, pestañas, data-lab, data-action, campos) [7] |
@@ -118,9 +120,15 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `pestanas/laboratorio.js` | Pestaña 2 · presets y "Explicar lo que veo" [9] |
 | `pestanas/pestana-laboratorio.js` | Pestaña 2 · cableado: registro, acciones `lab:*` y avisos [9] |
 | `pestanas/ejercicios.js` | Pestaña 3 · pide el ejercicio y dibuja la pantalla (pistas, solución, resolución con texto, foto o pizarra, 📄 Exportar) [10] |
-| `pestanas/foto-resolucion.js` | Pestaña 3 · foto del desarrollo: achica a 1600 px y pasa a JPEG [10] |
+| `pestanas/foto-resolucion.js` | Pestaña 3 · fotos: `achicarImagen` (1600 px, JPEG) para el desarrollo y para el enunciado del profesor [10] [MC-B] |
 | `pestanas/correccion.js` | Pestaña 3 · corrección por IA con texto e imagen; guarda lo que faltó como puntos débiles con tipo (origen `ejercicio`) [10] [MC-D] |
-| `pestanas/pestana-ejercicios.js` | Pestaña 3 · cableado: registro, botones y acciones de la pizarra [10] |
+| `pestanas/pestana-ejercicios.js` | Pestaña 3 · cableado: registro, botones y acciones de la pizarra; ya no pide un ejercicio solo al abrirla [10] [MC-B] |
+| `pestanas/ejercicios-propios/estado-propio.js` | Ejercicios propios · orígenes, estado `s.propio` y fuentes del tema (apuntes y capítulos) [MC-B] |
+| `pestanas/ejercicios-propios/vista-origen.js` | Ejercicios propios · HTML: elegir origen, ejercicios encontrados, enunciado del profesor y aviso de la solución [MC-B] |
+| `pestanas/ejercicios-propios/buscar-en-apuntes.js` | Ejercicios propios · la IA lista los ejercicios de los apuntes y libros; control con reglas: ¿está textual en el archivo? [MC-B] |
+| `pestanas/ejercicios-propios/enunciado-profesor.js` | Ejercicios propios · lee enunciado o solución desde foto (la IA transcribe) o PDF con texto [MC-B] |
+| `pestanas/ejercicios-propios/preparar-ejercicio.js` | Ejercicios propios · arma pistas, gráfico y (si falta) solución; marca de dónde salió la solución [MC-B] |
+| `pestanas/ejercicios-propios/acciones-propias.js` | Ejercicios propios · cableado de botones y campos [MC-B] |
 | `pizarra/pizarra.js` | Monta, limpia y exporta la pizarra (estado en la sesión: abierta, herramienta, dibujo) [10] |
 | `pizarra/herramientas.js` | Lápiz y línea recta con vista previa (mouse, lápiz y táctil) [10] |
 | `pizarra/cuadricula-pizarra.js` | Fondo cuadriculado con ejes, en colores del tema [10] |

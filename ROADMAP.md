@@ -42,6 +42,7 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
   - [x] Reglas del examen (base: material, fecha, mentor y prompts)
   - [x] Puntos débiles con tipo (tipo de error, origen, superado sin borrar, errores frecuentes)
   - [x] Editar y descartar puntos débiles (por punto, sin borrar)
+  - [ ] 🔄 Bibliografía en el tutor y ejercicios propios (ficha: `docs/fichas/bibliografia-y-ejercicios-propios.md`). Adelanta parte de los pasos 4 y 5
   - [ ] Pasos 4 a 10
 
 ## Fuera de alcance / ideas para después
