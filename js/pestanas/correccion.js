@@ -24,16 +24,22 @@ export async function corregir() {
   const nivel = s.nivel;
   s.busy.correccion = true; s.err.correccion = '';
   renderEjercicios();
+  // En los ejercicios propios, la solución puede venir de la fuente (referencia oficial) o de la IA (no verificada).
+  const notaSolucion = ex.solucionOrigen === 'fuente'
+    ? '(Es la solución oficial de la fuente del estudiante: corrige contra ella. Si ves un error evidente en ella, señálalo aparte.)'
+    : ex.origen && ex.origen !== 'tutor' ? '(La armó la IA y NO está verificada: si la resolución del estudiante difiere, revisa las dos antes de marcar un error y dilo.)' : '';
+  // Imágenes: la del enunciado original (puede traer una figura) y la del desarrollo del estudiante.
+  const imagenes = [ex.imagen?.blob, s.photo?.blob].filter(Boolean);
   const prompt = fitPrompt(b => `${header(b)}
 
 TAREA: corrige la resolución del estudiante como lo haría el profesor en un examen.
 [ENUNCIADO]
 ${ex.enunciado}
-[SOLUCIÓN DE REFERENCIA]
-${ex.solucion}
+[SOLUCIÓN DE REFERENCIA] ${notaSolucion}
+${ex.solucion}${ex.imagen ? '\nLa PRIMERA imagen adjunta es el enunciado original (con su figura).' : ''}
 [RESOLUCIÓN ESCRITA DEL ESTUDIANTE]
 ${s.resolucion.trim() || '(ver la foto adjunta)'}
-${s.photo ? '\nSe adjunta una foto del desarrollo manuscrito. Si alguna parte es ilegible, dilo en lugar de suponer.' : ''}
+${s.photo ? `\nSe adjunta ${ex.imagen ? 'como SEGUNDA imagen ' : ''}una foto del desarrollo manuscrito. Si alguna parte es ilegible, dilo en lugar de suponer.` : ''}
 <correccion>
 ### Lo que interpreté
 Breve transcripción de lo que hizo.
@@ -49,7 +55,7 @@ Sobresaliente / Aprobado / Requiere corrección, con una frase que lo justifique
 ${FORMAT_RULES}`);
   try {
     const fuentes = Apuntes.last;
-    const text = await ask(prompt, { fresh: true, images: s.photo ? [s.photo.blob] : null });
+    const text = await ask(prompt, { fresh: true, images: imagenes.length ? imagenes : null });
     s.correction = getTag(text, 'correccion') || text;
     s.correctionFuentes = fuentes;
     // Lo que faltó se guarda directo como punto débil (origen 'ejercicio'). Ya no se suma a "Lo que te falta"

@@ -124,7 +124,10 @@
 
   <section id="view-mentoria" class="view" hidden>
     <div class="mentoria-head">
-      <button class="btn" data-go="subtemas">← Volver a subtemas</button>
+      <div class="btn-row">
+        <button class="btn" data-go="subtemas">← Volver a subtemas</button>
+        <button class="btn" data-abrir="biblio-tema" title="Elegir qué capítulos de la biblioteca usa el tutor en este tema">📖 Bibliografía del tema</button>
+      </div>
       <h1 id="mentoria-title"></h1>
     </div>
     <div class="shell">
@@ -274,6 +277,15 @@
     <hr class="sep">
     <label class="toggle"><input type="checkbox" id="pf-estricto"><span><strong>Modo estricto de apuntes.</strong> Las explicaciones se basan solo en tus apuntes. Cuando falte algo, el tutor lo agrega en un recuadro aparte que indica qué agrega, por qué y para qué.</span></label>
     <p class="muted small">Los cambios se guardan solos. <span id="pf-guardado" role="status"></span></p>
+  </div>
+</dialog>
+
+<dialog id="dlg-biblio-tema">
+  <div class="dlg-head"><h3>📖 Bibliografía del tema</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body">
+    <p class="muted small">Marca los capítulos de la biblioteca que corresponden a <strong id="bt-subtema"></strong>. El tutor los usa como fuente secundaria: si contradicen a tus apuntes o al profesor, mandan ellos. Con el modo estricto, lo que salga de un libro aparece en un recuadro aparte.</p>
+    <div id="bt-lista"></div>
+    <p class="muted small" role="status" id="bt-guardado"></p>
   </div>
 </dialog>
 

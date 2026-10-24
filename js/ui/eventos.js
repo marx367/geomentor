@@ -7,9 +7,10 @@ import { mentor, tipFor } from './mentor.js';
 import { go, showTab } from './navegacion.js';
 import { abrirTemaHoy } from '../apuntes/dialogo-tema-hoy.js';
 import { abrirProfesor } from '../profesor/dialogo-profesor.js';
+import { abrirBiblioTema } from '../profesor/dialogo-biblio-tema.js';
 
 // Diálogos que se abren desde varios botones (data-abrir="...").
-const DIALOGOS = { 'tema-hoy': abrirTemaHoy, profesor: abrirProfesor };
+const DIALOGOS = { 'tema-hoy': abrirTemaHoy, profesor: abrirProfesor, 'biblio-tema': abrirBiblioTema };
 
 export function iniciarEventos() {
   document.addEventListener('click', ev => {
@@ -38,10 +39,12 @@ export function iniciarEventos() {
     if (!s) return;
     if (ev.target.id === 'answer') s.draft = ev.target.value;
     if (ev.target.id === 'resolucion') s.resolucion = ev.target.value;
+    if (ev.target.id === 'ep-enunciado' || ev.target.id === 'ep-solucion') ejecutarAccion('ej-campo', ev.target);
   });
   document.addEventListener('change', ev => {
     const s = sess();
     if (ev.target.id === 'ej-nivel' && s) s.nivel = ev.target.value;
     if (ev.target.id === 'in-photo') ejecutarAccion('foto', ev.target);
+    if (ev.target.id === 'in-enunciado' || ev.target.id === 'in-solucion') ejecutarAccion('ej-archivo', ev.target);
   });
 }

@@ -10,6 +10,9 @@ La IA responde **solo con etiquetas XML** (`<nombre>…</nombre>`). `js/nucleo/e
 | Chequeo socrático | `feedback`, `comprension` (0-100), `entendido`, `falta` (con `punto`), `siguiente_pregunta`, `tip` |
 | Resumen | `resumen_general`, `puntos_fuertes`, `puntos_debiles` (con `punto`), `plan_de_repaso`, `ejercicio_sugerido` |
 | Ejercicio | `enunciado`, `pista` (varias), `solucion`, `grafico` |
+| Ejercicio propio (preparar) | `pista` (varias), `solucion` (solo si la fuente no trae), `grafico` (vacío si no es del plano) |
+| Ejercicios en los apuntes | `ejercicio_encontrado` (varios) → `origen`, `enunciado`, `solucion_dada` |
+| Transcripción de una foto | `transcripcion` |
 | Corrección | `correccion`, `falta` (con `punto`) |
 | Examen | `pregunta` (varias) → dentro: `enunciado`, opciones, `correcta`, `explicacion`, `tipo`, `por_que_…` |
 | Hoja de errores | `recordar`, `encarar` (máximo 12 líneas cada una; no se recortan; si falta, queda vacía) |
@@ -31,6 +34,8 @@ Están en `js/contexto/reglas-prompt.js`:
   **Para qué:** …
   :::
   ```
+
+- **Bibliografía del tema** (si el subtema tiene capítulos asociados): bloque `[BIBLIOGRAFÍA DEL TEMA · FUENTE SECUNDARIA]` después de los apuntes, con `BIB_RULES` (mandan apuntes y profesor; cita `(libro: NOMBRE)`) o, con modo estricto, `BIB_RULES_ESTRICTO` (lo del libro solo en bloques `:::complemento`). Se lleva el 40 % del presupuesto de apuntes.
 
 ## Si cambiás un prompt
 
