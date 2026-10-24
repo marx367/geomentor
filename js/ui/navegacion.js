@@ -9,10 +9,11 @@ import { mentor } from './mentor.js';
 import { renderCrumbs } from './migas.js';
 import { pickCard, countDebiles } from './tarjetas.js';
 
+// Sin materia elegida vuelve al color de marca (los mismos valores que --marca-600 y --tiza-verde en tema.css).
 export function setAccent(m) {
   const r = document.documentElement.style;
-  r.setProperty('--accent-l', m ? m.acc[0] : '#0e7490');
-  r.setProperty('--accent-d', m ? m.acc[1] : '#22d3ee');
+  r.setProperty('--accent-l', m ? m.acc[0] : '#1f6b57');
+  r.setProperty('--accent-d', m ? m.acc[1] : '#6fd3b4');
   avisar('cambio-acento'); // el laboratorio redibuja con el color nuevo
 }
 export function go(view) {

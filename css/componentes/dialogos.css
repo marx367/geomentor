@@ -1,58 +1,67 @@
 /* Diálogos: configuración, apuntes, Tema de hoy (propuesta editable), Profesor y bibliografía, plan y puntos débiles */
-dialog { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); padding: 0; width: min(640px, calc(100vw - 1.5rem)); max-height: calc(100dvh - 2rem); box-shadow: var(--shadow); }
-dialog::backdrop { background: rgba(2,6,23,.55); }
-.dlg-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .9rem 1rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); }
-.dlg-body { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; }
-.file-list { display: flex; flex-direction: column; gap: .4rem; }
-.file-item { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .5rem .7rem; background: var(--surface-2); border-radius: 8px; font-size: .88rem; }
-.weak-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .8rem .9rem; }
-.weak-item h4 { font-size: .95rem; color: var(--accent); }
-.weak-item .meta { font-size: .78rem; color: var(--muted); margin: .15rem 0 .5rem; }
-.weak-item ul { margin: 0 0 .6rem; padding-left: 1.1rem; font-size: .9rem; }
-.ia-box { display: flex; flex-direction: column; gap: .6rem; }
-.ia-box h4 { font-size: 1rem; }
-.file-info { display: flex; flex-direction: column; gap: .35rem; flex: 1; min-width: 0; }
-.file-info select { min-height: 36px; padding: .3rem .5rem; font-size: .85rem; }
-.gen-eje { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .75rem; display: flex; flex-direction: column; gap: .5rem; }
-.gen-row { display: flex; gap: .4rem; align-items: center; }
-.gen-row input { flex: 1; min-width: 0; min-height: 38px; padding: .35rem .6rem; }
+/* Diálogos: capa flotante, la más alta. Entran con un resorte corto (movimiento.css). */
+dialog { border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--capa-flotante); color: var(--text); padding: 0; width: min(640px, calc(100vw - var(--e-5))); max-height: calc(100dvh - var(--e-6)); box-shadow: var(--sombra-flotante); }
+dialog::backdrop { background: rgba(var(--sombra-rgb), .45); backdrop-filter: blur(3px); }
+.dlg-head { display: flex; justify-content: space-between; align-items: center; gap: var(--e-2); padding: var(--e-3) var(--e-3) var(--e-3) var(--e-5); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1; background: var(--capa-flotante); }
+.dlg-head h3 { font-size: var(--t-md); }
+.dlg-body { padding: var(--e-5); display: flex; flex-direction: column; gap: var(--e-4); overflow-y: auto; }
+.file-list { display: flex; flex-direction: column; gap: var(--e-2); }
+.file-item { display: flex; justify-content: space-between; align-items: center; gap: var(--e-2); padding: var(--e-2) var(--e-3); background: var(--surface-2); border-radius: var(--radius-sm); font-size: var(--t-sm); }
+.weak-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--e-3) var(--e-4); }
+.weak-item h4 { font-size: var(--t-base); color: var(--accent); }
+.weak-item .meta { font-size: var(--t-xs); color: var(--muted); margin: var(--e-1) 0 var(--e-2); }
+.weak-item ul { margin: 0 0 var(--e-3); padding-left: var(--e-5); font-size: var(--t-sm); }
+.ia-box { display: flex; flex-direction: column; gap: var(--e-3); }
+.ia-box h4 { font-size: var(--t-base); }
+/* Enlace suelto (obtener la API key): área táctil de 44 px */
+.ia-box > a { display: inline-flex; align-items: center; min-height: 44px; align-self: flex-start; }
+.file-info { display: flex; flex-direction: column; gap: var(--e-2); flex: 1; min-width: 0; }
+.file-info select { min-height: 44px; padding: var(--e-1) var(--e-2); font-size: var(--t-sm); }
+.gen-eje { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--e-3); display: flex; flex-direction: column; gap: var(--e-2); }
+.gen-row { display: flex; gap: var(--e-2); align-items: center; }
+.gen-row input { flex: 1; min-width: 0; min-height: 44px; padding: var(--e-2) var(--e-3); }
 .gen-row .emoji { width: 56px; flex: 0 0 56px; text-align: center; }
-.gen-eje > input { font-size: .88rem; min-height: 38px; padding: .35rem .6rem; }
-.gen-files { font-size: .76rem; color: var(--muted); padding-left: .2rem; }
+.gen-eje > input { font-size: var(--t-sm); min-height: 44px; padding: var(--e-2) var(--e-3); }
+.gen-files { font-size: var(--t-xs); color: var(--muted); padding-left: var(--e-1); }
 
 /* Profesor y bibliografía */
 hr.sep { border: 0; border-top: 1px solid var(--border); margin: 0; }
-.pf-seccion { display: flex; flex-direction: column; gap: .6rem; }
-.pf-seccion h4 { font-size: 1rem; }
-.cuestionario summary, .nuevo-cap summary { cursor: pointer; font-size: .9rem; font-weight: 500; }
+.pf-seccion { display: flex; flex-direction: column; gap: var(--e-3); }
+.pf-seccion h4 { font-size: var(--t-base); }
+.cuestionario summary, .nuevo-cap summary { cursor: pointer; font-size: var(--t-sm); font-weight: 700; min-height: 44px; display: flex; align-items: center; border-radius: var(--radius-sm); }
+.cuestionario summary:hover, .nuevo-cap summary:hover { color: var(--accent); }
+.cuestionario summary:active, .nuevo-cap summary:active { color: var(--text); }
 /* Pregunta de opción múltiple (cuestionario y capítulos en Tema de hoy) */
-.pregunta { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .5rem .75rem .65rem; margin: .5rem 0 0; display: flex; flex-direction: column; gap: .3rem; }
-.pregunta legend { font-size: .88rem; font-weight: 600; padding: 0 .3rem; }
-.opcion { display: flex; gap: .5rem; align-items: flex-start; font-size: .86rem; cursor: pointer; }
-.opcion input { accent-color: var(--accent); margin-top: .2rem; flex-shrink: 0; }
-.analisis { background: var(--surface-2); border-radius: var(--radius-sm); padding: .6rem .8rem; display: flex; flex-direction: column; gap: .4rem; align-items: flex-start; }
-.libro { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .6rem .75rem; display: flex; flex-direction: column; gap: .45rem; margin-bottom: .5rem; }
-.libro-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+.pregunta { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--e-2) var(--e-3) var(--e-3); margin: var(--e-2) 0 0; display: flex; flex-direction: column; gap: var(--e-1); }
+.pregunta legend { font-size: var(--t-sm); font-weight: 600; padding: 0 var(--e-1); }
+.opcion { display: flex; gap: var(--e-2); align-items: flex-start; font-size: var(--t-sm); cursor: pointer; padding: var(--e-1) var(--e-2); border-radius: var(--radius-sm); }
+.opcion:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+.opcion:active { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.opcion:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 1px; }
+.opcion input { accent-color: var(--accent); margin-top: var(--e-1); flex-shrink: 0; }
+.analisis { background: var(--surface-2); border-radius: var(--radius-sm); padding: var(--e-3) var(--e-3); display: flex; flex-direction: column; gap: var(--e-2); align-items: flex-start; }
+.libro { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--e-3) var(--e-3); display: flex; flex-direction: column; gap: var(--e-2); margin-bottom: var(--e-2); }
+.libro-head { display: flex; justify-content: space-between; align-items: center; gap: var(--e-2); }
 .libro .file-item { background: var(--surface); }
-.nuevo-cap[open] { display: flex; flex-direction: column; gap: .45rem; }
-.nuevo-libro { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+.nuevo-cap[open] { display: flex; flex-direction: column; gap: var(--e-2); }
+.nuevo-libro { display: flex; flex-wrap: wrap; gap: var(--e-2); align-items: center; }
 .nuevo-libro input { flex: 1 1 180px; min-width: 0; }
 
 /* Zona final de ⚙️ Config: datos y reinicio */
-.zona-reinicio { display: flex; flex-direction: column; gap: .5rem; }
-.zona-reinicio h4 { font-size: 1rem; }
+.zona-reinicio { display: flex; flex-direction: column; gap: var(--e-2); }
+.zona-reinicio h4 { font-size: var(--t-base); }
 /* Botón que borra datos guardados: rojo para que no se confunda con "Reiniciar sesión" */
 .btn.peligro { color: var(--bad); border-color: var(--bad); }
 .btn.peligro:hover { background: var(--bad-soft); }
 
 /* Reglas del examen (Profesor y bibliografía) */
-.aviso-reglas { color: var(--bad); font-size: .82rem; margin: 0; }
+.aviso-reglas { color: var(--bad); font-size: var(--t-xs); margin: 0; }
 .aviso-reglas:empty { display: none; }
 /* Tipo de error de cada punto débil (lista 📌) */
-.weak-item .pill.tipo { font-size: .7rem; padding: .05rem .45rem; margin-left: .25rem; vertical-align: middle; }
+.weak-item .pill.tipo { font-size: var(--t-xs); padding: 0 var(--e-2); margin-left: var(--e-1); vertical-align: middle; }
 /* Editar y descartar cada punto: los botones bajan de línea si no entran (375 px) */
-.weak-item li { margin-bottom: .4rem; }
-.weak-item .punto-acciones { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .3rem; }
-.weak-item .editar-punto { display: flex; flex-direction: column; gap: .5rem; }
-.weak-item .editar-punto label { display: flex; flex-direction: column; gap: .2rem; font-size: .82rem; }
+.weak-item li { margin-bottom: var(--e-2); }
+.weak-item .punto-acciones { display: flex; flex-wrap: wrap; gap: var(--e-2); margin-top: var(--e-1); }
+.weak-item .editar-punto { display: flex; flex-direction: column; gap: var(--e-2); }
+.weak-item .editar-punto label { display: flex; flex-direction: column; gap: var(--e-1); font-size: var(--t-xs); }
 .weak-item .editar-punto textarea, .weak-item .editar-punto select { width: 100%; font: inherit; }

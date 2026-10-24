@@ -5,7 +5,7 @@ Tutor de matemática con IA: materias, ejes y subtemas que arma el estudiante (M
 ## Stack (definitivo)
 
 - **Tecnología:** HTML + CSS + JavaScript vanilla con **módulos ES** (`import`/`export`). Sin build ni npm.
-- **Librerías por CDN:** KaTeX y MathJax (fórmulas), html2pdf (ficha PDF), pdf.js (lectura de apuntes PDF, se carga bajo demanda), fuente Lexend.
+- **Librerías por CDN:** KaTeX y MathJax (fórmulas), html2pdf (ficha PDF), pdf.js (lectura de apuntes PDF, se carga bajo demanda), fuentes de Google Fonts: Bricolage Grotesque (títulos) y Atkinson Hyperlegible Next (texto, también en el lienzo y la pizarra).
 - **Persistencia:** localStorage. Opcional: la base de datos de claude.ai cuando la app corre como artefacto.
 - **IA:** el navegador llama directo a cada proveedor (Gemini, OpenAI, Anthropic, OpenRouter, DeepSeek, GLM, Qwen y compatibles con OpenAI). Las claves las carga el estudiante y quedan en su navegador.
 
@@ -22,7 +22,7 @@ Tutor de matemática con IA: materias, ejes y subtemas que arma el estudiante (M
 
 ```
 index.html          → estructura HTML; carga js/tema-inicial.js, css/estilos.css y js/main.js
-css/                → tema, base, componentes/, vistas/, responsive
+css/                → tema, base, componentes/, vistas/, movimiento, responsive
 js/main.js          → punto de entrada
 js/nucleo/          → utilidades sin dependencias
 js/datos/           → colores de materias y sinónimos
@@ -52,6 +52,15 @@ Detalle de cada archivo: `docs/modulos.md`. Regla de dependencias: `docs/arquite
 - Las capas bajas nunca importan a las altas (ver `docs/arquitectura.md`).
 - Nunca claves en el código.
 - Los PDF (html2pdf) no llevan ancho fijo: el contenido usa el ancho de la página (~698 px en A4) y las palabras largas pasan de línea; `generarPDF` pasa `scrollX: 0` y `scrollY: 0` a html2canvas porque, si no, el scroll de la página corre el PDF.
+
+## Diseño
+
+Dirección «pizarra y papel milimetrado». Todo sale de los tokens de `css/tema.css`: no usar valores sueltos.
+- **Color:** marca verde pizarra (`--marca-50…900`, `--tiza-verde`, `--tiza-amarilla`). `--marca` es fija; `--accent` cambia con cada materia (`setAccent` en `js/ui/navegacion.js`, paleta en `js/datos/colores-materias.js`). Las materias guardan su color: las creadas antes del rediseño conservan el viejo.
+- **Escalas:** espaciado `--e-1…--e-9` (4 a 96 px), tipografía `--t-xs…--t-2xl` (razón 1,25), radios `--radius-sm/--radius/--radius-lg`.
+- **Capas:** base (fondo), elevada (tarjetas, paneles) y flotante (diálogos, menús, mentor), con `--sombra-elevada` y `--sombra-flotante` teñidas de verde.
+- **Movimiento:** solo `transform` y `opacity`, easing `--resorte`. Una sola entrada orquestada al mostrar cada vista (`css/movimiento.css`), con `animation-fill-mode: backwards` (con `both` la animación queda pegada y anula el resorte del hover). `prefers-reduced-motion` la apaga.
+- **Accesibilidad:** todo lo clickeable mide al menos 44×44 y tiene `:hover`, `:focus-visible` y `:active`. Contraste mínimo de 4.5:1 en Light, Dim y Dark.
 
 ## Estado
 

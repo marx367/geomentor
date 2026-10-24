@@ -1,6 +1,7 @@
 /* Migas de pan: Materia › Eje › Subtema */
-.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .5rem; font-size: .88rem; color: var(--muted); margin-bottom: 1rem; }
-.crumbs button { background: none; border: 0; padding: .2rem 0; cursor: pointer; color: var(--muted); }
-.crumbs button:hover { color: var(--accent); text-decoration: underline; }
-.crumbs .current { color: var(--accent); font-weight: 600; }
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--e-2); font-size: var(--t-sm); color: var(--muted); margin-bottom: var(--e-3); }
+.crumbs button { background: none; border: 0; min-height: 44px; padding: 0 var(--e-1); border-radius: var(--e-1); cursor: pointer; color: var(--muted); }
+.crumbs button:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.crumbs button:active { color: var(--text); }
+.crumbs .current { color: var(--text); font-weight: 700; }
 .crumbs .sep { opacity: .6; }

@@ -1,15 +1,22 @@
-/* Mentor flotante: globo de tips y botón */
-.mentor { position: fixed; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 30; display: flex; flex-direction: column; align-items: flex-end; gap: .6rem; pointer-events: none; }
+/* Mentor flotante: globo de tips y botón (capa flotante) */
+.mentor { position: fixed; right: var(--e-4); bottom: calc(var(--e-4) + env(safe-area-inset-bottom, 0px)); z-index: 30; display: flex; flex-direction: column; align-items: flex-end; gap: var(--e-3); pointer-events: none; }
 .mentor > * { pointer-events: auto; }
 .mentor-bubble {
-  max-width: min(340px, calc(100vw - 2rem)); background: var(--surface); color: var(--text);
-  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border)); border-radius: 16px 16px 4px 16px;
-  padding: .8rem 2rem .8rem .95rem; box-shadow: var(--shadow); font-size: .92rem; position: relative;
-  animation: pop .25s ease;
+  max-width: min(340px, calc(100vw - var(--e-6))); background: var(--capa-flotante); color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--marca) 40%, var(--border)); border-radius: var(--radius-lg) var(--radius-lg) var(--e-1) var(--radius-lg);
+  padding: var(--e-3) var(--e-7) var(--e-3) var(--e-4); box-shadow: var(--sombra-flotante); font-size: var(--t-sm); line-height: 1.6; position: relative;
+  transform-origin: bottom right; animation: pop .45s var(--resorte);
 }
-.mentor-bubble .close { position: absolute; top: .3rem; right: .35rem; border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 1rem; width: 28px; height: 28px; border-radius: 6px; }
-.mentor-btn { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--surface); cursor: pointer; font-size: 1.5rem;
-  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 40%, #6366f1)); box-shadow: var(--shadow); }
-@keyframes pop { from { opacity: 0; transform: translateY(6px) scale(.97); } to { opacity: 1; transform: none; } }
-.mentor-bubble #mentor-accion { display: flex; margin-top: .6rem; }
+.mentor-bubble .close { position: absolute; top: 0; right: 0; border: 0; background: none; color: var(--muted); cursor: pointer; font-size: var(--t-base); width: 44px; height: 44px; border-radius: var(--radius-sm); transition: transform .25s var(--resorte); }
+.mentor-bubble .close:hover { color: var(--text); background: var(--surface-2); }
+.mentor-bubble .close:active { transform: scale(.9); transition-duration: .08s; }
+/* Botón: tiza sobre pizarra, el único elemento redondo de la app */
+.mentor-btn { width: 56px; height: 56px; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--tiza-verde) 50%, transparent); cursor: pointer; font-size: 1.5rem;
+  background: radial-gradient(circle at 30% 25%, var(--marca-500), var(--marca-800)); box-shadow: var(--sombra-flotante), 0 8px 20px -8px rgba(var(--sombra-rgb), .35);
+  transition: transform .35s var(--resorte); }
+.mentor-btn:hover { transform: translateY(-2px) rotate(-8deg); }
+.mentor-btn:active { transform: scale(.92); transition-duration: .08s; }
+.mentor-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.94); } to { opacity: 1; transform: none; } }
+.mentor-bubble #mentor-accion { display: flex; margin-top: var(--e-3); }
 .mentor-bubble #mentor-accion[hidden] { display: none; }

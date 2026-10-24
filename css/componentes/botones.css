@@ -1,17 +1,20 @@
-/* Botones: variantes primary, ghost, sm y fila de botones */
+/* Botones: variantes primary, ghost, sm y fila de botones.
+   Solo se anima transform (al presionar); los cambios de color son instantáneos. */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
-  min-height: 44px; padding: .55rem 1rem; border-radius: var(--radius-sm);
-  border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
-  font-weight: 500; cursor: pointer; transition: background .15s, border-color .15s, transform .1s;
-  text-align: center;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--e-2);
+  min-height: 44px; min-width: 44px; padding: var(--e-2) var(--e-4); border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  font-weight: 600; cursor: pointer; text-align: center;
+  box-shadow: 0 1px 1px rgba(var(--sombra-rgb), .05);
+  transition: transform .25s var(--resorte);
 }
-.btn:hover:not(:disabled) { background: var(--surface-3); }
-.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:hover:not(:disabled) { background: var(--surface-2); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.btn:active:not(:disabled) { transform: scale(.97); transition-duration: .08s; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
-.btn.primary:hover:not(:disabled) { background: color-mix(in srgb, var(--accent) 85%, var(--text)); }
-.btn.ghost { background: transparent; }
-.btn.ghost:hover:not(:disabled) { background: var(--surface-2); }
-.btn.sm { min-height: 36px; padding: .35rem .75rem; font-size: .88rem; }
-.btn-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 700; box-shadow: 0 1px 2px rgba(var(--sombra-rgb), .1), 0 6px 14px -6px color-mix(in srgb, var(--accent) 55%, transparent); }
+.btn.primary:hover:not(:disabled) { background: color-mix(in srgb, var(--accent) 86%, var(--text)); border-color: color-mix(in srgb, var(--accent) 86%, var(--text)); }
+.btn.ghost { background: transparent; border-color: transparent; box-shadow: none; }
+.btn.ghost:hover:not(:disabled) { background: var(--surface-2); border-color: var(--border); }
+/* sm: más compacto de texto y relleno, pero el área táctil sigue siendo de 44 px */
+.btn.sm { min-height: 44px; padding: var(--e-1) var(--e-3); font-size: var(--t-sm); }
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--e-2); }

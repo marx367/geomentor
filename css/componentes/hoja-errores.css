@@ -1,14 +1,14 @@
 /* Hoja de errores: diálogo (editor + vista previa) y versión compacta para el PDF de una página. */
-.hoja-barra { justify-content: flex-end; margin-bottom: .6rem; }
-.hoja-aviso { font-size: .88rem; margin: 0 0 .4rem; }
-.hoja-editor { display: grid; gap: .8rem; margin: .6rem 0; }
-.hoja-editor textarea { width: 100%; font-family: ui-monospace, monospace; font-size: .85rem; resize: vertical; }
-.hoja-cuenta { font-size: .78rem; color: var(--muted); margin: -.5rem 0 0; } /* contador debajo de cada sección */
+.hoja-barra { justify-content: flex-end; margin-bottom: var(--e-3); }
+.hoja-aviso { font-size: var(--t-sm); margin: 0 0 var(--e-2); }
+.hoja-editor { display: grid; gap: var(--e-3); margin: var(--e-3) 0; }
+.hoja-editor textarea { width: 100%; font-family: ui-monospace, monospace; font-size: var(--t-sm); resize: vertical; }
+.hoja-cuenta { font-size: var(--t-xs); color: var(--muted); margin: calc(-1 * var(--e-2)) 0 0; } /* contador debajo de cada sección */
 .hoja-cuenta.larga { color: var(--bad); }
-.hoja-vista { border: 1px solid var(--border); border-radius: var(--radius); padding: .6rem .8rem; overflow-x: auto; }
-.hoja h2 { font-size: 1rem; margin: .8rem 0 .3rem; }
+.hoja-vista { border: 1px solid var(--border); border-radius: var(--radius); padding: var(--e-3) var(--e-3); overflow-x: auto; }
+.hoja h2 { font-size: var(--t-base); margin: var(--e-3) 0 var(--e-1); }
 .hoja h2:first-child { margin-top: 0; }
-.hoja ul { margin: 0; padding-left: 1.2rem; }
+.hoja ul { margin: 0; padding-left: var(--e-5); }
 .hoja .mis-errores .superado { opacity: .75; }
 
 /* PDF: letra y márgenes más chicos para que un subtema típico entre en una A4. */

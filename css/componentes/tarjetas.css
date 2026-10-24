@@ -1,22 +1,35 @@
 /* Tarjetas de selección (materia, eje, subtema), pastillas y tema personalizado */
-.card-grid { display: grid; grid-template-columns: 1fr; gap: .85rem; }
+.card-grid { display: grid; grid-template-columns: 1fr; gap: var(--e-4); }
+/* Tarjeta en capa elevada. Al pasar el mouse sube 3 px y aparece una sombra más grande
+   (está en ::after y solo cambia su opacidad: así se anima sin repintar la sombra). */
 .pick {
-  position: relative; text-align: left; cursor: pointer; width: 100%;
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 1.1rem 1.15rem; box-shadow: var(--shadow); color: var(--text);
-  display: flex; flex-direction: column; gap: .45rem;
-  transition: border-color .2s, box-shadow .2s, transform .2s;
+  position: relative; isolation: isolate; text-align: left; cursor: pointer; width: 100%;
+  background: var(--capa-elevada); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: var(--e-5) var(--e-5) var(--e-4); box-shadow: var(--sombra-elevada); color: var(--text);
+  display: flex; flex-direction: column; gap: var(--e-2);
+  transition: transform .35s var(--resorte);
 }
-.pick:hover { border-color: color-mix(in srgb, var(--accent) 60%, var(--border)); }
-.pick .icon { font-size: 2rem; line-height: 1; }
-.pick h3 { font-size: 1.08rem; color: var(--accent); }
-.pick p { color: var(--muted); font-size: .92rem; }
-.pick .badges { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .2rem; }
-.pick.selected { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent), 0 0 28px color-mix(in srgb, var(--accent) 35%, transparent); transform: scale(1.03); }
-.pill { display: inline-flex; align-items: center; gap: .25rem; font-size: .76rem; padding: .15rem .55rem; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
+.pick::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; box-shadow: var(--sombra-flotante); opacity: 0; transition: opacity .25s var(--suave); }
+.pick:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+.pick:hover::after { opacity: 1; }
+.pick:active { transform: translateY(0) scale(.98); transition-duration: .08s; }
+.pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+/* Ícono sobre un cuadrito de papel milimetrado */
+.pick .icon { font-size: 1.6rem; line-height: 1; width: 52px; height: 52px; display: grid; place-items: center; border-radius: var(--radius-sm); margin-bottom: var(--e-1);
+  background:
+    linear-gradient(color-mix(in srgb, var(--accent) 14%, transparent) 1px, transparent 1px) 0 0 / 13px 13px,
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 14%, transparent) 1px, transparent 1px) 0 0 / 13px 13px,
+    color-mix(in srgb, var(--accent) 7%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); }
+.pick h3 { font-size: var(--t-md); font-weight: 700; color: var(--text); }
+.pick p { color: var(--muted); font-size: var(--t-sm); line-height: 1.6; }
+.pick .badges { display: flex; flex-wrap: wrap; gap: var(--e-1); margin-top: var(--e-1); }
+.pick.selected { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent), var(--sombra-flotante); transform: scale(1.03); }
+.pill { display: inline-flex; align-items: center; gap: var(--e-1); font-size: var(--t-xs); line-height: 1.5; padding: 0 var(--e-2); border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
 .pill.accent { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
 .pill.warn { color: var(--hint); background: var(--hint-soft); border-color: transparent; }
 
-/* Inicio vacío de Mi curso: ocupa todo el ancho de la grilla */
-.curso-vacio { grid-column: 1 / -1; text-align: center; padding: 2.5rem 1rem; display: flex; flex-direction: column; align-items: center; gap: .6rem; background: var(--surface-2); border: 1px dashed var(--border); border-radius: var(--radius); }
+/* Inicio vacío de Mi curso: ocupa todo el ancho de la grilla, como una hoja cuadriculada en blanco */
+.curso-vacio { grid-column: 1 / -1; text-align: center; padding: var(--e-7) var(--e-4); display: flex; flex-direction: column; align-items: center; gap: var(--e-3);
+  background: color-mix(in srgb, var(--surface) 70%, transparent); border: 1.5px dashed color-mix(in srgb, var(--marca) 35%, var(--border)); border-radius: var(--radius-lg); }
 .curso-vacio p { max-width: 46ch; margin: 0; }

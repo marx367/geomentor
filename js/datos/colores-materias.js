@@ -2,9 +2,9 @@
 // Cada materia nueva toma el siguiente par de la lista (y vuelve a empezar cuando se terminan).
 // acc = [color para tema claro, color para temas oscuros].
 export const COLORES_MATERIAS = [
-  { acc: ['#0e7490', '#22d3ee'], icono: '📐' },
-  { acc: ['#6d28d9', '#a78bfa'], icono: '📈' },
-  { acc: ['#b45309', '#fbbf24'], icono: '🔺' },
-  { acc: ['#047857', '#34d399'], icono: '📉' },
-  { acc: ['#be123c', '#fb7185'], icono: '🔢' }
+  { acc: ['#1f6b57', '#6fd3b4'], icono: '📐' }, // verde pizarra (el color de marca)
+  { acc: ['#8a3b6e', '#e39bc8'], icono: '📈' }, // ciruela
+  { acc: ['#7f5300', '#e9c46a'], icono: '🔺' }, // ocre, tiza amarilla
+  { acc: ['#a3361f', '#f49a84'], icono: '📉' }, // ladrillo
+  { acc: ['#4d5a1e', '#b9cc6b'], icono: '🔢' }  // oliva
 ];
