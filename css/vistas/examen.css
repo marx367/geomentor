@@ -1,25 +1,29 @@
 /* Pestaña Examen: preguntas, opciones y resultado */
 /* Examen */
-.q-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }
-.q-card .q-title { font-weight: 600; margin-bottom: .75rem; display: flex; gap: .4rem; }
-.opts { display: grid; gap: .5rem; }
+.q-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--e-4); }
+.q-card .q-title { font-weight: 700; margin-bottom: var(--e-3); display: flex; gap: var(--e-2); }
+.opts { display: grid; gap: var(--e-2); }
 .opt {
-  display: flex; align-items: flex-start; gap: .6rem; width: 100%; text-align: left; cursor: pointer;
-  padding: .7rem .9rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); min-height: 48px;
+  display: flex; align-items: flex-start; gap: var(--e-3); width: 100%; text-align: left; cursor: pointer;
+  padding: var(--e-3) var(--e-4); border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); min-height: 48px;
+  transition: transform .25s var(--resorte);
 }
-.opt:hover:not(:disabled) { border-color: var(--accent); }
-.opt .letter { font-weight: 700; color: var(--muted); flex-shrink: 0; }
+.opt:hover:not(:disabled) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 5%, var(--surface)); }
+.opt:active:not(:disabled) { transform: scale(.99); transition-duration: .08s; }
+.opt .letter { font-family: var(--font-titulos); font-weight: 700; color: var(--muted); flex-shrink: 0; }
 .opt.selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
+.opt.selected .letter { color: var(--accent); }
 .opt.correct { border-color: var(--ok); background: var(--ok-soft); }
 .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
 .opt:disabled { cursor: default; }
-.explain { margin-top: .75rem; font-size: .92rem; display: grid; gap: .35rem; }
+.explain { margin-top: var(--e-3); font-size: var(--t-sm); display: grid; gap: var(--e-2); }
 .explain .good { color: var(--ok); }
 .explain .badx { color: var(--bad); }
-.result-card { text-align: center; padding: 1.25rem; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
-  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--surface)), color-mix(in srgb, #6366f1 12%, var(--surface))); }
-.result-card .grade { font-size: 2rem; font-weight: 700; margin: .25rem 0 .6rem; }
+.result-card { text-align: center; padding: var(--e-5); border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: radial-gradient(120% 140% at 50% 0%, color-mix(in srgb, var(--accent) 16%, var(--surface)), var(--surface) 70%); box-shadow: var(--sombra-elevada); }
+.result-card .grade { font-family: var(--font-titulos); letter-spacing: -0.03em; font-size: var(--t-2xl); font-weight: 750; line-height: 1.1; margin: var(--e-1) 0 var(--e-3); }
 .score-bar { height: 14px; border-radius: 999px; background: var(--surface-3); overflow: hidden; max-width: 480px; margin: 0 auto; }
-.score-bar > span { display: block; height: 100%; border-radius: inherit; transition: width .7s ease; }
-.score-bar.low > span { background: var(--bad); } .score-bar.mid > span { background: #f59e0b; } .score-bar.high > span { background: var(--ok); }
-.exam-foot { position: sticky; bottom: 0; background: var(--surface); padding: .75rem 0 .25rem; border-top: 1px solid var(--border); }
+/* El ancho lo pone el JS; la barra crece con transform al aparecer (movimiento.css) */
+.score-bar > span { display: block; height: 100%; border-radius: inherit; transform-origin: left center; }
+.score-bar.low > span { background: var(--bad); } .score-bar.mid > span { background: var(--tiza-amarilla); } .score-bar.high > span { background: var(--ok); }
+.exam-foot { position: sticky; bottom: 0; background: var(--surface); padding: var(--e-3) 0 var(--e-1); border-top: 1px solid var(--border); }

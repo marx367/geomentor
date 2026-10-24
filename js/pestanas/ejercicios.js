@@ -1,7 +1,8 @@
 // Pestaña 3 · Ejercicios: pide un ejercicio tipo examen (enunciado, 3 pistas, solución y gráfico de los datos)
 // y dibuja la pantalla: pistas graduales, solución, y "Tu resolución" con texto, foto o pizarra.
+// Sin ejercicio, muestra la elección del origen: del tutor, de los apuntes y libros o del profesor (ver ejercicios-propios/).
 import { $ } from '../nucleo/dom.js';
-import { escapeHTML, spinnerHTML, clip, loadingHTML, errorBlock } from '../nucleo/utilidades.js';
+import { escapeHTML, spinnerHTML, clip, loadingHTML } from '../nucleo/utilidades.js';
 import { getTag, getTags } from '../nucleo/etiquetas-xml.js';
 import { S, key, sess } from '../estado/estado.js';
 import { markdownToHTML, mdInline } from '../render/markdown.js';
@@ -13,6 +14,7 @@ import { header, fitPrompt } from '../contexto/cabecera-prompt.js';
 import { fuentesHTML } from '../contexto/fuentes.js';
 import { FORMAT_RULES, LAB_SYNTAX } from '../contexto/reglas-prompt.js';
 import { montarPizarra } from '../pizarra/pizarra.js';
+import { vistaOrigen, extrasEjercicio, tituloEjercicio } from './ejercicios-propios/vista-origen.js';
 
 export async function generarEjercicio(fresh) {
   const k = key(), s = sess(k);
@@ -38,7 +40,7 @@ ${FORMAT_RULES}`);
     const enunciado = getTag(text, 'enunciado');
     if (!enunciado) throw new Error('No llegó el ejercicio. Vuelve a intentarlo.');
     s.exercise = {
-      fuentes,
+      origen: 'tutor', fuentes,
       enunciado, pistas: getTags(text, 'pista').slice(0, 3), solucion: getTag(text, 'solucion'),
       grafico: getTag(text, 'grafico').split('\n').map(l => l.replace(/^\s*[-*]\s+/, '').replace(/`/g, '').trim()).filter(Boolean)
     };
@@ -57,16 +59,16 @@ export function renderEjercicios() {
   if (!s) return;
   const niveles = ['Básico', 'Parcial', 'Examen reglamentado'];
   const nivelSel = `<select id="ej-nivel" style="width:auto">${niveles.map(n => `<option ${n === s.nivel ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
-  if (s.busy.ejercicio) { el.innerHTML = loadingHTML('Preparando un ejercicio tipo examen…'); return; }
-  if (!s.exercise) { el.innerHTML = s.err.ejercicio ? errorBlock(s.err.ejercicio, 'nuevo-ej') : `<div class="empty"><p class="muted">Genera un ejercicio para practicar.</p><div class="btn-row">${nivelSel}<button class="btn primary" data-action="nuevo-ej">Generar ejercicio</button></div></div>`; return; }
+  if (s.busy.ejercicio) { el.innerHTML = loadingHTML('Preparando el ejercicio con pistas y solución…'); return; }
+  if (!s.exercise) { el.innerHTML = vistaOrigen(s, nivelSel); return; }
   const ex = s.exercise;
   const hints = ex.pistas.slice(0, s.hints).map((p, i) => `<div class="hint-box"><strong>Pista ${i + 1}:</strong> ${mdInline(p)}</div>`).join('');
   const busyC = s.busy.correccion;
   el.innerHTML = `
   <div class="stack">
     <section class="panel-card">
-      <div class="card-head"><h2>📌 Ejercicio guiado tipo examen</h2><div class="btn-row">${nivelSel}<button class="btn sm" data-action="nuevo-ej">↻ Nuevo ejercicio</button><button class="btn sm" data-action="pdf-ejercicio">📄 Exportar</button></div></div>
-      <div class="md">${markdownToHTML(ex.enunciado)}</div>${fuentesHTML(ex.fuentes)}
+      <div class="card-head"><h2>${escapeHTML(tituloEjercicio(ex))}</h2><div class="btn-row">${ex.origen === 'tutor' ? `${nivelSel}<button class="btn sm" data-action="nuevo-ej">↻ Nuevo ejercicio</button>` : ''}<button class="btn sm" data-action="ej-otro">↩ Elegir otro ejercicio</button><button class="btn sm" data-action="pdf-ejercicio">📄 Exportar</button></div></div>
+      <div class="md">${markdownToHTML(ex.enunciado)}</div>${extrasEjercicio(ex)}${fuentesHTML(ex.fuentes)}
       <div class="btn-row" style="margin:.9rem 0">
         <button class="btn" data-action="pista" ${s.hints >= ex.pistas.length ? 'disabled' : ''}>💡 Pedir pista (${s.hints}/${ex.pistas.length})</button>
         <button class="btn" data-action="solucion">${s.showSol ? '🙈 Ocultar solución' : '👁️ Ver solución'}</button>

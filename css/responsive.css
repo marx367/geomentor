@@ -1,22 +1,57 @@
-/* Breakpoints y movimiento reducido */
+/* Breakpoints (mobile-first: 320 → 560 → 760 → 1000 → 1400) y movimiento reducido */
+
+/* Celular angosto: más ancho útil para fórmulas y el plano */
+@media (max-width: 559px) {
+  .tab-panel { padding: var(--e-3); }
+  .panel-card { padding: var(--e-3); }
+  .math-block { padding: var(--e-2) var(--e-3); margin-left: calc(-1 * var(--e-1)); margin-right: calc(-1 * var(--e-1)); }
+  .tab { padding: var(--e-3); }
+  .view-head .btn-row > .btn { flex: 1 1 auto; }
+  dialog { width: calc(100vw - var(--e-4)); }
+  .dlg-head { padding-left: var(--e-4); }
+  .dlg-body { padding: var(--e-4); }
+  .notice-bar { text-align: left; }
+}
+/* 320 px: el subtítulo de la marca no entra y el nombre se achica */
+@media (max-width: 359px) {
+  .topbar { padding: var(--e-2); gap: var(--e-2); }
+  .brand { gap: var(--e-2); }
+  .logo { width: 36px; height: 36px; }
+  .brand-name { font-size: var(--t-base); }
+  .container { padding-left: var(--e-3); padding-right: var(--e-3); }
+  .view-head h1 { font-size: var(--t-lg); }
+}
 @media (min-width: 560px) {
   .card-grid { grid-template-columns: repeat(2, 1fr); }
   .brand-sub { display: block; }
 }
 @media (min-width: 760px) {
   .top-actions .lbl { display: inline; }
-  .top-actions .btn { padding: .4rem .8rem; }
-  .container { padding: 1.5rem 1.5rem 7rem; }
-  .view-head h1 { font-size: 1.75rem; }
-  .tab-panel { padding: 1.25rem 1.5rem; }
+  .top-actions .btn { padding: var(--e-2) var(--e-3); }
+  .container { padding: var(--e-6) var(--e-5) var(--e-9); }
+  .view-head h1 { font-size: var(--t-2xl); }
+  .mentoria-head h1 { font-size: var(--t-xl); }
+  .tab-panel { padding: var(--e-5) var(--e-6); }
   .chips-block { grid-template-columns: 1fr 1fr; }
+  .card-grid { gap: var(--e-5); }
+}
+/* Hasta 1000 px las 4 pestañas no entran: menos relleno y un desvanecido a la derecha avisa que hay más */
+@media (max-width: 999px) {
+  .tab { padding-left: var(--e-3); padding-right: var(--e-3); }
+  .tabs { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); }
 }
 @media (min-width: 1000px) {
   .card-grid.three { grid-template-columns: repeat(3, 1fr); }
   .lab { grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); align-items: start; }
   .lab-side { max-height: 640px; overflow-y: auto; }
 }
+@media (min-width: 1400px) {
+  .container { padding-top: var(--e-7); }
+  .view-head { margin-bottom: var(--e-6); }
+}
+/* Sin animaciones si el sistema pide menos movimiento: todo aparece directo en su lugar */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-  .pick.selected { transform: none; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
+  .pick.selected, .pick:hover { transform: none; }
+  .spinner { animation: none; border-color: var(--accent); opacity: .6; } /* sin giro: un anillo quieto en lugar de un parpadeo */
 }

@@ -1,5 +1,14 @@
 /* Diseño de página: contenedor central y encabezado de cada vista */
-.container { max-width: 1180px; margin: 0 auto; padding: 1rem 1rem 7rem; }
-.view-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: .75rem; margin-bottom: 1.25rem; }
-.view-head h1 { font-size: 1.5rem; }
-.lead { color: var(--muted); margin-top: .35rem; max-width: 62ch; }
+.container { max-width: 1180px; margin: 0 auto; padding: var(--e-4) var(--e-4) var(--e-9); }
+.view-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--e-4); margin-bottom: var(--e-5); }
+.view-head h1 { font-size: var(--t-xl); font-weight: 700; }
+/* Eje x bajo el título: línea, marcas de graduación cada 24 px y flecha. Se dibuja al entrar (ver movimiento.css). */
+.view-head h1::after, .mentoria-head h1::after {
+  content: ""; display: block; width: min(100%, 16rem); height: 10px; margin-top: var(--e-2);
+  background:
+    linear-gradient(var(--accent), var(--accent)) left center / calc(100% - 6px) 2px no-repeat,
+    repeating-linear-gradient(90deg, var(--accent) 0 2px, transparent 2px 24px) left center / calc(100% - 12px) 10px no-repeat,
+    conic-gradient(from 240deg at 100% 50%, var(--accent) 0 60deg, transparent 0) right center / 8px 10px no-repeat;
+  transform-origin: left center;
+}
+.lead { color: var(--muted); margin-top: var(--e-3); max-width: 62ch; }

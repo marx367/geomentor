@@ -20,7 +20,7 @@ export function drawExpr(e, C) {
 
 export function label(text, px, py, color, C) {
   if (!text) return;
-  lz.ctx.font = '600 13px Lexend, system-ui, sans-serif';
+  lz.ctx.font = '700 13px "Atkinson Hyperlegible Next", system-ui, sans-serif';
   lz.ctx.lineWidth = 4; lz.ctx.strokeStyle = C.bg; lz.ctx.strokeText(text, px, py);
   lz.ctx.fillStyle = color; lz.ctx.fillText(text, px, py);
 }

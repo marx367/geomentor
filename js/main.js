@@ -21,6 +21,7 @@ import { iniciarPanelApuntes, renderApuntes } from './apuntes/panel-apuntes.js';
 import { iniciarDialogoPlan } from './apuntes/dialogo-plan.js';
 import { iniciarDialogoTemaHoy } from './apuntes/dialogo-tema-hoy.js';
 import { iniciarDialogoProfesor } from './profesor/dialogo-profesor.js';
+import { iniciarDialogoBiblioTema } from './profesor/dialogo-biblio-tema.js';
 import { iniciarExportarPDF } from './exportacion/exportar-pdf.js';
 import { iniciarHojaErrores } from './exportacion/dialogo-hoja.js';
 
@@ -38,6 +39,7 @@ iniciarPuntosDebiles();
 iniciarDialogoPlan();
 iniciarDialogoTemaHoy();
 iniciarDialogoProfesor();
+iniciarDialogoBiblioTema();
 iniciarExportarPDF();
 iniciarHojaErrores();
 iniciarEventos();

@@ -23,6 +23,18 @@ export const STRICT_RULES = `MODO ESTRICTO: explica, resuelve y evalúa SOLO con
 :::
 Fuera de esos bloques no incluyas contenido que no esté en los apuntes. En las opciones de un examen no uses bloques; si una explicación necesita un complemento, indícalo con «(complemento: …, porque los apuntes no lo tratan)».`;
 
+// Bibliografía del tema (capítulos de libros asociados al subtema). Siempre es fuente secundaria:
+// mandan los apuntes y el profesor. Con modo estricto, lo del libro va solo en bloques de complemento.
+const BIB_CITA = 'Cuando uses algo de la bibliografía, cítalo así: (libro: NOMBRE), con el nombre exacto que figura en sus encabezados «=== ... ===». Si algo del libro es evidentemente incorrecto, señálalo en lugar de repetirlo.';
+export const BIB_RULES = `USO DE LA BIBLIOGRAFÍA: es una fuente secundaria. Si contradice a los apuntes o al estilo del profesor, sigue a los apuntes y al profesor, y menciona la diferencia en una frase. ${BIB_CITA}`;
+export const BIB_RULES_ESTRICTO = `USO DE LA BIBLIOGRAFÍA EN MODO ESTRICTO: la bibliografía NO es base. Todo lo que tomes de ella va solo dentro de un bloque aparte con este formato exacto (cada marca en su propia línea):
+:::complemento
+**Qué agrego:** el contenido, indicando de qué libro y capítulo sale.
+**Por qué:** qué falta o no está claro en los apuntes.
+**Para qué:** qué le permite entender o resolver al estudiante.
+:::
+Si contradice a los apuntes o al estilo del profesor, mandan ellos: dilo dentro del bloque. ${BIB_CITA}`;
+
 // Reglas del examen final (🎓 Profesor y bibliografía). Una línea por opción de material; ver estado/reglas-examen.js.
 export const REGLAS_EXAMEN = {
   ninguno: 'El examen es SIN MATERIAL: el estudiante tiene que saber de memoria fórmulas, definiciones y notación. En la teoría destaca qué conviene memorizar; en las pistas pídele que recuerde la fórmula antes de dársela; en las preguntas evalúa también fórmulas y notación exactas.',

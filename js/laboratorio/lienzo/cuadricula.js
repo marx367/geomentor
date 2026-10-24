@@ -11,7 +11,7 @@ export const decimalsFor = step => Math.max(0, -Math.floor(Math.log10(step) + 1e
 export function colorsFromCSS() {
   const cs = getComputedStyle(document.documentElement);
   const g = n => cs.getPropertyValue(n).trim();
-  return { bg: g('--plot-bg'), minor: g('--plot-minor'), major: g('--plot-major'), axis: g('--plot-axis'), label: g('--plot-label'), font: '12px Lexend, system-ui, sans-serif' };
+  return { bg: g('--plot-bg'), minor: g('--plot-minor'), major: g('--plot-major'), axis: g('--plot-axis'), label: g('--plot-label'), font: '12px "Atkinson Hyperlegible Next", system-ui, sans-serif' };
 }
 
 export function drawGrid(C) {

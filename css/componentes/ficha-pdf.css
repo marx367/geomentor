@@ -1,10 +1,10 @@
 /* Ficha PDF exportada (siempre en claro, para imprimir) */
 .pdf-doc { background: #fff; color: #111827; padding: 12px; font-family: var(--font); font-size: 11pt; line-height: 1.55; max-width: 100%; overflow-wrap: anywhere; } /* sin ancho fijo: html2pdf la mete en un contenedor del ancho útil de la A4 (~698px) y recorta lo que se pasa */
 .pdf-doc * { color: #111827; }
-.pdf-doc h1 { font-size: 18pt; color: #0e7490; margin-bottom: 4px; }
-.pdf-doc h2 { font-size: 13pt; color: #0e7490; margin: 16px 0 6px; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; }
-.pdf-doc .md h3, .pdf-doc .md h4 { color: #1e40af; }
-.pdf-doc .math-block { background: #f1f5f9; border-left-color: #0e7490; }
+.pdf-doc h1 { font-size: 18pt; color: #1f6b57; margin-bottom: 4px; }
+.pdf-doc h2 { font-size: 13pt; color: #1f6b57; margin: 16px 0 6px; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; }
+.pdf-doc .md h3, .pdf-doc .md h4 { color: #195545; }
+.pdf-doc .math-block { background: #f1f5f9; border-color: #e2e8f0; border-left-color: #1f6b57; }
 .pdf-doc .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; margin: 6px 0; }
 .pdf-doc .pill { background: #f1f5f9; color: #111827; border-color: #94a3b8; } /* .pill usa variables del tema: en oscuro saldría negra */
 .pdf-doc img { max-width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; margin: 6px 0; } /* foto o pizarra del ejercicio */

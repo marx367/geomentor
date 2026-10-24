@@ -1,12 +1,39 @@
-/* Base: reset y estilos de elementos, mobile-first */
-:root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: var(--bg); }
+/* Base: reset, tipografía, fondo en capas y foco. Mobile-first. */
+:root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: var(--capa-base); }
 html { scroll-padding-top: env(safe-area-inset-top, 0px); }
 *, *::before, *::after { box-sizing: inherit; }
-body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
-h1, h2, h3, h4, h5 { line-height: 1.25; margin: 0; font-weight: 600; }
+/* Sin fondo propio: el de :root queda debajo y body::before (cuadrícula) se ve entre los dos */
+body { margin: 0; background: transparent; color: var(--text); font-family: var(--font-texto); font-size: var(--t-base); line-height: 1.7; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+/* Fondo fijo: dos manchas de luz (gradientes radiales en capas) sobre papel milimetrado que se desvanece hacia abajo */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(60rem 40rem at 105% -10%, color-mix(in srgb, var(--marca) 14%, transparent), transparent 70%),
+    radial-gradient(40rem 30rem at -10% 10%, color-mix(in srgb, var(--tiza-amarilla) 10%, transparent), transparent 70%),
+    radial-gradient(50rem 40rem at 50% 120%, color-mix(in srgb, var(--marca) 8%, transparent), transparent 70%),
+    linear-gradient(var(--cuadricula) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, var(--cuadricula) 1px, transparent 1px) 0 0 / 32px 32px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,.35) 70%, rgba(0,0,0,.2) 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,.35) 70%, rgba(0,0,0,.2) 100%);
+}
+/* Textura de ruido (SVG en línea, sin pedir archivos). En oscuro se invierte para que sea clara. */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  opacity: var(--ruido-opacidad); filter: invert(var(--ruido-color));
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)'/%3E%3C/svg%3E");
+}
+
+h1, h2, h3, h4, h5 { font-family: var(--font-titulos); line-height: 1.2; letter-spacing: -0.03em; margin: 0; font-weight: 650; }
 p { margin: 0; }
 button, input, select, textarea { font: inherit; color: inherit; }
+/* Foco con teclado: contorno del color de acento, separado del borde para que se vea sobre cualquier superficie */
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--accent) 28%, transparent); }
 [hidden] { display: none !important; }
+/* Enlaces: color de acento, subrayado que se separa del texto al pasar el mouse */
+a { color: var(--accent); text-underline-offset: 2px; }
+a:hover { text-underline-offset: 4px; }
+a:active { color: var(--text); }
 .muted { color: var(--muted); }
-.small { font-size: .85rem; }
+.small { font-size: var(--t-sm); }

@@ -28,7 +28,7 @@ export function dibujarCuadricula(ctx, ancho, alto) {
   ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, alto); ctx.stroke();
 
   ctx.fillStyle = c.ejes;
-  ctx.font = '12px Lexend, system-ui, sans-serif';
+  ctx.font = '12px "Atkinson Hyperlegible Next", system-ui, sans-serif';
   ctx.fillText('x', ancho - 12, cy - 6);
   ctx.fillText('y', cx + 6, 12);
   ctx.fillText('O', cx + 4, cy + 14);

@@ -1,4 +1,4 @@
 /* Pizarra de Ejercicios: lienzo cuadriculado para dibujar el desarrollo y sus herramientas */
-.pizarra { margin-top: .6rem; display: flex; flex-direction: column; gap: .5rem; }
+.pizarra { margin-top: var(--e-3); display: flex; flex-direction: column; gap: var(--e-2); }
 .pizarra canvas { display: block; width: 100%; max-width: 640px; aspect-ratio: 8 / 5; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--plot-bg); touch-action: none; cursor: crosshair; }
 .pizarra [aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }

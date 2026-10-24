@@ -63,6 +63,19 @@ const EXAMEN = [1, 2, 3, 4, 5].map(i => `<pregunta>
 <tipo>${i === 1 ? 'calculo' : i === 2 ? 'cualquiera' : ''}</tipo>
 </pregunta>`).join('\n');
 
+// Ejercicios: el del tutor y la práctica guiada de un ejercicio propio (sin <solucion> si la fuente la trae).
+const EJERCICIO = `<enunciado>Enunciado simulado: halla la distancia entre $A(1, 2)$ y $B(4, 6)$.</enunciado>
+<pista>Pista simulada 1</pista><pista>Pista simulada 2</pista><pista>Pista simulada 3</pista>
+<solucion>Solución simulada: $d = \\sqrt{3^2 + 4^2} = 5$.</solucion>
+<grafico>
+A = (1, 2)
+B = (4, 6)
+</grafico>`;
+// Ejercicios encontrados en los apuntes: el segundo sin solución, para probar las dos insignias.
+const ENCONTRADOS = `<ejercicio_encontrado><origen>apuntes-de-prueba.md</origen><enunciado>Representar en el depurado el punto $A(2, 3)$ (ejemplo simulado).</enunciado><solucion_dada>$A''$ arriba de LT a 2 unidades y $A'$ debajo a 3 (ejemplo).</solucion_dada></ejercicio_encontrado>
+<ejercicio_encontrado><origen>Libro de prueba · Cap. 2</origen><enunciado>Indicar la región del punto $B(4, 2)$ (ejemplo simulado).</enunciado><solucion_dada></solucion_dada></ejercicio_encontrado>`;
+const TRANSCRIPCION = '<transcripcion>Transcripción simulada: representar en el depurado los puntos $A(-2, 0)$ y $B(4, 2)$. [figura: ejemplo]</transcripcion>';
+
 // "＋ Tema de hoy": si la materia ya tiene ejes, elige el primero; si no, propone uno nuevo.
 function ubicacion(prompt) {
   const primerEje = prompt.match(/^- ([a-z0-9-]+): /m)?.[1] || '';
@@ -85,6 +98,9 @@ export async function llamarSimulado({ prompt, signal }) {
   if (prompt.includes('<resumen_general>')) return RESUMEN;
   if (prompt.includes('<correccion>')) return CORRECCION;
   if (prompt.includes('<por_que_a>')) return EXAMEN;
+  if (prompt.includes('<ejercicio_encontrado>')) return ENCONTRADOS;
+  if (prompt.includes('<transcripcion>')) return TRANSCRIPCION;
+  if (prompt.includes('<pista>')) return EJERCICIO;
   if (prompt.includes('<analisis>')) return `<analisis>
 - Análisis de ejemplo: justificar cada paso
 - Usar la notación de clase
