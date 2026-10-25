@@ -24,6 +24,7 @@ import { iniciarDialogoProfesor } from './profesor/dialogo-profesor.js';
 import { iniciarDialogoBiblioTema } from './profesor/dialogo-biblio-tema.js';
 import { iniciarExportarPDF } from './exportacion/exportar-pdf.js';
 import { iniciarHojaErrores } from './exportacion/dialogo-hoja.js';
+import { iniciarConfirmarDebiles } from './pestanas/confirmar-debiles.js';
 
 // Pestañas: cada una se anota sola en el registro al importarse.
 import './pestanas/pestana-teoria.js';
@@ -42,6 +43,7 @@ iniciarDialogoProfesor();
 iniciarDialogoBiblioTema();
 iniciarExportarPDF();
 iniciarHojaErrores();
+iniciarConfirmarDebiles();
 iniciarEventos();
 iniciarTema();
 

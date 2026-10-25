@@ -65,3 +65,10 @@ hr.sep { border: 0; border-top: 1px solid var(--border); margin: 0; }
 .weak-item .editar-punto { display: flex; flex-direction: column; gap: var(--e-2); }
 .weak-item .editar-punto label { display: flex; flex-direction: column; gap: var(--e-1); font-size: var(--t-xs); }
 .weak-item .editar-punto textarea, .weak-item .editar-punto select { width: 100%; font: inherit; }
+
+/* Confirmar puntos débiles del resumen (pestaña 1): un punto por fila, con casilla, texto y tipo editables */
+.confirmar-punto { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--e-3); display: flex; flex-direction: column; gap: var(--e-2); }
+.confirmar-punto .cp-casilla { display: flex; align-items: center; gap: var(--e-2); font-size: var(--t-sm); font-weight: 600; min-height: 44px; cursor: pointer; }
+.confirmar-punto .cp-casilla input { accent-color: var(--accent); }
+.confirmar-punto .field { display: flex; flex-direction: column; gap: var(--e-1); font-size: var(--t-xs); }
+.confirmar-punto textarea, .confirmar-punto select { width: 100%; font: inherit; }

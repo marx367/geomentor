@@ -96,7 +96,8 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `pestanas/teoria.js` | Pestaña 1 · pantalla: teoría, ideas clave, chequeo y tarjeta de resumen [8] |
 | `pestanas/contenido-teoria.js` | Pestaña 1 · pide el material a la IA; manda el gráfico al laboratorio (`cargar-grafico`) [8] |
 | `pestanas/chequeo-socratico.js` | Pestaña 1 · evalúa la respuesta y actualiza comprensión, entendido/falta (con tipo) y pregunta [8] |
-| `pestanas/resumen-sesion.js` | Pestaña 1 · resumen por IA, guarda puntos débiles con tipo (origen `chequeo`) y descarga el .txt [8] |
+| `pestanas/resumen-sesion.js` | Pestaña 1 · resumen por IA: abre el panel de confirmación, guarda los puntos débiles confirmados (origen `chequeo`) y descarga el .txt [8] [MC-D] |
+| `pestanas/confirmar-debiles.js` | Pestaña 1 · panel de confirmación: desmarcar, editar texto y tipo de los puntos débiles propuestos por el resumen; devuelve los confirmados y marca los que ya están guardados [MC-D] |
 | `estado/progreso.js` | `saveProgreso`: comprensión y mejor examen por subtema [8] |
 | `exportacion/resumen-txt.js` | Arma el texto del resumen .txt [8] |
 | `exportacion/exportar-pdf.js` | PDF con html2pdf: `generarPDF()` y `rutaHTML()` comunes, ficha del subtema (acción `pdf`, en Examen y ficha) y ejercicio con resolución y solución (acción `pdf-ejercicio`, en Ejercicios) [8] |
