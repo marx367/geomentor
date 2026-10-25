@@ -1,72 +1,51 @@
 # GeoMentor
 
-Tutor de matemática con IA: materias, ejes y subtemas que arma el estudiante (Mi curso), cuatro pestañas por subtema (Teoría, Laboratorio, Ejercicios, Examen), apuntes del estudiante y capa multi-LLM. App web estática, sin backend.
+Tutor de matemática con IA, sin backend: el estudiante arma su curso (materias, ejes, subtemas) y cada subtema tiene Teoría, Laboratorio, Ejercicios y Examen; apuntes y capa multi-LLM.
 
 ## Stack (definitivo)
 
-- **Tecnología:** HTML + CSS + JavaScript vanilla con **módulos ES** (`import`/`export`). Sin build ni npm.
-- **Librerías por CDN:** KaTeX y MathJax (fórmulas), html2pdf (ficha PDF), pdf.js (lectura de apuntes PDF, se carga bajo demanda), fuentes de Google Fonts: Bricolage Grotesque (títulos) y Atkinson Hyperlegible Next (texto, también en el lienzo y la pizarra).
-- **Persistencia:** localStorage. Opcional: la base de datos de claude.ai cuando la app corre como artefacto.
-- **IA:** el navegador llama directo a cada proveedor (Gemini, OpenAI, Anthropic, OpenRouter, DeepSeek, GLM, Qwen y compatibles con OpenAI). Las claves las carga el estudiante y quedan en su navegador.
+HTML + CSS + JS vanilla con módulos ES, sin build ni npm. Librerías por CDN (ver index.html): KaTeX, MathJax, html2pdf, pdf.js (solo bajo demanda) y Google Fonts.
 
-**Por qué:** cero herramientas para empezar. Los `import` muestran qué depende de qué. Si el proyecto crece, la carpeta `js/` se mueve casi igual a `src/` con Vite.
+- Persistencia: localStorage. Al correr como artefacto de claude.ai, puede usar además su base de datos.
+- IA: el navegador llama directo a cada proveedor (ver js/ia/). Las claves las carga el estudiante y quedan en su navegador.
 
-**Limitación:** los módulos ES no cargan con doble clic (`file://`). Se abre con `iniciar-servidor.ps1` o con Live Server de VS Code.
+Por qué: cero herramientas para empezar; los import muestran las dependencias. Si crece, js/ pasa casi igual a src/ con Vite.
 
-**Señales para reevaluar el stack:**
-- Más de ~100 archivos JS o ganas de tests automáticos → pasar a Vite + Vitest.
-- Necesidad de funcionar sin internet → bajar las librerías a `vendor/` o instalarlas con npm.
-- Varios usuarios con cuentas, o claves de IA compartidas → hace falta un backend (las claves nunca deben ir al navegador de otros).
+Limitación: los módulos ES no cargan con file://. Abrir con iniciar-servidor.ps1 o Live Server.
+
+Reevaluar el stack si: ~100+ archivos JS o ganas de tests (→ Vite + Vitest); se necesita funcionar sin internet (→ vendor/); varios usuarios con cuentas o claves compartidas (→ backend: las claves nunca deben ir al navegador de otros).
 
 ## Estructura
 
 ```
-index.html          → estructura HTML; carga js/tema-inicial.js, css/estilos.css y js/main.js
+index.html          → js/tema-inicial.js, css/estilos.css, js/main.js
 css/                → tema, base, componentes/, vistas/, movimiento, responsive
-js/main.js          → punto de entrada
-js/nucleo/          → utilidades sin dependencias
-js/datos/           → colores de materias y sinónimos
-js/estado/          → estado en memoria y almacenamiento
-js/render/          → Markdown y fórmulas
-js/ia/              → proveedores, adaptadores, cliente y panel de IA
-js/contexto/        → armado de prompts con apuntes y reglas
-js/laboratorio/     → parser de expresiones (sin eval) y lienzo
-js/pizarra/         → pizarra a mano alzada para Ejercicios
-js/pestanas/        → teoría, laboratorio, ejercicios, examen
-js/apuntes/         → lectores de archivos, Tema de hoy, plan de estudios
-js/profesor/        → estilo del profesor, cuestionario y biblioteca
-js/exportacion/     → descargas, resumen .txt, ficha PDF
-js/ui/              → navegación, migas, mentor, diálogos, eventos, tema
-docs/               → arquitectura y guías; docs/fichas/ con la ficha de cada función nueva
-scripts/            → verificar.ps1 (sintaxis, gitleaks, TODO/FIXME)
-.claude/agents/     → árbitro: revisa los cambios contra el listón de la ficha
+js/                 → main.js · nucleo/ · datos/ · estado/ · render/ · ia/ · contexto/ · laboratorio/ (parser sin eval) · pizarra/ · pestanas/ · apuntes/ · profesor/ · exportacion/ · ui/
+docs/               → arquitectura y guías; docs/fichas/ (ficha por función nueva)
+scripts/            → verificar.ps1 · .claude/agents/ → árbitro (revisa contra el listón de la ficha)
 ```
 
-Detalle de cada archivo: `docs/modulos.md`. Regla de dependencias: `docs/arquitectura.md`.
+Detalle de cada archivo: docs/modulos.md. Dependencias: docs/arquitectura.md.
 
 ## Convenciones
 
-- Nombres de archivos y carpetas en minúsculas, con guiones, sin tildes. Código y comentarios en español.
-- Un archivo = una responsabilidad. Si pasa de ~300 líneas, se parte.
-- Sin `onclick` en el HTML: los eventos van delegados en `js/ui/eventos.js`.
-- Las capas bajas nunca importan a las altas (ver `docs/arquitectura.md`).
-- Nunca claves en el código.
-- Los PDF (html2pdf) no llevan ancho fijo: el contenido usa el ancho de la página (~698 px en A4) y las palabras largas pasan de línea; `generarPDF` pasa `scrollX: 0` y `scrollY: 0` a html2canvas porque, si no, el scroll de la página corre el PDF.
+- Archivos y carpetas en minúsculas, con guiones, sin tildes. Código y comentarios en español.
+- Un archivo = una responsabilidad; si pasa de ~300 líneas, se parte.
+- Eventos delegados en js/ui/eventos.js (sin onclick en el HTML).
+- Las capas bajas nunca importan a las altas (docs/arquitectura.md).
 
 ## Diseño
 
-Dirección «pizarra y papel milimetrado». Todo sale de los tokens de `css/tema.css`: no usar valores sueltos.
-- **Color:** marca verde pizarra (`--marca-50…900`, `--tiza-verde`, `--tiza-amarilla`). `--marca` es fija; `--accent` cambia con cada materia (`setAccent` en `js/ui/navegacion.js`, paleta en `js/datos/colores-materias.js`). Las materias guardan su color; si es de la paleta anterior al rediseño (`COLORES_ANTERIORES`), al cargar pasa al nuevo de la misma posición (`colorMateria` en `js/estado/curso.js`).
-- **Escalas:** espaciado `--e-1…--e-9` (4 a 96 px), tipografía `--t-xs…--t-2xl` (razón 1,25), radios `--radius-sm/--radius/--radius-lg`.
-- **Capas:** base (fondo), elevada (tarjetas, paneles) y flotante (diálogos, menús, mentor), con `--sombra-elevada` y `--sombra-flotante` teñidas de verde.
-- **Movimiento:** solo `transform` y `opacity`, easing `--resorte`. Una sola entrada orquestada al mostrar cada vista (`css/movimiento.css`), con `animation-fill-mode: backwards` (con `both` la animación queda pegada y anula el resorte del hover). `prefers-reduced-motion` la apaga.
-- **Accesibilidad:** todo lo clickeable mide al menos 44×44 y tiene `:hover`, `:focus-visible` y `:active`. Contraste mínimo de 4.5:1 en Light, Dim y Dark.
+«Pizarra y papel milimetrado». Todo sale de los tokens de css/tema.css, nada de valores sueltos. --marca es fija; --accent cambia con cada materia (setAccent); los colores de la paleta anterior migran solos (COLORES_ANTERIORES).
+- Movimiento: solo transform y opacity, easing --resorte; entrada orquestada por vista (css/movimiento.css) con animation-fill-mode: backwards (con both, anula el resorte del hover); prefers-reduced-motion la apaga.
+- Accesibilidad: clickeables ≥44×44 con :hover, :focus-visible y :active; contraste ≥4.5:1 en Light, Dim y Dark.
+- PDF (html2pdf): sin ancho fijo (~698 px en A4) y render con scrollX/scrollY en 0, o el scroll de la página corre el PDF.
 
 ## Estado
 
-Migración desde el prototipo terminada (2026-10-11). Abierto a nuevas implementaciones: ver Fase 2 en `ROADMAP.md`.
+Siguiente: Fase 2 de ROADMAP.md.
 
 ## Ramas y commits
-- Nunca trabajes en main ni en mi-curso. Si la rama actual es una de esas, pará y pedime crear
-  una rama feat/<nombre> o fix/<nombre> antes de tocar código.
-- Commit y push solo cuando yo lo pida, después de mostrarme qué archivos entran y el mensaje.
+
+- Nunca trabajar en main ni en mi-curso: pedir crear feat/<nombre> o fix/<nombre> antes de tocar código.
+- Commit y push solo cuando Marcelo lo pida, mostrando antes qué archivos entran y el mensaje.
