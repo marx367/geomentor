@@ -19,6 +19,7 @@ import { iniciarPuntosDebiles, updateDebilesCount } from './ui/puntos-debiles.js
 import { iniciarEventos } from './ui/eventos.js';
 import { iniciarTema } from './ui/tema.js';
 import { iniciarHoy, renderHoy } from './ui/hoy.js';
+import { iniciarDialogoDrill } from './ui/dialogo-drill.js';
 import { iniciarPanelApuntes, renderApuntes } from './apuntes/panel-apuntes.js';
 import { iniciarDialogoPlan } from './apuntes/dialogo-plan.js';
 import { iniciarDialogoTemaHoy } from './apuntes/dialogo-tema-hoy.js';
@@ -47,6 +48,7 @@ iniciarHojaErrores();
 iniciarEventos();
 iniciarTema();
 iniciarHoy();
+iniciarDialogoDrill();
 
 // Cuando MathJax termina de cargar, se redibuja para mostrar las fórmulas con mejor calidad.
 window.addEventListener('math-ready', rerenderCurrent);

@@ -5,7 +5,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 ## Raíz
 | Archivo | Qué hace |
 |---|---|
-| `index.html` | Estructura: cabecera (Hoy, Mi curso, 📌, ⚙️ y tema), vistas (Hoy es la primera) [M2], diálogos (Profesor con Reglas del examen, Hoja de errores), mentor con botón de acción. Carga CSS y `js/main.js` [2] |
+| `index.html` | Estructura: cabecera (Hoy, Mi curso, 📌, ⚙️ y tema), vistas (Hoy es la primera) [M2], diálogos (Profesor con Reglas del examen, Hoja de errores, Práctica rápida [M2]), mentor con botón de acción. Carga CSS y `js/main.js` [2] |
 | `iniciar-servidor.ps1` | Levanta un servidor local en el puerto 8080 [1] |
 
 ## css/ [2]
@@ -77,7 +77,8 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `apuntes/plan-estudios.js` | Lógica: prompt de cada sección, limpieza, cronograma y armado del plan .md [6] |
 | `apuntes/panel-apuntes.js` | Lista de apuntes en Config, asignación a temas y carga de archivos [7] |
 | `apuntes/dialogo-plan.js` | Diálogo "Consolidar apuntes en un plan", con progreso y cancelación [7] |
-| `ui/hoy.js` | Pantalla Hoy: arma los temas con `temasDesdeEstado`, muestra hasta 3 acciones de `colaDeHoy` (motivo, minutos y "Empezar") o "Todo al día"; acciones `hoy-ir` (entra al subtema y abre la pestaña) y `cerrar-hoja-hoy` (entra y abre la hoja); se dibuja con el aviso `mostrar-hoy` [M2] |
+| `ui/dialogo-drill.js` | Diálogo "🎯 Práctica rápida" (acción `drill-abrir`): método preelegido por el nombre del subtema, 10 ítems con botones, "Corregir" local que registra un intento `drill`, "Repetir" con semilla nueva; al cerrar redibuja Hoy [M2] |
+| `ui/hoy.js` | Pantalla Hoy: arma los temas con `temasDesdeEstado`, muestra hasta 3 acciones de `colaDeHoy` (motivo, minutos y "Empezar"; en practicar y repasar abre un drill y suma "Ir al tema") o "Todo al día"; acciones `hoy-ir` (entra al subtema y abre la pestaña) y `cerrar-hoja-hoy` (entra y abre la hoja); se dibuja con el aviso `mostrar-hoy` [M2] |
 | `ui/navegacion.js` | Vista Hoy (avisa `mostrar-hoy`) y `enterSubtema(sub, tab)` para entrar directo a una pestaña [M2]; vistas de Mi curso (materias, con inicio vacío; ejes; subtemas por fecha), acento por materia, entrar a un subtema, pestañas, `reiniciarSesion()` (el botón está en Config) [7] |
 | `ui/migas.js` | Migas de pan (vacías en Hoy) [7] [M2] |
 | `ui/tarjetas.js` | Tarjetas de selección y conteo de puntos débiles pendientes [7] |
@@ -147,5 +148,7 @@ Lógica pura del método: no importa otras carpetas de `js/`, no toca la pantall
 | `estudio.js` | `ETAPAS`, `UMBRALES`, `etapaDe()` derivada por compuertas (captura → reconstrucción → práctica → recuperación → simulación), `proximaEtapa()`, `aprobado()` e `intentosHasta()` |
 | `repaso.js` | `OFFSETS` D0/D1/D3/D7/D14, `vencimientos()` (fecha, vence, atraso, hecho), `fechaExamen()` con `EXAMEN_ESTIMADO`, `diasHastaExamen()`, `modoExpress()` |
 | `cola.js` | `colaDeHoy()`: hasta 3 acciones por prioridad P0-P4 con minutos y motivo; la etapa elige qué acciones aplican y los vencimientos, el momento y el motivo; máximo 2 repasos y una acción por tema (salvo reconstruir + cerrar hoja) |
+| `drills.js` | Drills de opción múltiple: `generarDrill({ metodo, semilla, cantidad })` determinista (RNG mulberry32, sin preguntas repetidas), `corregirDrill()` (faltante = error) y `METODOS` [M2] |
+| `drills-banco.js` | Banco de Geometría Descriptiva por método (tercera proyección y recta, 5 generadores cada uno), con `diedroDe`, `TRAZAS` y `mezclar`; reglas de las hojas 01 y 02 del cuadernillo [M2] |
 | `adaptadores.js` | Puente con los datos de la app: `claveDe`, `aplanarCurso`, `buscarPorClave` y `temasDesdeEstado()` (subtema → Tema, con estado de la hoja vacía/hecha/obsoleta) [M2] |
 | `*.test.js` | Tests con `node:test`: `node --test js/dominio/*.test.js` (los corre `scripts/verificar.ps1`) |

@@ -11,6 +11,8 @@ import { setAccent, enterSubtema } from './navegacion.js';
 
 // Pestaña del subtema donde se hace cada acción (cerrar-hoja abre el diálogo de la hoja).
 const PESTANA = { reconstruir: 'teoria', practicar: 'ejercicios', repasar: 'ejercicios', integrar: 'examen' };
+// Acciones que se hacen con un drill (ver ui/dialogo-drill.js, que registra la acción drill-abrir).
+const DRILL = new Set(['practicar', 'repasar']);
 
 // 'AAAA-MM-DD' → 'DD/MM/AAAA' sin pasar por Date (no cambia el día por la zona horaria).
 const fechaCorta = f => f.split('-').reverse().join('/');
@@ -18,10 +20,15 @@ const fechaCorta = f => f.split('-').reverse().join('/');
 function tarjeta(accion) {
   const f = buscarPorClave(S.curso, accion.temaId);
   const titulo = f ? f.subtema.nombre : 'Tema';
-  const datos = `data-key="${escapeHTML(accion.temaId)}" aria-label="Empezar: ${escapeHTML(titulo)}"`;
-  const boton = accion.tipo === 'cerrar-hoja'
-    ? `<button class="btn primary" data-action="cerrar-hoja-hoy" ${datos}>Empezar</button>`
-    : `<button class="btn primary" data-action="hoy-ir" data-tab="${PESTANA[accion.tipo]}" ${datos}>Empezar</button>`;
+  const clave = `data-key="${escapeHTML(accion.temaId)}"`;
+  const datos = `${clave} aria-label="Empezar: ${escapeHTML(titulo)}"`;
+  let boton;
+  if (accion.tipo === 'cerrar-hoja') boton = `<button class="btn primary" data-action="cerrar-hoja-hoy" ${datos}>Empezar</button>`;
+  // Practicar y repasar se hacen con un drill local; "Ir al tema" lleva a Ejercicios como antes.
+  else if (DRILL.has(accion.tipo)) {
+    boton = `<button class="btn primary" data-action="drill-abrir" ${datos}>Empezar</button>
+      <button class="btn" data-action="hoy-ir" data-tab="${PESTANA[accion.tipo]}" ${clave} aria-label="Ir al tema: ${escapeHTML(titulo)}">Ir al tema</button>`;
+  } else boton = `<button class="btn primary" data-action="hoy-ir" data-tab="${PESTANA[accion.tipo]}" ${datos}>Empezar</button>`;
   return `<article class="panel-card stack">
     <div>
       <h2>${escapeHTML(titulo)}</h2>
