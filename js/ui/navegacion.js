@@ -18,7 +18,8 @@ export function setAccent(m) {
 }
 export function go(view) {
   S.view = view;
-  for (const v of ['materias', 'ejes', 'subtemas', 'mentoria']) $('#view-' + v).hidden = v !== view;
+  for (const v of ['hoy', 'materias', 'ejes', 'subtemas', 'mentoria']) $('#view-' + v).hidden = v !== view;
+  if (view === 'hoy') avisar('mostrar-hoy'); // la dibuja ui/hoy.js (que importa este archivo: así no hay ciclo)
   if (view === 'materias') renderMaterias();
   if (view === 'ejes') renderEjes();
   if (view === 'subtemas') renderSubtemas();
