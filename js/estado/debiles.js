@@ -1,7 +1,7 @@
 // Puntos débiles: formato de cada ítem, migración del formato viejo y guardado.
 // Ítem: { id, key, materiaId, ejeId, subId, materia, eje, subtema, fecha, origen, detalle, puntos: [{ texto, tipo, descartado }], superado }
 // origen es un código (ORIGENES) y detalle el dato extra ("7/10", "Parcial"). superado y descartado: null o fecha ISO.
-import { limpiarTexto } from '../nucleo/utilidades.js';
+import { limpiarTexto, norm } from '../nucleo/utilidades.js';
 import { S } from './estado.js';
 import { Store } from './almacen.js';
 import { normalizarTipo, SIN_CLASIFICAR } from './tipos-error.js';
@@ -74,6 +74,15 @@ export const puntosVigentes = d => (Array.isArray(d?.puntos) ? d.puntos : []).fi
 // Los superados no se borran (quedan para contar frecuencias), pero no se muestran ni se cuentan como pendientes.
 // Un ítem con todos sus puntos descartados tampoco.
 export const debilesActivos = () => S.debiles.filter(d => !d.superado && puntosVigentes(d).length);
+
+// Clave de comparación de un punto débil: texto normalizado y recortado igual que al guardarlo.
+export const claveTextoDebil = t => norm(limpiarTexto(t, MAX_PUNTO));
+
+// Textos normalizados de los puntos vigentes ya guardados para un subtema (key). Se usan para no
+// guardar dos veces el mismo punto: el panel marca como "ya guardado" los que coincidan con estos.
+export const textosDebilesGuardados = k => new Set(
+  S.debiles.filter(d => d.key === k).flatMap(d => puntosVigentes(d).map(p => claveTextoDebil(p.texto)))
+);
 
 // Marca el ítem como superado con la fecha de hoy. Devuelve false si no se pudo guardar (y no cambia nada).
 export async function marcarSuperado(d) {

@@ -1,7 +1,7 @@
 // Tipos de error de los puntos débiles: lista fija y corta, igual para todos los temas, para poder contar
 // repeticiones ("Mis errores", "Errores más frecuentes"). La IA elige uno por punto; si no elige bien, 'sin-clasificar'.
 // Si agregás o renombrás un tipo, los puntos ya guardados con el id viejo pasan a 'sin-clasificar': hace falta migrarlos.
-import { norm } from '../nucleo/utilidades.js';
+import { norm, escapeHTML } from '../nucleo/utilidades.js';
 import { getTag, getTags, toList } from '../nucleo/etiquetas-xml.js';
 
 export const SIN_CLASIFICAR = 'sin-clasificar';
@@ -25,6 +25,13 @@ export function normalizarTipo(x) {
 }
 
 export const etiquetaTipo = id => TIPOS_ERROR[id]?.etiqueta || 'Sin clasificar';
+
+// Opciones del <select> de tipo (para el panel de confirmación y el editor del 📌): todos los tipos,
+// con el id seleccionado marcado. "Sin clasificar" va al final.
+export const opcionesTipo = (seleccionado = SIN_CLASIFICAR) => [
+  ...Object.entries(TIPOS_ERROR).map(([id, t]) => [id, t.etiqueta]),
+  [SIN_CLASIFICAR, 'Sin clasificar']
+].map(([id, et]) => `<option value="${id}"${id === seleccionado ? ' selected' : ''}>${escapeHTML(et)}</option>`).join('');
 
 // Lee los puntos que devolvió la IA: <punto><texto>…</texto><tipo>id</tipo></punto> (formato en reglas-prompt.js).
 // Si la IA no usó <punto> (modelo que no obedece), toma una línea por punto, sin clasificar.
