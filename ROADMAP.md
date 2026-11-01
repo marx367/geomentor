@@ -77,7 +77,7 @@ Tutor de matemática con IA, pasado de un prototipo de un solo archivo a un proy
 2. Al cerrar una fase: pasarla a ✅ y marcar la siguiente con 🔄.
 3. Una idea nueva entra en "Fuera de alcance"; pasa a una fase solo si la persona lo decide.
 4. Cambios en este archivo: solo con el OK de la persona.
-5. Al cambiar de fase, actualizar también la línea del proyecto en `C:\Proyectos\ROADMAP-GLOBAL.md`.
+5. Al cambiar de fase, actualizar también la línea del proyecto en `C:\claude_proyectos\ROADMAP-GLOBAL.md`.
 - 2026-10-11 · Fase 2: engranaje de configuración y selector de tema
 - 2026-10-11 · Fase 2: Mi curso, pasos 1 a 3 (datos propios, Tema de hoy, Profesor y bibliografía)
 - 2026-10-11 · Fase 2: Mi curso, Reglas del examen y Puntos débiles con tipo
