@@ -1,6 +1,6 @@
 # Módulos
 
-Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2; [MCn] = paso n de `docs/plan-mi-curso.md`; [MC-R] = Reglas del examen, [MC-D] = Puntos débiles con tipo y [MC-H] = Hoja de errores y [MC-B] = Bibliografía en el tutor y ejercicios propios, del mismo plan).
+Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2; [MCn] = paso n de `docs/plan-mi-curso.md`; [MC-R] = Reglas del examen, [MC-D] = Puntos débiles con tipo y [MC-H] = Hoja de errores y [MC-B] = Bibliografía en el tutor y ejercicios propios, del mismo plan; [M1] = Fase 1 del roadmap del método: dominio puro + tests).
 
 ## Raíz
 | Archivo | Qué hace |
@@ -135,3 +135,14 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `pestanas/examen.js` | Pestaña 4 · pide las 5 preguntas (cada una con su tipo de error) y dibuja examen y resultado; botón 📝 Hoja de errores arriba y junto a la ficha PDF [10] [MC-H] |
 | `pestanas/examen-resultado.js` | Pestaña 4 · entrega (nota, mejor resultado) y guardar errores como débiles con el tipo de cada pregunta (origen `examen`) [10] |
 | `pestanas/pestana-examen.js` | Pestaña 4 · cableado: registro y botones [10] |
+
+## js/dominio/ [M1]
+Lógica pura del método: no importa otras carpetas de `js/`, no toca la pantalla ni el almacenamiento. Fechas siempre como texto `'YYYY-MM-DD'`.
+| Archivo | Qué hace |
+|---|---|
+| `tipos.js` | Solo JSDoc: `Etapa`, `Intento`, `Tema` y `Accion` |
+| `fechas.js` | `esFecha`, `sumarDias`, `diasEntre` sin `Date` (número de día civil, cruza meses, años y bisiestos); entrada inválida → `null` |
+| `estudio.js` | `ETAPAS`, `UMBRALES`, `etapaDe()` derivada por compuertas (captura → reconstrucción → práctica → recuperación → simulación), `proximaEtapa()`, `aprobado()` e `intentosHasta()` |
+| `repaso.js` | `OFFSETS` D0/D1/D3/D7/D14, `vencimientos()` (fecha, vence, atraso, hecho), `fechaExamen()` con `EXAMEN_ESTIMADO`, `diasHastaExamen()`, `modoExpress()` |
+| `cola.js` | `colaDeHoy()`: hasta 3 acciones por prioridad P0-P4 con minutos y motivo; máximo 2 repasos y una acción por tema (salvo clase nueva + cerrar hoja) |
+| `*.test.js` | Tests con `node:test`: `node --test js/dominio/*.test.js` (los corre `scripts/verificar.ps1`) |

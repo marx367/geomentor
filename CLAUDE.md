@@ -25,6 +25,7 @@ index.html          → estructura HTML; carga js/tema-inicial.js, css/estilos.c
 css/                → tema, base, componentes/, vistas/, movimiento, responsive
 js/main.js          → punto de entrada
 js/nucleo/          → utilidades sin dependencias
+js/dominio/         → el método puro: etapas, vencimientos y cola del día, con tests (node --test)
 js/datos/           → colores de materias y sinónimos
 js/estado/          → estado en memoria y almacenamiento
 js/render/          → Markdown y fórmulas
@@ -38,7 +39,7 @@ js/profesor/        → estilo del profesor, cuestionario y biblioteca
 js/exportacion/     → descargas, resumen .txt, ficha PDF
 js/ui/              → navegación, migas, mentor, diálogos, eventos, tema
 docs/               → arquitectura y guías; docs/fichas/ con la ficha de cada función nueva
-scripts/            → verificar.ps1 (sintaxis, gitleaks, TODO/FIXME)
+scripts/            → verificar.ps1 (sintaxis, tests de dominio, gitleaks, TODO/FIXME)
 .claude/agents/     → árbitro: revisa los cambios contra el listón de la ficha
 ```
 

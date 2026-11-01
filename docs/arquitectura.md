@@ -25,6 +25,8 @@ estado/                      → estado en memoria y almacenamiento
   │
 datos/  laboratorio/parser/  → datos fijos (colores, sinónimos) · parser puro (sin DOM)
   │
+dominio/                     → el método: etapas, vencimientos y cola del día (puro, con tests)
+  │
 nucleo/                      → utilidades sin dependencias
 ```
 
@@ -43,6 +45,7 @@ nucleo/                      → utilidades sin dependencias
 5. **El parser no toca el DOM.** Recibe texto y devuelve valores o errores. Así se puede probar solo.
 6. **Eventos delegados.** `ui/eventos.js` escucha `click`, `input` y `change` en `document` y deriva según `data-action` (y `data-abrir` para diálogos que se abren desde varios botones, como "＋ Tema de hoy"). No hay `onclick` en el HTML.
 7. **Avisos con eventos de `window`** cuando una capa baja tiene que reaccionar a algo de una alta: `math-ready` (MathJax cargó) y `cambio-tema` (lo dispara `ui/tema.js`; lo escucha el lienzo para redibujarse con los colores nuevos). Así la capa baja escucha sin importar a la alta.
+8. **`dominio/` es lógica pura.** `dominio/` no importa `estado/`, `ui/` ni `ia/`, y no toca DOM ni almacenamiento: es lógica pura y testeable. Las fechas se operan como texto `'YYYY-MM-DD'` con `dominio/fechas.js`, nunca con `Date`. Tests: `node --test js/dominio/*.test.js`.
 
 ## Temas
 
