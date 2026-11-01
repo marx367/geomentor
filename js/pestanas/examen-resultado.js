@@ -4,6 +4,7 @@ import { $ } from '../nucleo/dom.js';
 import { S, key, sess } from '../estado/estado.js';
 import { guardarDebil } from '../estado/debiles.js';
 import { saveProgreso } from '../estado/progreso.js';
+import { registrar } from '../estado/intentos.js';
 import { mentor } from '../ui/mentor.js';
 import { updateDebilesCount } from '../ui/puntos-debiles.js';
 import { renderExamen } from './examen.js';
@@ -17,6 +18,7 @@ export async function entregarExamen() {
   window.scrollTo({ top: $('#tab-examen').getBoundingClientRect().top + window.scrollY - 90, behavior: 'smooth' });
   const prev = S.progreso.temas[k]?.examenMejor ?? 0;
   await saveProgreso(k, { examenUltimo: ex.score, examenMejor: Math.max(prev, ex.score) });
+  await registrar(k, { tipo: 'examen', aciertos: correct, total: ex.questions.length });
   mentor(ex.score >= 8 ? '🎯 ¡Excelente progreso! El estudio constante te asegura la nota reglamentada.' : ex.score >= 5 ? 'Buen intento. Lee las explicaciones de las que fallaste y reintenta.' : 'No te desanimes: vuelve al chequeo de la pestaña Teoría y después reintenta.');
 }
 

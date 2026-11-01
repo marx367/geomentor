@@ -8,6 +8,7 @@ import { cargarProfesor, cargarBiblioteca, guardarProfesor } from './estado/prof
 import { normalizarReglas, esDefinida } from './estado/reglas-examen.js';
 import { migrarDebiles, debilesActivos, puntosVigentes } from './estado/debiles.js';
 import { cargarHojas } from './estado/hojas.js';
+import { cargarIntentos, backfillDesdeProgreso } from './estado/intentos.js';
 import { initCapabilities } from './ia/config-ia.js';
 import { applyIA } from './ia/panel-ia.js';
 import { iniciarMentor, mentor } from './ui/mentor.js';
@@ -17,6 +18,8 @@ import { go, rerenderCurrent, renderMaterias } from './ui/navegacion.js';
 import { iniciarPuntosDebiles, updateDebilesCount } from './ui/puntos-debiles.js';
 import { iniciarEventos } from './ui/eventos.js';
 import { iniciarTema } from './ui/tema.js';
+import { iniciarHoy, renderHoy } from './ui/hoy.js';
+import { iniciarDialogoDrill } from './ui/dialogo-drill.js';
 import { iniciarPanelApuntes, renderApuntes } from './apuntes/panel-apuntes.js';
 import { iniciarDialogoPlan } from './apuntes/dialogo-plan.js';
 import { iniciarDialogoTemaHoy } from './apuntes/dialogo-tema-hoy.js';
@@ -24,6 +27,7 @@ import { iniciarDialogoProfesor } from './profesor/dialogo-profesor.js';
 import { iniciarDialogoBiblioTema } from './profesor/dialogo-biblio-tema.js';
 import { iniciarExportarPDF } from './exportacion/exportar-pdf.js';
 import { iniciarHojaErrores } from './exportacion/dialogo-hoja.js';
+import { iniciarConfirmarDebiles } from './pestanas/confirmar-debiles.js';
 
 // Pestañas: cada una se anota sola en el registro al importarse.
 import './pestanas/pestana-teoria.js';
@@ -42,8 +46,11 @@ iniciarDialogoProfesor();
 iniciarDialogoBiblioTema();
 iniciarExportarPDF();
 iniciarHojaErrores();
+iniciarConfirmarDebiles();
 iniciarEventos();
 iniciarTema();
+iniciarHoy();
+iniciarDialogoDrill();
 
 // Cuando MathJax termina de cargar, se redibuja para mostrar las fórmulas con mejor calidad.
 window.addEventListener('math-ready', rerenderCurrent);
@@ -60,7 +67,7 @@ function yaPreguntoReglas() {
 }
 
 (async function boot() {
-  go('materias');
+  go('hoy');
   $('#mentor-bubble').hidden = false;
   initCapabilities().then(() => { applyIA(); rerenderCurrent(); });
   await Store.init();
@@ -80,11 +87,15 @@ function yaPreguntoReglas() {
   // el curso real con uno vacío. El progreso del catálogo viejo queda guardado pero no se muestra
   // (sus claves no coinciden con ningún tema de Mi curso); ejesGen se descarta al próximo guardado de config.
   cargarCurso(curso);
+  // Intentos: después del curso y del progreso, porque el backfill los necesita (no escribe si no hay nada nuevo).
+  await cargarIntentos();
+  await backfillDesdeProgreso();
   // Puntos débiles del formato viejo (texto suelto) → formato con tipo; respalda antes de reescribir.
   S.debiles = await migrarDebiles(debiles);
   updateDebilesCount();
   renderApuntes();
   if (S.view === 'materias') renderMaterias();
+  if (S.view === 'hoy') renderHoy();
   const n = debilesActivos().reduce((a, d) => a + puntosVigentes(d).length, 0);
   if (!esDefinida() && !yaPreguntoReglas()) mentor('¡Hola! Antes de seguir: ¿cómo es tu examen final? ¿Se puede usar material? Con eso adapto la teoría, las pistas y las preguntas.', { texto: '📋 Reglas del examen', abrir: 'profesor' });
   else if (n) mentor(`¡Hola de nuevo! Tienes ${n} puntos débiles guardados. Ábrelos con 📌 para repasarlos o elige una materia.`);

@@ -3,7 +3,7 @@
 //  - registrarPestana('teoria', { mostrar, redibujar }): qué hacer al abrirla y al redibujar la vista.
 //  - registrarAccion('verificar', fn): botones con data-action="verificar" (ver ui/eventos.js).
 //  - alSuceder('entrar-subtema', fn): avisos generales; la navegación los dispara con avisar().
-// Avisos usados: 'entrar-subtema', 'cambio-acento', 'reiniciar'.
+// Avisos usados: 'entrar-subtema', 'cambio-acento', 'reiniciar', 'mostrar-hoy' (lo escucha ui/hoy.js).
 const pestanas = {};
 const acciones = {};
 const ganchos = {};

@@ -6,7 +6,7 @@ import { S } from '../estado/estado.js';
 import { buscarMateria, buscarEje } from '../estado/curso.js';
 import { Store } from '../estado/almacen.js';
 import { etiquetaOrigen, debilesActivos, marcarSuperado, puntosVigentes, editarPunto, descartarPunto } from '../estado/debiles.js';
-import { etiquetaTipo, TIPOS_ERROR, SIN_CLASIFICAR } from '../estado/tipos-error.js';
+import { etiquetaTipo, opcionesTipo } from '../estado/tipos-error.js';
 import { mdInline } from '../render/markdown.js';
 import { saveFile } from '../exportacion/descargas.js';
 import { mentor } from './mentor.js';
@@ -51,10 +51,9 @@ const puntoHTML = (d, p, i) => `<li>${mdInline(p.texto)} <span class="pill tipo"
 // Formulario de edición dentro del mismo <li>. Los <label> envuelven al campo: no hacen falta ids.
 function abrirEditor(li, d, i) {
   const p = d.puntos[i];
-  const tipos = [...Object.entries(TIPOS_ERROR).map(([id, t]) => [id, t.etiqueta]), [SIN_CLASIFICAR, 'Sin clasificar']];
   li.innerHTML = `<div class="editar-punto">
     <label>Texto del punto <textarea maxlength="600" rows="3">${escapeHTML(p.texto)}</textarea></label>
-    <label>Tipo de error <select>${tipos.map(([id, et]) => `<option value="${id}"${id === p.tipo ? ' selected' : ''}>${escapeHTML(et)}</option>`).join('')}</select></label>
+    <label>Tipo de error <select>${opcionesTipo(p.tipo)}</select></label>
     <div class="btn-row"><button class="btn sm primary" data-dact="guardar-punto" ${datos(d, i)}>Guardar</button><button class="btn sm" data-dact="cancelar-punto" ${datos(d, i)}>Cancelar</button></div>
   </div>`;
   li.querySelector('textarea').focus();
