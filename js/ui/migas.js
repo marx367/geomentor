@@ -4,6 +4,7 @@ import { escapeHTML } from '../nucleo/utilidades.js';
 import { S } from '../estado/estado.js';
 
 export function renderCrumbs() {
+  if (S.view === 'hoy') { $('#crumbs').innerHTML = ''; return; } // Hoy no es un paso de Mi curso
   const steps = [
     { v: 'materias', label: S.materia ? S.materia.nombre : '1. Materia' },
     { v: 'ejes', label: S.eje ? S.eje.nombre : '2. Eje temático', need: S.materia },

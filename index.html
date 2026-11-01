@@ -46,6 +46,8 @@
     </div>
   </div>
   <nav class="top-actions" aria-label="Acciones">
+    <button class="btn ghost" data-go="hoy" title="Lo que conviene hacer hoy">📅 <span class="lbl">Hoy</span></button>
+    <button class="btn ghost" data-go="materias" title="Materias, ejes y subtemas">📚 <span class="lbl">Mi curso</span></button>
     <button class="btn ghost" id="btn-debiles" title="Áreas de mejora guardadas">📌 <span class="lbl">Áreas de mejora</span> <span class="count" id="debiles-count" hidden>0</span></button>
   </nav>
   <!-- Botones de ícono: configuración (IA y apuntes) y tema -->
@@ -77,7 +79,20 @@
 <main class="container">
   <nav class="crumbs" id="crumbs" aria-label="Ruta"></nav>
 
-  <section id="view-materias" class="view">
+  <section id="view-hoy" class="view">
+    <div class="view-head">
+      <div>
+        <h1>Hoy</h1>
+        <p class="lead" id="hoy-fecha"></p>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" data-abrir="tema-hoy">＋ Tema de hoy</button>
+      </div>
+    </div>
+    <div id="hoy-body"></div>
+  </section>
+
+  <section id="view-materias" class="view" hidden>
     <div class="view-head">
       <div>
         <h1>Mi curso</h1>
@@ -302,6 +317,11 @@
 <dialog id="dlg-hoja">
   <div class="dlg-head"><h3>📝 Hoja de errores</h3><button class="btn ghost sm" data-close>✕</button></div>
   <div class="dlg-body" id="hoja-body"></div>
+</dialog>
+
+<dialog id="dlg-drill">
+  <div class="dlg-head"><h3>🎯 Práctica rápida</h3><button class="btn ghost sm" data-close>✕</button></div>
+  <div class="dlg-body" id="drill-body"></div>
 </dialog>
 
 </body>

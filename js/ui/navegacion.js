@@ -18,7 +18,8 @@ export function setAccent(m) {
 }
 export function go(view) {
   S.view = view;
-  for (const v of ['materias', 'ejes', 'subtemas', 'mentoria']) $('#view-' + v).hidden = v !== view;
+  for (const v of ['hoy', 'materias', 'ejes', 'subtemas', 'mentoria']) $('#view-' + v).hidden = v !== view;
+  if (view === 'hoy') avisar('mostrar-hoy'); // la dibuja ui/hoy.js (que importa este archivo: así no hay ciclo)
   if (view === 'materias') renderMaterias();
   if (view === 'ejes') renderEjes();
   if (view === 'subtemas') renderSubtemas();
@@ -85,11 +86,12 @@ export function renderSubtemas() {
   }
 }
 
-export function enterSubtema(sub) {
+// tab: pestaña donde se entra (desde Hoy puede ser otra); la teoría se pide sola solo si es 'teoria'.
+export function enterSubtema(sub, tab = 'teoria') {
   S.sub = sub;
   $('#mentoria-title').textContent = sub.nombre;
   go('mentoria');
-  showTab('teoria');
+  showTab(tab);
   avisar('entrar-subtema'); // el laboratorio carga su gráfico y la teoría se pide si no está en caché
   const n = debilesDelTema().length;
   mentor(n ? `Tienes ${n} puntos débiles guardados en este subtema. El mentor los va a reforzar en las preguntas y ejercicios.` : '¡Excelente elección! Lee la teoría y luego pon a prueba tu comprensión en el chequeo.');

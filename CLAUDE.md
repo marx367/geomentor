@@ -14,7 +14,8 @@ Tutor de matemática con IA: materias, ejes y subtemas que arma el estudiante (M
 **Limitación:** los módulos ES no cargan con doble clic (`file://`). Se abre con `iniciar-servidor.ps1` o con Live Server de VS Code.
 
 **Señales para reevaluar el stack:**
-- Más de ~100 archivos JS o ganas de tests automáticos → pasar a Vite + Vitest.
+- Más de ~100 archivos JS → pasar a Vite.
+- Tests de la interfaz → Vitest (la lógica pura ya se prueba sin npm con `node --test`).
 - Necesidad de funcionar sin internet → bajar las librerías a `vendor/` o instalarlas con npm.
 - Varios usuarios con cuentas, o claves de IA compartidas → hace falta un backend (las claves nunca deben ir al navegador de otros).
 
@@ -25,6 +26,7 @@ index.html          → estructura HTML; carga js/tema-inicial.js, css/estilos.c
 css/                → tema, base, componentes/, vistas/, movimiento, responsive
 js/main.js          → punto de entrada
 js/nucleo/          → utilidades sin dependencias
+js/dominio/         → el método puro: etapas, vencimientos y cola del día, con tests (node --test)
 js/datos/           → colores de materias y sinónimos
 js/estado/          → estado en memoria y almacenamiento
 js/render/          → Markdown y fórmulas
@@ -38,7 +40,7 @@ js/profesor/        → estilo del profesor, cuestionario y biblioteca
 js/exportacion/     → descargas, resumen .txt, ficha PDF
 js/ui/              → navegación, migas, mentor, diálogos, eventos, tema
 docs/               → arquitectura y guías; docs/fichas/ con la ficha de cada función nueva
-scripts/            → verificar.ps1 (sintaxis, gitleaks, TODO/FIXME)
+scripts/            → verificar.ps1 (sintaxis, tests de dominio, gitleaks, TODO/FIXME)
 .claude/agents/     → árbitro: revisa los cambios contra el listón de la ficha
 ```
 

@@ -20,5 +20,6 @@ registrarAccion('descargar-resumen', () => {
   if (s.summary) saveFile(new Blob([buildResumenTxt(s, s.summary.meta)], { type: 'text/plain;charset=utf-8' }), `resumen_${slug(s.summary.meta.subtema)}_${today()}.txt`);
 });
 
-// Al entrar a un subtema, si su teoría no está en caché, se pide a la IA.
-alSuceder('entrar-subtema', () => { if (!S.cache[key()]) loadContent(false); });
+// Al entrar a un subtema por Teoría, si su teoría no está en caché, se pide a la IA. Si se entra por otra
+// pestaña (desde Hoy) no se pide: se ahorra una consulta, y Teoría ofrece "Generar teoría" si se abre después.
+alSuceder('entrar-subtema', () => { if (S.tab === 'teoria' && !S.cache[key()]) loadContent(false); });

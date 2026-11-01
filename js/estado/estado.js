@@ -10,6 +10,7 @@ export const S = {
   progreso: { temas: {} },
   debiles: [],
   hojas: {}, // hojas de errores editadas, por subtema: ver hojas.js
+  intentos: {}, // chequeos, drills y exámenes por subtema (solo se agregan): ver intentos.js
   cache: {}, sessions: {}
 };
 export const key = () => S.sub ? `${S.materia.id}/${S.eje.id}/${S.sub.id}` : null;

@@ -1,11 +1,11 @@
 # Módulos
 
-Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2; [MCn] = paso n de `docs/plan-mi-curso.md`; [MC-R] = Reglas del examen, [MC-D] = Puntos débiles con tipo y [MC-H] = Hoja de errores y [MC-B] = Bibliografía en el tutor y ejercicios propios, del mismo plan).
+Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lista. Entre corchetes: paso del roadmap en que se creó ([F2] = Fase 2; [MCn] = paso n de `docs/plan-mi-curso.md`; [MC-R] = Reglas del examen, [MC-D] = Puntos débiles con tipo y [MC-H] = Hoja de errores y [MC-B] = Bibliografía en el tutor y ejercicios propios, del mismo plan; [M1] = Fase 1 del roadmap del método: dominio puro + tests; [M2] = Fase 2 del mismo roadmap: pantalla Hoy).
 
 ## Raíz
 | Archivo | Qué hace |
 |---|---|
-| `index.html` | Estructura: cabecera (📌, ⚙️ y tema), vistas, diálogos (Profesor con Reglas del examen, Hoja de errores), mentor con botón de acción. Carga CSS y `js/main.js` [2] |
+| `index.html` | Estructura: cabecera (Hoy, Mi curso, 📌, ⚙️ y tema), vistas (Hoy es la primera) [M2], diálogos (Profesor con Reglas del examen, Hoja de errores, Práctica rápida [M2]), mentor con botón de acción. Carga CSS y `js/main.js` [2] |
 | `iniciar-servidor.ps1` | Levanta un servidor local en el puerto 8080 [1] |
 
 ## css/ [2]
@@ -35,7 +35,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 |---|---|
 | `config-mathjax.js` | Configuración de MathJax. Script clásico que se carga antes que MathJax; avisa con el evento `math-ready` [2] |
 | `tema-inicial.js` | Script clásico en `<head>`, antes de los estilos: aplica el tema guardado (`data-theme`) para que no haya parpadeo [F2] |
-| `main.js` | Punto de entrada: inicializa almacén, IA, lienzo, eventos y la primera vista; carga las hojas de errores [7] [MC-H] |
+| `main.js` | Punto de entrada: inicializa almacén, IA, lienzo, eventos y la primera vista (Hoy); carga las hojas de errores y los intentos, con el backfill desde el progreso [7] [MC-H] [M2] |
 | `nucleo/dom.js` | `$` y `$$` (selectores) [3] |
 | `nucleo/utilidades.js` | `newId`, `escapeHTML`, formateos, `today` (fecha local), `limpiarTexto` y `esFechaValida` para validar lo que escribe el estudiante [3] |
 | `nucleo/etiquetas-xml.js` | `getTag`, `getTags`, `toList`: leen la respuesta de la IA [3] |
@@ -51,9 +51,10 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `estado/errores-frecuentes.js` | Función pura: cuenta los tipos de error de un subtema (o de todos), superados incluidos y descartados no → `[{ tipo, veces, ultimaFecha }]` [MC-D] |
 | `estado/mis-errores.js` | Función pura: puntos de un subtema para la hoja, sin descartados, primero pendientes y después superados → `[{ texto, tipo, superado }]` [MC-H] |
 | `estado/hojas.js` | Hojas de errores editadas (secciones 1 y 2) por subtema en el documento `hojas`: `cargarHojas`, `hojaDe`, `guardarHoja` (guarda antes de cambiar la memoria) [MC-H] |
+| `estado/intentos.js` | Intentos por subtema en el documento `intentos` (solo se agregan): `cargarIntentos`, `intentosDe`, `appendIntento` (valida con el dominio, relee antes de escribir, de a una escritura por vez, tope de 240000), `registrar()` (lo que se acaba de hacer, con la fecha local de hoy) y `backfillDesdeProgreso()` (comprensión → chequeo sobre 100, una vez por subtema, con el día local del progreso y nunca después de hoy) [M2] |
 | `estado/reglas-examen.js` | Reglas del examen en `S.config.reglasExamen` (material permitido y fecha): `normalizarReglas`, `materialPermitido()`, `esDefinida()`, `diasHastaExamen()`, `guardarReglas()` [MC-R] |
 | `estado/profesor.js` | Estilo del profesor (texto, cuestionario, análisis), modo estricto y biblioteca de libros por capítulo, en los documentos `profesor` y `biblioteca`; `textoEstilo()` para los prompts [MC3] |
-| `estado/almacen.js` | Fachada de guardado: elige backend; puntos débiles con `addDebil` y `updateDebil` (no se borran uno por uno); `borrarTodo()` limpia todo el estudiante en los dos backends (lista `DOCUMENTOS`, con `hojas`) [4] [MC-D] [MC-H] |
+| `estado/almacen.js` | Fachada de guardado: elige backend; puntos débiles con `addDebil` y `updateDebil` (no se borran uno por uno); `borrarTodo()` limpia todo el estudiante en los dos backends (lista `DOCUMENTOS`, con `hojas` e `intentos`) [4] [MC-D] [MC-H] [M2] |
 | `estado/almacen-local.js` | Backend localStorage (`updateDebil` reemplaza por id) [4] |
 | `estado/almacen-claude.js` | Backend base de datos de claude.ai (opcional; `updateDebil` reescribe el documento) [4] |
 | `ia/proveedores.js` | Lista de proveedores, modelos sugeridos y URLs [5] |
@@ -76,8 +77,10 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `apuntes/plan-estudios.js` | Lógica: prompt de cada sección, limpieza, cronograma y armado del plan .md [6] |
 | `apuntes/panel-apuntes.js` | Lista de apuntes en Config, asignación a temas y carga de archivos [7] |
 | `apuntes/dialogo-plan.js` | Diálogo "Consolidar apuntes en un plan", con progreso y cancelación [7] |
-| `ui/navegacion.js` | Vistas de Mi curso (materias, con inicio vacío; ejes; subtemas por fecha), acento por materia, entrar a un subtema, pestañas, `reiniciarSesion()` (el botón está en Config) [7] |
-| `ui/migas.js` | Migas de pan [7] |
+| `ui/dialogo-drill.js` | Diálogo "🎯 Práctica rápida" (acción `drill-abrir`): método preelegido por el nombre del subtema, 10 ítems con botones, "Corregir" local que registra un intento `drill`, "Repetir" con semilla nueva; al cerrar redibuja Hoy [M2] |
+| `ui/hoy.js` | Pantalla Hoy: arma los temas con `temasDesdeEstado`, muestra hasta 3 acciones de `colaDeHoy` (motivo, minutos y "Empezar"; en practicar y repasar abre un drill y suma "Ir al tema") o "Todo al día"; acciones `hoy-ir` (entra al subtema y abre la pestaña) y `cerrar-hoja-hoy` (entra y abre la hoja); se dibuja con el aviso `mostrar-hoy` [M2] |
+| `ui/navegacion.js` | Vista Hoy (avisa `mostrar-hoy`) y `enterSubtema(sub, tab)` para entrar directo a una pestaña [M2]; vistas de Mi curso (materias, con inicio vacío; ejes; subtemas por fecha), acento por materia, entrar a un subtema, pestañas, `reiniciarSesion()` (el botón está en Config) [7] |
+| `ui/migas.js` | Migas de pan (vacías en Hoy) [7] [M2] |
 | `ui/tarjetas.js` | Tarjetas de selección y conteo de puntos débiles pendientes [7] |
 | `ui/mentor.js` | Mentor flotante y tips por pestaña; `mentor(msg, { texto, abrir })` suma un botón que abre un diálogo (`data-abrir`) [7] [MC-R] |
 | `ui/dialogos.js` | Botón ✕ de todos los diálogos [7] |
@@ -91,11 +94,11 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `ui/puntos-debiles.js` | Contador, diálogo 📌 (con el tipo de cada punto), repasar, marcar superado (guarda la fecha, no borra), editar texto y tipo o descartar cada punto, exportar .txt; solo los pendientes y vigentes [7] [MC-D] |
 | `ui/eventos.js` | Listeners delegados del documento (data-go, data-abrir: Tema de hoy y Profesor, pestañas, data-lab, data-action, campos) [7] |
 | `exportacion/descargas.js` | `saveFile`: descarga con claude.ai o con enlace temporal [7] |
-| `pestanas/registro.js` | Conecta navegación y pestañas: `registrarPestana`, `registrarAccion`, avisos `alSuceder`/`avisar` (`entrar-subtema`, `cambio-acento`, `reiniciar`) [7] |
-| `pestanas/pestana-teoria.js` | Pestaña 1 · cableado: registro, acciones y pedido de teoría al entrar a un subtema [8] |
+| `pestanas/registro.js` | Conecta navegación y pestañas: `registrarPestana`, `registrarAccion`, avisos `alSuceder`/`avisar` (`entrar-subtema`, `cambio-acento`, `reiniciar`, `mostrar-hoy`) [7] [M2] |
+| `pestanas/pestana-teoria.js` | Pestaña 1 · cableado: registro, acciones y pedido de teoría al entrar a un subtema (solo si se entra por Teoría) [8] [M2] |
 | `pestanas/teoria.js` | Pestaña 1 · pantalla: teoría, ideas clave, chequeo y tarjeta de resumen [8] |
 | `pestanas/contenido-teoria.js` | Pestaña 1 · pide el material a la IA; manda el gráfico al laboratorio (`cargar-grafico`) [8] |
-| `pestanas/chequeo-socratico.js` | Pestaña 1 · evalúa la respuesta y actualiza comprensión, entendido/falta (con tipo) y pregunta [8] |
+| `pestanas/chequeo-socratico.js` | Pestaña 1 · evalúa la respuesta y actualiza comprensión, entendido/falta (con tipo) y pregunta; registra el chequeo como intento (comprensión sobre 100) [8] [M2] |
 | `pestanas/resumen-sesion.js` | Pestaña 1 · resumen por IA, guarda puntos débiles con tipo (origen `chequeo`) y descarga el .txt [8] |
 | `estado/progreso.js` | `saveProgreso`: comprensión y mejor examen por subtema [8] |
 | `exportacion/resumen-txt.js` | Arma el texto del resumen .txt [8] |
@@ -133,5 +136,19 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `pizarra/herramientas.js` | Lápiz y línea recta con vista previa (mouse, lápiz y táctil) [10] |
 | `pizarra/cuadricula-pizarra.js` | Fondo cuadriculado con ejes, en colores del tema [10] |
 | `pestanas/examen.js` | Pestaña 4 · pide las 5 preguntas (cada una con su tipo de error) y dibuja examen y resultado; botón 📝 Hoja de errores arriba y junto a la ficha PDF [10] [MC-H] |
-| `pestanas/examen-resultado.js` | Pestaña 4 · entrega (nota, mejor resultado) y guardar errores como débiles con el tipo de cada pregunta (origen `examen`) [10] |
+| `pestanas/examen-resultado.js` | Pestaña 4 · entrega (nota, mejor resultado, intento `examen` con aciertos sobre el total de preguntas [M2]) y guardar errores como débiles con el tipo de cada pregunta (origen `examen`) [10] |
 | `pestanas/pestana-examen.js` | Pestaña 4 · cableado: registro y botones [10] |
+
+## js/dominio/ [M1]
+Lógica pura del método: no importa otras carpetas de `js/`, no toca la pantalla ni el almacenamiento. Fechas siempre como texto `'YYYY-MM-DD'`.
+| Archivo | Qué hace |
+|---|---|
+| `tipos.js` | Solo JSDoc: `Etapa`, `Intento`, `Tema` y `Accion` |
+| `fechas.js` | `esFecha`, `sumarDias`, `diasEntre` sin `Date` (número de día civil, cruza meses, años y bisiestos); entrada inválida → `null` |
+| `estudio.js` | `ETAPAS`, `UMBRALES`, `etapaDe()` derivada por compuertas (captura → reconstrucción → práctica → recuperación → simulación), `proximaEtapa()`, `aprobado()` e `intentosHasta()` |
+| `repaso.js` | `OFFSETS` D0/D1/D3/D7/D14, `vencimientos()` (fecha, vence, atraso, hecho), `fechaExamen()` con `EXAMEN_ESTIMADO`, `diasHastaExamen()`, `modoExpress()` |
+| `cola.js` | `colaDeHoy()`: hasta 3 acciones por prioridad P0-P4 con minutos y motivo; la etapa elige qué acciones aplican y los vencimientos, el momento y el motivo; máximo 2 repasos y una acción por tema (salvo reconstruir + cerrar hoja) |
+| `drills.js` | Drills de opción múltiple: `generarDrill({ metodo, semilla, cantidad })` determinista (RNG mulberry32, sin preguntas repetidas), `corregirDrill()` (faltante = error) y `METODOS` [M2] |
+| `drills-banco.js` | Banco de Geometría Descriptiva por método (tercera proyección y recta, 5 generadores cada uno), con `diedroDe`, `TRAZAS` y `mezclar`; reglas de las hojas 01 y 02 del cuadernillo [M2] |
+| `adaptadores.js` | Puente con los datos de la app: `claveDe`, `aplanarCurso`, `buscarPorClave` y `temasDesdeEstado()` (subtema → Tema, con estado de la hoja vacía/hecha/obsoleta) [M2] |
+| `*.test.js` | Tests con `node:test`: `node --test js/dominio/*.test.js` (los corre `scripts/verificar.ps1`) |
