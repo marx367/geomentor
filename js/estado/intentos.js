@@ -1,5 +1,6 @@
 // Intentos por subtema (chequeos, drills, construcciones, exámenes) en el documento 'intentos'
 // → S.intentos = { 'materia/eje/subtema': Intento[] } (formato en js/dominio/tipos.js). Solo se agregan: nunca se editan ni se borran.
+import { today } from '../nucleo/utilidades.js';
 import { S } from './estado.js';
 import { Store } from './almacen.js';
 import { esFecha } from '../dominio/fechas.js';
@@ -68,19 +69,36 @@ export async function appendIntento(clave, intento) {
 }
 
 /**
+ * Registra lo que el estudiante acaba de hacer, con la fecha de hoy (local: toISOString daría el día siguiente
+ * de noche en Argentina). aciertos y total, enteros con total > 0. false si no es válido o no se pudo guardar.
+ */
+export async function registrar(clave, { tipo, aciertos, total } = {}) {
+  if (!TIPOS.includes(tipo) || !Number.isInteger(aciertos) || !Number.isInteger(total) || total <= 0) return false;
+  return appendIntento(clave, { fecha: today(), tipo, aciertos, total });
+}
+
+// Día local de una fecha ISO del progreso ('2026-11-01T02:30:00Z' de noche en Argentina es el 31/10). '' si no sirve.
+function diaLocal(iso) {
+  const d = typeof iso === 'string' ? new Date(iso) : null;
+  return d && !isNaN(d) ? today(d) : '';
+}
+
+/**
  * Pasa la comprensión guardada en el progreso a un chequeo (aciertos = comprensión, total = 100), solo para los
  * subtemas de Mi curso que todavía no tienen ningún intento. Idempotente: la segunda vez no encuentra nada que sumar.
- * Fecha: la del progreso (es la del último chequeo); si no es válida, la de la clase. No inventa fechas.
+ * Fecha: el día local del progreso (es la del último chequeo), nunca posterior a hoy; si no es válida, la de la
+ * clase. No inventa fechas.
  */
 export async function backfillDesdeProgreso() {
+  const hoy = today();
   return enCola(() => escribir(todos => {
     const suma = {};
     for (const [k, p] of Object.entries(S.progreso.temas || {})) {
       if (p?.comprension === undefined || todos[k]?.length) continue;
       const f = buscarPorClave(S.curso, k);
       if (!f) continue; // progreso del catálogo viejo: no hay subtema
-      const delProgreso = typeof p.fecha === 'string' ? p.fecha.slice(0, 10) : '';
-      const fecha = esFecha(delProgreso) ? delProgreso : f.subtema.fecha;
+      const delProgreso = diaLocal(p.fecha);
+      const fecha = esFecha(delProgreso) ? (delProgreso > hoy ? hoy : delProgreso) : f.subtema.fecha;
       const intento = limpiar({ fecha, tipo: 'chequeo', aciertos: p.comprension, total: 100 });
       if (intento) suma[k] = [intento];
     }

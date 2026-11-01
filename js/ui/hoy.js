@@ -7,7 +7,7 @@ import { temasDesdeEstado, buscarPorClave } from '../dominio/adaptadores.js';
 import { colaDeHoy } from '../dominio/cola.js';
 import { registrarAccion, alSuceder } from '../pestanas/registro.js';
 import { abrirHoja } from '../exportacion/dialogo-hoja.js';
-import { setAccent, enterSubtema, showTab } from './navegacion.js';
+import { setAccent, enterSubtema } from './navegacion.js';
 
 // Pestaña del subtema donde se hace cada acción (cerrar-hoja abre el diálogo de la hoja).
 const PESTANA = { reconstruir: 'teoria', practicar: 'ejercicios', repasar: 'ejercicios', integrar: 'examen' };
@@ -49,7 +49,7 @@ export function renderHoy() {
   const acciones = colaDeHoy({ temas, fechaExamen: S.config.reglasExamen?.fecha, hoy });
   if (!acciones.length) {
     cuerpo.innerHTML = `<div class="panel-card stack">
-      <p>Todo al día. Si querés adelantar, abrí Mi curso.</p>
+      <p>Todo al día. Si quieres adelantar, abre Mi curso.</p>
       <div class="btn-row"><button class="btn primary" data-go="materias">Ir a Mi curso</button></div>
     </div>`;
     return;
@@ -57,21 +57,19 @@ export function renderHoy() {
   cuerpo.innerHTML = `<div class="stack">${acciones.map(tarjeta).join('')}</div>`;
 }
 
-// Elige materia, eje y subtema de la clave y entra al subtema (enterSubtema abre la pestaña Teoría).
-function entrar(el) {
+// Elige materia, eje y subtema de la clave y entra directo a la pestaña: así la teoría no se pide si no es Teoría.
+function entrar(el, tab) {
   const f = buscarPorClave(S.curso, el.dataset.key);
   if (!f) return false;
   S.materia = f.materia; S.eje = f.eje;
   setAccent(f.materia);
-  enterSubtema(f.subtema);
+  enterSubtema(f.subtema, tab);
   return true;
 }
 
 export function iniciarHoy() {
   alSuceder('mostrar-hoy', renderHoy);
-  registrarAccion('hoy-ir', el => {
-    if (entrar(el) && el.dataset.tab && el.dataset.tab !== 'teoria') showTab(el.dataset.tab);
-  });
-  // abrirHoja trabaja sobre el subtema abierto: primero se entra al tema.
-  registrarAccion('cerrar-hoja-hoy', el => { if (entrar(el)) abrirHoja(); });
+  registrarAccion('hoy-ir', el => { entrar(el, el.dataset.tab || 'teoria'); });
+  // abrirHoja trabaja sobre el subtema abierto: primero se entra al tema, por Examen (donde está la hoja).
+  registrarAccion('cerrar-hoja-hoy', el => { if (entrar(el, 'examen')) abrirHoja(); });
 }

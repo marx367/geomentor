@@ -47,10 +47,11 @@ function accionReconstruir(tema, hoy, examen) {
   if (modoExpress(tema, hoy, examen)) {
     const quedan = diasHastaExamen(hoy, examen);
     const texto = quedan === 1 ? 'queda 1 día' : `quedan ${quedan} días`;
-    return candidato(tema, 0, 'integrar', MINUTOS_EXPRESS, `express (${texto})`, dias);
+    return candidato(tema, 0, 'integrar', MINUTOS_EXPRESS, `express (${texto})`, -dias);
   }
   const detalle = dias === 0 ? 'clase de hoy, sin reconstruir' : dias === 1 ? 'sin reconstruir desde ayer' : 'reconstrucción pendiente';
-  return candidato(tema, 0, 'reconstruir', MINUTOS.reconstruir, detalle, dias);
+  // Atraso negativo: en reconstrucción va primero la clase más nueva (la de hoy es la que hay que cerrar hoy).
+  return candidato(tema, 0, 'reconstruir', MINUTOS.reconstruir, detalle, -dias);
 }
 
 // P1 · etapa práctica: ninguna práctica aprobada todavía. Si los drills o construcciones vienen

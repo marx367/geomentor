@@ -6,6 +6,7 @@ import { getTag, toList } from '../nucleo/etiquetas-xml.js';
 import { leerPuntos } from '../estado/tipos-error.js';
 import { S, key, sess } from '../estado/estado.js';
 import { saveProgreso } from '../estado/progreso.js';
+import { registrar } from '../estado/intentos.js';
 import { ask } from '../ia/cliente-ia.js';
 import { aiError } from '../ia/errores-ia.js';
 import { Apuntes } from '../contexto/busqueda-apuntes.js';
@@ -67,6 +68,8 @@ ${FORMAT_RULES}`);
     s.currentQ = getTag(text, 'siguiente_pregunta') || s.currentQ;
     if (!noSe) s.draft = '';
     await saveProgreso(k, { comprension: s.comprension });
+    // Solo si la IA devolvió la comprensión: si no, s.comprension es la anterior y sería un chequeo repetido.
+    if (Number.isFinite(comp)) await registrar(k, { tipo: 'chequeo', aciertos: s.comprension, total: 100 });
     const tip = getTag(text, 'tip');
     if (tip && key() === k) mentor(tip);
   } catch (e) {

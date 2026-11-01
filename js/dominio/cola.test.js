@@ -196,6 +196,11 @@ test('18 · invariante: la etapa decide el tipo de la primera acción', () => {
   }
 });
 
+test('19 · dos temas sin reconstruir: primero el de hoy', () => {
+  const acciones = cola([tema('viejo', 4), tema('nuevo', 0)]);
+  assert.deepEqual(acciones.map(a => [a.temaId, a.tipo]), [['nuevo', 'reconstruir'], ['viejo', 'reconstruir']]);
+});
+
 test('entradas inválidas: devuelve []', () => {
   assert.deepEqual(colaDeHoy({ temas: [], fechaExamen: null, hoy: '2026-11-01' }), []);
   assert.deepEqual(colaDeHoy({ temas: null, hoy: HOY }), []);

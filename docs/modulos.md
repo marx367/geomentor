@@ -51,7 +51,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `estado/errores-frecuentes.js` | Función pura: cuenta los tipos de error de un subtema (o de todos), superados incluidos y descartados no → `[{ tipo, veces, ultimaFecha }]` [MC-D] |
 | `estado/mis-errores.js` | Función pura: puntos de un subtema para la hoja, sin descartados, primero pendientes y después superados → `[{ texto, tipo, superado }]` [MC-H] |
 | `estado/hojas.js` | Hojas de errores editadas (secciones 1 y 2) por subtema en el documento `hojas`: `cargarHojas`, `hojaDe`, `guardarHoja` (guarda antes de cambiar la memoria) [MC-H] |
-| `estado/intentos.js` | Intentos por subtema en el documento `intentos` (solo se agregan): `cargarIntentos`, `intentosDe`, `appendIntento` (valida con el dominio, relee antes de escribir, de a una escritura por vez, tope de 240000) y `backfillDesdeProgreso()` (comprensión → chequeo sobre 100, una vez por subtema) [M2] |
+| `estado/intentos.js` | Intentos por subtema en el documento `intentos` (solo se agregan): `cargarIntentos`, `intentosDe`, `appendIntento` (valida con el dominio, relee antes de escribir, de a una escritura por vez, tope de 240000), `registrar()` (lo que se acaba de hacer, con la fecha local de hoy) y `backfillDesdeProgreso()` (comprensión → chequeo sobre 100, una vez por subtema, con el día local del progreso y nunca después de hoy) [M2] |
 | `estado/reglas-examen.js` | Reglas del examen en `S.config.reglasExamen` (material permitido y fecha): `normalizarReglas`, `materialPermitido()`, `esDefinida()`, `diasHastaExamen()`, `guardarReglas()` [MC-R] |
 | `estado/profesor.js` | Estilo del profesor (texto, cuestionario, análisis), modo estricto y biblioteca de libros por capítulo, en los documentos `profesor` y `biblioteca`; `textoEstilo()` para los prompts [MC3] |
 | `estado/almacen.js` | Fachada de guardado: elige backend; puntos débiles con `addDebil` y `updateDebil` (no se borran uno por uno); `borrarTodo()` limpia todo el estudiante en los dos backends (lista `DOCUMENTOS`, con `hojas` e `intentos`) [4] [MC-D] [MC-H] [M2] |
@@ -78,7 +78,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `apuntes/panel-apuntes.js` | Lista de apuntes en Config, asignación a temas y carga de archivos [7] |
 | `apuntes/dialogo-plan.js` | Diálogo "Consolidar apuntes en un plan", con progreso y cancelación [7] |
 | `ui/hoy.js` | Pantalla Hoy: arma los temas con `temasDesdeEstado`, muestra hasta 3 acciones de `colaDeHoy` (motivo, minutos y "Empezar") o "Todo al día"; acciones `hoy-ir` (entra al subtema y abre la pestaña) y `cerrar-hoja-hoy` (entra y abre la hoja); se dibuja con el aviso `mostrar-hoy` [M2] |
-| `ui/navegacion.js` | Vista Hoy (avisa `mostrar-hoy`) [M2] y vistas de Mi curso (materias, con inicio vacío; ejes; subtemas por fecha), acento por materia, entrar a un subtema, pestañas, `reiniciarSesion()` (el botón está en Config) [7] |
+| `ui/navegacion.js` | Vista Hoy (avisa `mostrar-hoy`) y `enterSubtema(sub, tab)` para entrar directo a una pestaña [M2]; vistas de Mi curso (materias, con inicio vacío; ejes; subtemas por fecha), acento por materia, entrar a un subtema, pestañas, `reiniciarSesion()` (el botón está en Config) [7] |
 | `ui/migas.js` | Migas de pan (vacías en Hoy) [7] [M2] |
 | `ui/tarjetas.js` | Tarjetas de selección y conteo de puntos débiles pendientes [7] |
 | `ui/mentor.js` | Mentor flotante y tips por pestaña; `mentor(msg, { texto, abrir })` suma un botón que abre un diálogo (`data-abrir`) [7] [MC-R] |
@@ -94,10 +94,10 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `ui/eventos.js` | Listeners delegados del documento (data-go, data-abrir: Tema de hoy y Profesor, pestañas, data-lab, data-action, campos) [7] |
 | `exportacion/descargas.js` | `saveFile`: descarga con claude.ai o con enlace temporal [7] |
 | `pestanas/registro.js` | Conecta navegación y pestañas: `registrarPestana`, `registrarAccion`, avisos `alSuceder`/`avisar` (`entrar-subtema`, `cambio-acento`, `reiniciar`, `mostrar-hoy`) [7] [M2] |
-| `pestanas/pestana-teoria.js` | Pestaña 1 · cableado: registro, acciones y pedido de teoría al entrar a un subtema [8] |
+| `pestanas/pestana-teoria.js` | Pestaña 1 · cableado: registro, acciones y pedido de teoría al entrar a un subtema (solo si se entra por Teoría) [8] [M2] |
 | `pestanas/teoria.js` | Pestaña 1 · pantalla: teoría, ideas clave, chequeo y tarjeta de resumen [8] |
 | `pestanas/contenido-teoria.js` | Pestaña 1 · pide el material a la IA; manda el gráfico al laboratorio (`cargar-grafico`) [8] |
-| `pestanas/chequeo-socratico.js` | Pestaña 1 · evalúa la respuesta y actualiza comprensión, entendido/falta (con tipo) y pregunta [8] |
+| `pestanas/chequeo-socratico.js` | Pestaña 1 · evalúa la respuesta y actualiza comprensión, entendido/falta (con tipo) y pregunta; registra el chequeo como intento (comprensión sobre 100) [8] [M2] |
 | `pestanas/resumen-sesion.js` | Pestaña 1 · resumen por IA, guarda puntos débiles con tipo (origen `chequeo`) y descarga el .txt [8] |
 | `estado/progreso.js` | `saveProgreso`: comprensión y mejor examen por subtema [8] |
 | `exportacion/resumen-txt.js` | Arma el texto del resumen .txt [8] |
@@ -135,7 +135,7 @@ Qué hace cada archivo. Al sumar, mover o borrar un archivo, actualizar esta lis
 | `pizarra/herramientas.js` | Lápiz y línea recta con vista previa (mouse, lápiz y táctil) [10] |
 | `pizarra/cuadricula-pizarra.js` | Fondo cuadriculado con ejes, en colores del tema [10] |
 | `pestanas/examen.js` | Pestaña 4 · pide las 5 preguntas (cada una con su tipo de error) y dibuja examen y resultado; botón 📝 Hoja de errores arriba y junto a la ficha PDF [10] [MC-H] |
-| `pestanas/examen-resultado.js` | Pestaña 4 · entrega (nota, mejor resultado) y guardar errores como débiles con el tipo de cada pregunta (origen `examen`) [10] |
+| `pestanas/examen-resultado.js` | Pestaña 4 · entrega (nota, mejor resultado, intento `examen` con aciertos sobre el total de preguntas [M2]) y guardar errores como débiles con el tipo de cada pregunta (origen `examen`) [10] |
 | `pestanas/pestana-examen.js` | Pestaña 4 · cableado: registro y botones [10] |
 
 ## js/dominio/ [M1]

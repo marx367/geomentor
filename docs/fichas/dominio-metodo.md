@@ -26,6 +26,7 @@ Lógica pura en `js/dominio/`, sin pantalla, sin almacenamiento y sin IA. Todav�
 - Varios repasos pendientes del mismo tema → una sola acción, la del offset más avanzado.
 - Orden: prioridad, después el vencimiento más viejo, después el id del tema (siempre el mismo resultado).
 - En simulación, un D7 pendiente da `repasar` (escenario 5) y el D14, `integrar`.
+- En reconstrucción va primero la clase más nueva: la de hoy es la que hay que cerrar hoy (test 19).
 - Tests migrados el 2026-11-01 (PROMPT 01d):
   - Cambiaron de expectativa:
     - 3: un tema de ayer con chequeo aprobado ya no da `[]`, da "primera práctica".
