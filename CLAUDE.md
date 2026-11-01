@@ -14,7 +14,8 @@ Tutor de matemática con IA: materias, ejes y subtemas que arma el estudiante (M
 **Limitación:** los módulos ES no cargan con doble clic (`file://`). Se abre con `iniciar-servidor.ps1` o con Live Server de VS Code.
 
 **Señales para reevaluar el stack:**
-- Más de ~100 archivos JS o ganas de tests automáticos → pasar a Vite + Vitest.
+- Más de ~100 archivos JS → pasar a Vite.
+- Tests de la interfaz → Vitest (la lógica pura ya se prueba sin npm con `node --test`).
 - Necesidad de funcionar sin internet → bajar las librerías a `vendor/` o instalarlas con npm.
 - Varios usuarios con cuentas, o claves de IA compartidas → hace falta un backend (las claves nunca deben ir al navegador de otros).
 
